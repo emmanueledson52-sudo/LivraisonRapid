@@ -9,249 +9,39 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f6f8;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .navigation-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      width: 100%;
-      max-width: 1000px;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      flex: 1;
-      min-width: 140px;
-      padding: 12px;
-      background-color: #e0e6ed;
-      color: #333;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .tab-btn.active {
-      background-color: #1f4e79;
-      color: white;
-    }
-
-    .carte {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 25px;
-      width: 100%;
-      max-width: 1000px;
-      margin-bottom: 20px;
-    }
-
-    .carte-centree {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .section-app {
-      display: none;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .section-app.active {
-      display: block;
-    }
-
-    h1,
-    h2,
-    h3 {
-      color: #1f4e79;
-      margin-top: 0;
-    }
-
-    h1 {
-      font-size: 22px;
-      text-align: center;
-    }
-
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: bold;
-      font-size: 13px;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    button.btn-submit {
-      width: 100%;
-      margin-top: 18px;
-      padding: 12px;
-      background-color: #1f4e79;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button.btn-submit:hover {
-      background-color: #163a5c;
-    }
-
-    .btn-action {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      gap: 5px;
-    }
-
-    .btn-whatsapp {
-      background-color: #25D366;
-      color: white;
-    }
-
-    .btn-status {
-      background-color: #1f4e79;
-      color: white;
-    }
-
-    .btn-accept {
-      background-color: #28a745;
-      color: white;
-      margin-top: 10px;
-    }
-
-    .prix-box {
-      background: #eef6ff;
-      border: 1px solid #b6d4fe;
-      padding: 12px;
-      border-radius: 6px;
-      margin-top: 15px;
-      text-align: center;
-      font-weight: bold;
-      color: #1f4e79;
-    }
-
-    .map-container {
-      height: 200px;
-      width: 100%;
-      border-radius: 8px;
-      margin-top: 12px;
-      border: 1px solid #ddd;
-    }
-
-    .grid-layout {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .item-card {
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 15px;
-      background: #fafafa;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 10px;
-      font-size: 11px;
-      font-weight: bold;
-      color: white;
-    }
-
-    .badge-dispo {
-      background-color: #28a745;
-    }
-
-    .badge-occupe {
-      background-color: #dc3545;
-    }
-
-    .badge-attente {
-      background-color: #ffc107;
-      color: #333;
-    }
-
-    .badge-cours {
-      background-color: #17a2b8;
-    }
-
-    .badge-livre {
-      background-color: #6c757d;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-    }
-
-    .stat-card {
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    .stat-card .number {
-      font-size: 22px;
-      font-weight: bold;
-      color: #1f4e79;
-      margin-top: 5px;
-    }
-
-    .user-bar {
-      background: #eef6ff;
-      padding: 10px 15px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      width: 100%;
-      max-width: 1000px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .img-preview {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      margin-top: 5px;
-    }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+    .navigation-tabs { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; max-width: 1000px; flex-wrap: wrap; }
+    .tab-btn { flex: 1; min-width: 140px; padding: 12px; background-color: #e0e6ed; color: #333; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
+    .tab-btn.active { background-color: #1f4e79; color: white; }
+    .carte { background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; width: 100%; max-width: 1000px; margin-bottom: 20px; }
+    .carte-centree { max-width: 600px; margin: 0 auto; }
+    .section-app { display: none; width: 100%; max-width: 1000px; }
+    .section-app.active { display: block; }
+    h1, h2, h3 { color: #1f4e79; margin-top: 0; }
+    h1 { font-size: 22px; text-align: center; }
+    label { display: block; margin-top: 12px; font-weight: bold; font-size: 13px; }
+    input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    button.btn-submit { width: 100%; margin-top: 18px; padding: 12px; background-color: #1f4e79; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    button.btn-submit:hover { background-color: #163a5c; }
+    .btn-action { padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-flex; gap: 5px; }
+    .btn-whatsapp { background-color: #25D366; color: white; }
+    .btn-status { background-color: #1f4e79; color: white; }
+    .btn-accept { background-color: #28a745; color: white; margin-top: 10px; }
+    .prix-box { background: #eef6ff; border: 1px solid #b6d4fe; padding: 12px; border-radius: 6px; margin-top: 15px; text-align: center; font-weight: bold; color: #1f4e79; }
+    .map-container { height: 200px; width: 100%; border-radius: 8px; margin-top: 12px; border: 1px solid #ddd; }
+    .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+    .item-card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; background: #fafafa; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; color: white; }
+    .badge-dispo { background-color: #28a745; }
+    .badge-occupe { background-color: #dc3545; }
+    .badge-attente { background-color: #ffc107; color: #333; }
+    .badge-cours { background-color: #17a2b8; }
+    .badge-livre { background-color: #6c757d; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+    .stat-card { background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; border-radius: 8px; text-align: center; }
+    .stat-card .number { font-size: 22px; font-weight: bold; color: #1f4e79; margin-top: 5px; }
+    .user-bar { background: #eef6ff; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; width: 100%; max-width: 1000px; display: flex; justify-content: space-between; align-items: center; }
   </style>
 </head>
 
@@ -259,8 +49,7 @@
 
   <div id="userBar" class="user-bar" style="display:none;">
     <span id="userInfo"></span>
-    <button onclick="deconnexion()"
-      style="padding: 5px 10px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">Déconnexion</button>
+    <button onclick="deconnexion()" style="padding: 5px 10px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">Déconnexion</button>
   </div>
 
   <div class="navigation-tabs">
@@ -342,8 +131,6 @@
       <form id="formLogin">
         <label>Téléphone</label>
         <input type="tel" id="loginTel" required>
-        <label>Mot de passe</label>
-        <input type="password" id="loginPass" required>
         <button type="submit" class="btn-submit">Se connecter</button>
       </form>
     </div>
@@ -355,10 +142,7 @@
           <div><label>Nom</label><input type="text" id="nomLivreur" required></div>
           <div><label>Prénom</label><input type="text" id="prenomLivreur" required></div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div><label>Téléphone</label><input type="tel" id="teleLivreur" required></div>
-          <div><label>Mot de passe</label><input type="password" id="passLivreur" required></div>
-        </div>
+        <div><label>Téléphone</label><input type="tel" id="teleLivreur" required></div>
         <label>Zone d'intervention</label>
         <select id="zoneLivreur" required>
           <option value="Pétion-Ville">Pétion-Ville</option>
@@ -367,16 +151,12 @@
           <option value="Juvénat">Juvénat</option>
           <option value="Thomassin">Thomassin</option>
         </select>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div><label>Photo identité</label><input type="file" id="photoIdentite"></div>
-          <div><label>Photo permis</label><input type="file" id="photoPermis"></div>
-        </div>
         <button type="submit" class="btn-submit">Créer mon compte livreur</button>
       </form>
     </div>
 
     <div class="carte">
-      <h2>📋 Registre des Chauffeurs (Stock)</h2>
+      <h2>📋 Registre des Chauffeurs</h2>
       <div id="listeLivreurs" class="grid-layout"></div>
     </div>
   </div>
@@ -410,14 +190,18 @@
     </div>
   </div>
 
+  <!-- SCRIPTS EXTERNES -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    const socket = io();
+    // CONFIGURATION SUPABASE INTEGRÉE
+    const SUPABASE_URL = 'https://hstgwiyztzfplxncuzxc.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_2HWJPXVoD-A66Cdy3gJS3Q_9BM1_tgq';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     let map, markerDepart, markerArrivee;
-    let userToken = localStorage.getItem('token');
-    let currentUser = JSON.parse(localStorage.getItem('user'));
+    let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
     let tarifActuel = 0;
 
     const coordsZones = {
@@ -436,20 +220,17 @@
       chargerLivreurs();
       chargerCommandes();
 
-      // ECOUTEURS WEBSOCKETS TEMPS REEL
-      socket.on('nouvelle_commande', (data) => {
-        alert(`🔔 Nouvelle commande reçue dans la zone ${data.zDepart} !`);
-        chargerCommandes();
-      });
-
-      socket.on('update_livreurs', () => chargerLivreurs());
-      socket.on('update_commandes', () => chargerCommandes());
+      // TEMPS RÉEL SUPABASE
+      supabase.channel('custom-all-channel')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'commandes' }, () => chargerCommandes())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'livreurs' }, () => chargerLivreurs())
+        .subscribe();
     };
 
     function verifierSession() {
-      if (currentUser && userToken) {
+      if (currentUser) {
         document.getElementById('userBar').style.display = 'flex';
-        document.getElementById('userInfo').textContent = `Connecté : ${currentUser.prenom} ${currentUser.nom} (${currentUser.role})`;
+        document.getElementById('userInfo').textContent = `Connecté : ${currentUser.prenom} ${currentUser.nom}`;
         document.getElementById('authBox').style.display = 'none';
       } else {
         document.getElementById('userBar').style.display = 'none';
@@ -458,7 +239,7 @@
     }
 
     function deconnexion() {
-      localStorage.clear();
+      localStorage.removeItem('user_livreur');
       location.reload();
     }
 
@@ -488,154 +269,120 @@
       }
     }
 
-    // --- REQUÊTES SERVEUR ---
-
-    // 1. Inscription Livreur
+    // INSCRIPTION LIVREUR
     document.getElementById("formLivreur").addEventListener("submit", async function (e) {
       e.preventDefault();
-      const formData = new FormData();
-      formData.append('nom', document.getElementById("nomLivreur").value);
-      formData.append('prenom', document.getElementById("prenomLivreur").value);
-      formData.append('telephone', document.getElementById("teleLivreur").value);
-      formData.append('password', document.getElementById("passLivreur").value);
-      formData.append('zone', document.getElementById("zoneLivreur").value);
-      formData.append('role', 'livreur');
+      const { data, error } = await supabase.from('livreurs').insert([{
+        nom: document.getElementById("nomLivreur").value,
+        prenom: document.getElementById("prenomLivreur").value,
+        telephone: document.getElementById("teleLivreur").value,
+        zone: document.getElementById("zoneLivreur").value
+      }]).select();
 
-      if (document.getElementById("photoIdentite").files[0]) formData.append('photoIdentite', document.getElementById("photoIdentite").files[0]);
-      if (document.getElementById("photoPermis").files[0]) formData.append('photoPermis', document.getElementById("photoPermis").files[0]);
-
-      const res = await fetch('/api/auth/register', { method: 'POST', body: formData });
-      const data = await res.json();
-      if (res.ok) { alert(data.message); this.reset(); } else alert(data.error);
+      if (error) alert("Erreur : " + error.message);
+      else { alert("Compte créé !"); this.reset(); }
     });
 
-    // 2. Connexion
+    // CONNEXION
     document.getElementById("formLogin").addEventListener("submit", async function (e) {
       e.preventDefault();
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          telephone: document.getElementById("loginTel").value,
-          password: document.getElementById("loginPass").value
-        })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+      const tel = document.getElementById("loginTel").value;
+      const { data, error } = await supabase.from('livreurs').select('*').eq('telephone', tel).single();
+
+      if (data) {
+        localStorage.setItem('user_livreur', JSON.stringify(data));
         location.reload();
-      } else alert(data.error);
-    });
-
-    // 3. Soumettre Commande
-    document.getElementById("formCommande").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const body = {
-        clientNom: document.getElementById("clientNom").value,
-        clientTel: document.getElementById("clientTel").value,
-        zDepart: document.getElementById("zoneDepart").value,
-        zArrivee: document.getElementById("zoneArrivee").value,
-        adresseDepart: document.getElementById("adresseDepart").value,
-        adresseArrivee: document.getElementById("adresseArrivee").value,
-        typeColis: document.getElementById("typeColis").value,
-        paiement: document.getElementById("methodePaiement").value,
-        prix: tarifActuel
-      };
-
-      const res = await fetch('/api/commandes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-
-      if (res.ok) {
-        alert("Commande soumise avec succès !");
-        this.reset();
-        chargerCommandes();
+      } else {
+        alert("Chauffeur non trouvé avec ce numéro.");
       }
     });
 
-    // 4. Charger Livreurs
+    // CRÉER COMMANDE
+    document.getElementById("formCommande").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const { error } = await supabase.from('commandes').insert([{
+        client_nom: document.getElementById("clientNom").value,
+        client_tel: document.getElementById("clientTel").value,
+        zone_depart: document.getElementById("zoneDepart").value,
+        zone_arrivee: document.getElementById("zoneArrivee").value,
+        adresse_depart: document.getElementById("adresseDepart").value,
+        adresse_arrivee: document.getElementById("adresseArrivee").value,
+        type_colis: document.getElementById("typeColis").value,
+        paiement: document.getElementById("methodePaiement").value,
+        prix: tarifActuel
+      }]);
+
+      if (error) alert("Erreur : " + error.message);
+      else { alert("Commande envoyée avec succès !"); this.reset(); }
+    });
+
+    // CHARGER LIVREURS
     async function chargerLivreurs() {
-      const res = await fetch('/api/livreurs');
-      const data = await res.json();
+      const { data } = await supabase.from('livreurs').select('*');
       const conteneur = document.getElementById("listeLivreurs");
       conteneur.innerHTML = "";
+      document.getElementById("statLivreurs").textContent = data ? data.length : 0;
 
-      document.getElementById("statLivreurs").textContent = data.length;
-
-      data.forEach(l => {
-        const carte = document.createElement("div");
-        carte.className = "item-card";
-        carte.innerHTML = `
-        <span class="badge ${l.dispo === 'Disponible' ? 'badge-dispo' : 'badge-occupe'}">${l.dispo}</span>
-        <h3>${l.prenom}${l.nom}</h3>
-        <p><strong>Zone :</strong> ${l.zone}</p>
-        <p><strong>Tél :</strong> ${l.telephone}</p>
-        <div>
-          ${l.photoIdentite ? `<img src="${l.photoIdentite}" class="img-preview" />` : ''}
-          ${l.photoPermis ? `<img src="${l.photoPermis}" class="img-preview" />` : ''}
-        </div>
-        <div style="margin-top:10px;">
-          <a class="btn-action btn-whatsapp" href="https://wa.me/${l.telephone}" target="_blank">WhatsApp</a>
-          ${currentUser && currentUser.id === l._id ? `<button class="btn-action btn-status" onclick="changerStatutLivreur()">Changer Statut</button>` : ''}
-        </div>
-      `;
-        conteneur.appendChild(carte);
-      });
+      if (data) {
+        data.forEach(l => {
+          const carte = document.createElement("div");
+          carte.className = "item-card";
+          carte.innerHTML = `
+            <span class="badge ${l.dispo === 'Disponible' ? 'badge-dispo' : 'badge-occupe'}">${l.dispo}</span>
+            <h3>${l.prenom} ${l.nom}</h3>
+            <p><strong>Zone :</strong> ${l.zone}</p>
+            <p><strong>Tél :</strong> ${l.telephone}</p>
+            <div style="margin-top:10px;">
+              <a class="btn-action btn-whatsapp" href="https://wa.me/${l.telephone}" target="_blank">WhatsApp</a>
+              ${currentUser && currentUser.id === l.id ? `<button class="btn-action btn-status" onclick="changerStatutLivreur('${l.id}', '${l.dispo}')">Changer Statut</button>` : ''}
+            </div>
+          `;
+          conteneur.appendChild(carte);
+        });
+      }
     }
 
-    // 5. Charger Commandes
+    // CHARGER COMMANDES
     async function chargerCommandes() {
-      const res = await fetch('/api/commandes');
-      const data = await res.json();
+      const { data } = await supabase.from('commandes').select('*, livreurs(nom, prenom)');
       const conteneur = document.getElementById("listeCommandes");
       conteneur.innerHTML = "";
-
       let totalCA = 0;
-      document.getElementById("statCommandes").textContent = data.length;
 
-      data.forEach(c => {
-        totalCA += c.prix;
-        const carte = document.createElement("div");
-        carte.className = "item-card";
-        carte.innerHTML = `
-        <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut}</span>
-        <h3>Colis: ${c.typeColis} (${c.prix} HTG)</h3>
-        <p><strong>Client :</strong> ${c.clientNom} (${c.clientTel})</p>
-        <p><strong>Trajet :</strong> ${c.zDepart} ➔${c.zArrivee}</p>
-        <p><strong>Paiement :</strong> ${c.paiement}</p>
-        <p><strong>Chauffeur :</strong> ${c.livreurId ? c.livreurId.prenom + ' ' + c.livreurId.nom : 'Non assigné'}</p>
-        <div style="margin-top:8px;">
-          ${c.statut === 'En attente' && userToken ? `<button class="btn-action btn-accept" onclick="changerStatutCommande('${c._id}', 'En cours')">Accepter Course</button>` : ''}
-          ${c.statut === 'En cours' && userToken ? `<button class="btn-action btn-accept" onclick="changerStatutCommande('${c._id}', 'Livré')">Terminer Course</button>` : ''}
-        </div>
-      `;
-        conteneur.appendChild(carte);
-      });
+      document.getElementById("statCommandes").textContent = data ? data.length : 0;
 
+      if (data) {
+        data.forEach(c => {
+          totalCA += Number(c.prix);
+          const carte = document.createElement("div");
+          carte.className = "item-card";
+          carte.innerHTML = `
+            <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut}</span>
+            <h3>Colis: ${c.type_colis} (${c.prix} HTG)</h3>
+            <p><strong>Client :</strong> ${c.client_nom} (${c.client_tel})</p>
+            <p><strong>Trajet :</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
+            <p><strong>Paiement :</strong> ${c.paiement}</p>
+            <p><strong>Chauffeur :</strong> ${c.livreurs ? c.livreurs.prenom + ' ' + c.livreurs.nom : 'Non assigné'}</p>
+            <div style="margin-top:8px;">
+              ${c.statut === 'En attente' && currentUser ? `<button class="btn-action btn-accept" onclick="changerStatutCommande('${c.id}', 'En cours')">Accepter Course</button>` : ''}
+              ${c.statut === 'En cours' && currentUser ? `<button class="btn-action btn-accept" onclick="changerStatutCommande('${c.id}', 'Livré')">Terminer Course</button>` : ''}
+            </div>
+          `;
+          conteneur.appendChild(carte);
+        });
+      }
       document.getElementById("statCA").textContent = totalCA + " HTG";
     }
 
-    async function changerStatutLivreur() {
-      await fetch('/api/livreurs/status', {
-        method: 'PATCH',
-        headers: { 'Authorization': 'Bearer ' + userToken }
-      });
-      chargerLivreurs();
+    async function changerStatutLivreur(id, statutActuel) {
+      const nouveau = statutActuel === 'Disponible' ? 'Occupé' : 'Disponible';
+      await supabase.from('livreurs').update({ dispo: nouveau }).eq('id', id);
     }
 
-    async function changerStatutCommande(id, statut) {
-      await fetch(`/api/commandes/${id}/statut`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + userToken
-        },
-        body: JSON.stringify({ statut })
-      });
-      chargerCommandes();
+    async function changerStatutCommande(id, nouveauStatut) {
+      const maj = { statut: nouveauStatut };
+      if (nouveauStatut === 'En cours') maj.livreur_id = currentUser.id;
+      await supabase.from('commandes').update(maj).eq('id', id);
     }
   </script>
 </body>
