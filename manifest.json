@@ -1,0 +1,21 @@
+{
+  "short_name": "LivraisonRapid",
+  "name": "Livraison Rapid Haiti",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://via.placeholder.com/512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#f4f6f8",
+  "theme_color": "#1f4e79",
+  "display": "standalone",
+  "orientation": "portrait"
+}
