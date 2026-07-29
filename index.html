@@ -612,6 +612,7 @@
   <script>
     // CONFIGURATION SUPABASE
     const SUPABASE_URL = 'https://hstgwiyztzfplxncuzxc.supabase.co';
+    // Remplacez la chaîne ci-dessous par la vraie clé Anon Key récupérée sur Supabase (Project Settings > API)
     const SUPABASE_KEY = 'sb_publishable_2HWJPXVoD-A66Cdy3gJS3Q_9BM1_tgq';
 
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -635,9 +636,17 @@
       "Thomassin": [18.4800, -72.2800]
     };
 
-    window.onload = function () {
+    window.onload = async function () {
       map = L.map('mapClient').setView([18.525, -72.310], 12);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+      // Traitement du retour de session OAuth Google
+      if (supabaseClient) {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session && session.user) {
+          await chargerEtSauvegarderProfilLivreur(session.user.email);
+        }
+      }
 
       verifierSession();
       chargerLivreurs();
@@ -734,7 +743,7 @@
         alert("Compte Auth créé, mais erreur table livreurs : " + dbError.message);
       } else {
         alert("Compte créé avec succès ! Un e-mail de confirmation peut vous être envoyé.");
-        location.reload();
+        await chargerEtSauvegarderProfilLivreur(email);
       }
     });
 
@@ -747,7 +756,6 @@
       const email = document.getElementById('loginEmail').value.trim().toLowerCase();
 
       if (mode === 'otp') {
-        // Mode OTP / Lien magique
         const { error } = await supabaseClient.auth.signInWithOtp({ email: email });
 
         if (error) {
@@ -758,9 +766,7 @@
           document.getElementById('formLogin').style.display = 'none';
           document.getElementById('formVerifyOtp').style.display = 'block';
         }
-
       } else {
-        // Mode E-mail + Mot de passe
         const password = document.getElementById('loginPassword').value;
 
         const { data, error } = await supabaseClient.auth.signInWithPassword({
@@ -803,19 +809,38 @@
     }
 
     async function chargerEtSauvegarderProfilLivreur(email) {
-      const { data: profil } = await supabaseClient
+      if (!supabaseClient) return;
+
+      let { data: profil } = await supabaseClient
         .from('livreurs')
         .select('*')
         .eq('email', email)
         .maybeSingle();
 
-      if (profil) {
-        localStorage.setItem('user_livreur', JSON.stringify(profil));
-      } else {
-        localStorage.setItem('user_livreur', JSON.stringify({ email: email, nom: 'Livreur', prenom: 'Utilisateur' }));
+      // Si le livreur n'existe pas en BDD (ex: premier login Google), on le crée
+      if (!profil) {
+        const { data: newProfil, error } = await supabaseClient
+          .from('livreurs')
+          .insert([{
+            email: email,
+            nom: 'Livreur',
+            prenom: 'Nouveau',
+            telephone: 'Non renseigné',
+            zone: 'Port-au-Prince - Canapé-Vert',
+            dispo: 'Disponible'
+          }])
+          .select()
+          .single();
+
+        if (!error) profil = newProfil;
       }
-      alert("Connexion réussie !");
-      location.reload();
+
+      if (profil) {
+        currentUser = profil;
+        localStorage.setItem('user_livreur', JSON.stringify(profil));
+      }
+
+      verifierSession();
     }
 
     function verifierSession() {
@@ -839,7 +864,8 @@
     function deconnexion() {
       if (supabaseClient) supabaseClient.auth.signOut();
       localStorage.removeItem('user_livreur');
-      location.reload();
+      currentUser = null;
+      verifierSession();
     }
 
     function changerOnglet(nom, event) {
