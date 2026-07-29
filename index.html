@@ -28,7 +28,7 @@
     }
 
     #map {
-      height: 280px;
+      height: 320px;
       border-radius: 8px;
       z-index: 1;
     }
@@ -58,7 +58,7 @@
     }
 
     .btn-whatsapp { background-color: #25D366; color: white; }
-    
+
     .grid-layout {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -72,22 +72,28 @@
       background: #ffffff;
     }
 
+    /* Style Système d'avis / Étoiles */
     .rating-stars {
       color: #ffc107;
       cursor: pointer;
       font-size: 1.25rem;
     }
 
-    /* Pulse animation pour le tracking GPS */
+    /* Pulse animation pour la géolocalisation GPS active */
     .gps-active {
       animation: pulse 1.5s infinite;
     }
 
     @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.4; }
-      100% { opacity: 1; }
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.05); }
+      100% { opacity: 1; transform: scale(1); }
     }
+
+    /* Status de sécurité des zones */
+    .sec-green { border-left: 5px solid #28a745; }
+    .sec-yellow { border-left: 5px solid #ffc107; }
+    .sec-red { border-left: 5px solid #dc3545; opacity: 0.6; }
   </style>
 </head>
 
@@ -109,22 +115,22 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
     <div class="container">
       <a class="navbar-brand fw-bold text-primary" href="#">🚚 LivraisonRapid</a>
-      
-      <!-- Bouton d'installation PWA -->
-      <button id="btnPwaInstall" class="btn btn-warning btn-sm me-2 d-none" onclick="installerPWA()">
+
+      <!-- Bouton PWA d'installation de l'App -->
+      <button id="btnPwaInstall" class="btn btn-warning btn-sm me-2 d-none fw-bold" onclick="installerPWA()">
         📲 Installer l'App
       </button>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-      
+
       <div class="collapse navbar-collapse" id="navbarNav">
         <div class="navbar-nav ms-auto flex-row flex-wrap gap-2 mt-2 mt-lg-0">
           <button class="btn btn-primary btn-sm" onclick="changerOnglet('client', event)">📦 Commander</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis / GPS</button>
           <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('livreur', event)">🛵 Espace Livreur</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('commandes', event)">📋 Courses</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('commandes', event)">📋 Courses en cours</button>
           <button class="btn btn-outline-info btn-sm" onclick="changerOnglet('support', event)">💬 Support & FAQ</button>
           <button class="btn btn-outline-dark btn-sm" onclick="changerOnglet('admin', event)">📊 Admin</button>
         </div>
@@ -135,14 +141,14 @@
   <!-- Contenu Principal -->
   <main class="container mb-5">
 
-    <!-- Barre d'Information Livreur Connecté + GPS Live Status -->
+    <!-- Barre Livreur / Activation GPS Live -->
     <div id="userBar" class="alert alert-info d-flex justify-content-between align-items-center mb-4" style="display:none !important;">
       <div>
-        <span id="userInfo"></span>
+        <strong id="userInfo">Espace Livreur</strong>
         <span id="gpsBadge" class="badge bg-secondary ms-2">GPS Inactif</span>
       </div>
-      <div>
-        <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm me-2">📍 Activer Partage GPS Live</button>
+      <div class="d-flex gap-2">
+        <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm fw-bold">📍 Partage GPS Live</button>
         <button onclick="deconnexion()" class="btn btn-danger btn-sm">Déconnexion</button>
       </div>
     </div>
@@ -150,17 +156,17 @@
     <!-- 1. SECTION COMMANDE CLIENT -->
     <div id="section-client" class="section-app">
       <div class="row g-4">
-        
-        <!-- Formulaire de Commande -->
+
+        <!-- Colonne Gauche : Formulaire de Commande -->
         <div class="col-lg-7">
           <div class="card shadow-sm border-0">
             <div class="card-body p-4">
               <h3 class="card-title mb-4">🚚 Commander une livraison</h3>
-              
+
               <form id="orderForm">
-                
-                <!-- 1. Expéditeur -->
-                <h5 class="text-secondary fs-6 mb-3">1. Information Expéditeur</h5>
+
+                <!-- 1. Informations Expéditeur -->
+                <h5 class="text-secondary fs-6 mb-3">1. Information Expéditeur (Vous)</h5>
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
                     <label for="clientNom" class="form-label">Nom complet *</label>
@@ -172,7 +178,7 @@
                   </div>
                 </div>
 
-                <!-- 2. Destinataire -->
+                <!-- 2. Informations Destinataire -->
                 <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
                   <h5 class="text-secondary fs-6 mb-0">2. Information Destinataire</h5>
                   <div class="form-check form-switch mb-0">
@@ -187,50 +193,62 @@
                     <input type="text" class="form-control" id="destinataireNom" placeholder="Ex: Jean Baptiste" required>
                   </div>
                   <div class="col-md-6">
-                    <label for="destinataireTel" class="form-label">Téléphone / WhatsApp destinataire *</label>
+                    <label for="destinataireTel" class="form-label">WhatsApp Destinataire (Alerte Directe) *</label>
                     <input type="tel" class="form-control" id="destinataireTel" placeholder="Ex: +509 3700 0000" required>
                   </div>
                 </div>
 
-                <!-- 3. Trajet & Zones de Sécurité -->
-                <h5 class="text-secondary fs-6 mb-3 mt-4">3. Trajet & Adresses (Sécurité Réseau)</h5>
+                <!-- 3. Trajet, Zones & Sécurité -->
+                <h5 class="text-secondary fs-6 mb-3 mt-4">3. Trajet, Zones & Sécurité</h5>
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
                     <label for="zoneDepart" class="form-label">Zone départ *</label>
-                    <select class="form-select" id="zoneDepart" onchange="calculerPrix()" required>
+                    <select class="form-select" id="zoneDepart" onchange="calculerPrixEtSecurite()" required>
                       <option value="">-- Choisir --</option>
-                      <optgroup label="Zones Sûres 🟢">
+                      <optgroup label="Port-au-Prince (Zones Accessibles)">
                         <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
                         <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
                         <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
-                        <option value="Pétion-Ville">Pétion-Ville 🟢</option>
-                        <option value="Delmas">Delmas 🟢</option>
-                      </optgroup>
-                      <optgroup label="Zones de Vigilance 🟡">
+                        <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
                         <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
                         <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
                       </optgroup>
-                      <optgroup label="Zones Actuellement Fermées 🔴" disabled>
-                        <option value="Martissant" disabled>Martissant (Inaccessible 🔴)</option>
-                        <option value="Bas-Delmas" disabled>Bas-Delmas (Risque élevé 🔴)</option>
+                      <optgroup label="Autres Communes Praticables">
+                        <option value="Pétion-Ville">Pétion-Ville 🟢</option>
+                        <option value="Delmas">Delmas 🟢</option>
+                        <option value="Route de Frères">Route de Frères 🟢</option>
+                        <option value="Juvénat">Juvénat 🟢</option>
+                        <option value="Thomassin">Thomassin 🟢</option>
                       </optgroup>
                     </select>
                   </div>
                   <div class="col-md-6">
                     <label for="zoneArrivee" class="form-label">Zone arrivée *</label>
-                    <select class="form-select" id="zoneArrivee" onchange="calculerPrix()" required>
+                    <select class="form-select" id="zoneArrivee" onchange="calculerPrixEtSecurite()" required>
                       <option value="">-- Choisir --</option>
-                      <optgroup label="Zones Sûres 🟢">
+                      <optgroup label="Port-au-Prince (Zones Accessibles)">
                         <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
                         <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
+                        <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
+                        <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
+                        <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
+                        <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
+                      </optgroup>
+                      <optgroup label="Autres Communes Praticables">
                         <option value="Pétion-Ville">Pétion-Ville 🟢</option>
                         <option value="Delmas">Delmas 🟢</option>
-                      </optgroup>
-                      <optgroup label="Zones de Vigilance 🟡">
-                        <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
+                        <option value="Route de Frères">Route de Frères 🟢</option>
+                        <option value="Juvénat">Juvénat 🟢</option>
+                        <option value="Thomassin">Thomassin 🟢</option>
                       </optgroup>
                     </select>
                   </div>
+                </div>
+
+                <!-- Panneau visuel d'état de sécurité -->
+                <div id="securityAlert" class="alert alert-info d-flex align-items-center gap-2 mb-3" role="alert">
+                  <span id="secIcon" class="fs-4">🛡️</span>
+                  <div id="secText" class="small">Sélectionnez vos zones pour évaluer la sécurité du trajet.</div>
                 </div>
 
                 <div class="mb-3">
@@ -243,32 +261,46 @@
                   <input type="text" class="form-control" id="adresseArrivee" placeholder="Ex: Impasse Lavaud, ..." required>
                 </div>
 
-                <!-- 4. Détails du colis -->
-                <h5 class="text-secondary fs-6 mb-3 mt-4">4. Colis, Paiement & Code Promo</h5>
+                <!-- 4. Planification & Colis -->
+                <h5 class="text-secondary fs-6 mb-3 mt-4">4. Détails du colis & Horaire</h5>
+
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
-                    <label for="typeColis" class="form-label">Type de colis *</label>
+                    <label for="typeColis" class="form-label">Type de colis / Service *</label>
                     <select class="form-select" id="typeColis" required>
-                      <option value="Repas / Plat préparé">Repas / Plat préparé</option>
-                      <option value="Documents / Papiers">Documents / Papiers</option>
-                      <option value="Pharmacie / Médicaments">Pharmacie / Médicaments</option>
-                      <option value="Électroménager / Charges">Électroménager / Encombrant</option>
+                      <optgroup label="🍔 Alimentation & Restauration">
+                        <option value="Repas / Plat préparé">Repas / Plat préparé</option>
+                        <option value="Courses de supermarché">Courses de supermarché</option>
+                        <option value="Boissons / Packs / Bières">Boissons / Packs / Bières</option>
+                      </optgroup>
+                      <optgroup label="📄 Documents & Urgences">
+                        <option value="Documents / Papiers officiels">Documents / Papiers officiels</option>
+                        <option value="Clés / Portefeuille / Chargeur">Clés / Portefeuille / Chargeur</option>
+                      </optgroup>
+                      <optgroup label="💊 Santé & Beauté">
+                        <option value="Pharmacie / Médicaments">Pharmacie / Médicaments</option>
+                      </optgroup>
+                      <optgroup label="📦 Charges Lourdes & Encombrants">
+                        <option value="Électroménager">Électroménager</option>
+                        <option value="Autre type de colis">Autre type de colis</option>
+                      </optgroup>
                     </select>
                   </div>
                   <div class="col-md-6">
                     <label for="poidsColis" class="form-label">Poids estimé *</label>
-                    <select class="form-select" id="poidsColis" onchange="calculerPrix()" required>
+                    <select class="form-select" id="poidsColis" onchange="calculerPrixEtSecurite()" required>
                       <option value="0">Léger (&lt; 5 kg)</option>
-                      <option value="150">Moyen (5-15 kg) [+150 HTG]</option>
-                      <option value="350">Lourd (15-30 kg) [+350 HTG]</option>
+                      <option value="150">Moyen (5 kg - 15 kg) [+150 HTG]</option>
+                      <option value="350">Lourd (15 kg - 30 kg) [+350 HTG]</option>
+                      <option value="700">Très lourd (&gt; 30 kg) [+700 HTG]</option>
                     </select>
                   </div>
                 </div>
 
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
-                    <label for="moyenTransport" class="form-label">Transport</label>
-                    <select class="form-select" id="moyenTransport" onchange="calculerPrix()">
+                    <label for="moyenTransport" class="form-label">Moyen de Transport</label>
+                    <select class="form-select" id="moyenTransport" onchange="calculerPrixEtSecurite()">
                       <option value="Moto">Moto</option>
                       <option value="Tricycle">Tricycle</option>
                       <option value="Voiture">Voiture</option>
@@ -276,38 +308,74 @@
                   </div>
                   <div class="col-md-6">
                     <label for="methodePaiement" class="form-label">Mode de paiement *</label>
-                    <select class="form-select" id="methodePaiement" required>
+                    <select class="form-select" id="methodePaiement" required onchange="toggleFormPaiement()">
                       <option value="Cash à la livraison">Cash à la livraison</option>
-                      <option value="MonCash">MonCash (Sécurisé)</option>
-                      <option value="NatCash">NatCash (Sécurisé)</option>
+                      <option value="MonCash">MonCash</option>
+                      <option value="NatCash">NatCash</option>
                     </select>
                   </div>
                 </div>
 
-                <!-- Champagne Code Promo -->
-                <div class="mb-3">
-                  <label for="codePromo" class="form-label">Code Promo / Réduction</label>
-                  <div class="input-group">
-                    <input type="text" id="codePromo" class="form-control" placeholder="Ex: RAPID10">
-                    <button type="button" class="btn btn-outline-secondary" onclick="appliquerPromo()">Appliquer</button>
+                <!-- Simulation de Paiement Sécurisé MonCash / NatCash -->
+                <div id="boxPaiementEnLigne" class="p-3 bg-light border rounded mb-3" style="display:none;">
+                  <h6 class="text-primary mb-2">💳 Transaction Sécurisée <span id="nomPasserelle">MonCash</span></h6>
+                  <p class="small text-muted mb-2">Saisissez votre numéro pour simuler la validation du paiement :</p>
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">+509</span>
+                    <input type="tel" id="payPhone" class="form-control" placeholder="38XX XXXX">
+                    <button type="button" class="btn btn-success" onclick="simulerPaiementAPI()">Simuler le Paiement</button>
                   </div>
-                  <span id="promoStatus" class="small d-block mt-1"></span>
+                  <div id="payStatus" class="small mt-2"></div>
                 </div>
 
-                <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
-                  ✅ Valider et rechercher un livreur
+                <!-- Code Promo & Remises -->
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Code Promo</label>
+                  <div class="input-group">
+                    <input type="text" id="codePromo" class="form-control" placeholder="Entrez RAPID10 ou LIVRAISON20">
+                    <button type="button" class="btn btn-outline-secondary" onclick="appliquerPromo()">Appliquer</button>
+                  </div>
+                  <div id="promoStatus" class="small mt-1"></div>
+                </div>
+
+                <!-- Planification -->
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Moment de la livraison</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="deliveryTiming" id="asap" value="asap" checked onclick="toggleSchedule(false)">
+                    <label class="form-check-label" for="asap">Livraison immédiate (Dès que possible)</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="deliveryTiming" id="scheduled" value="scheduled" onclick="toggleSchedule(true)">
+                    <label class="form-check-label" for="scheduled">Planifier pour plus tard</label>
+                  </div>
+                </div>
+
+                <div id="scheduleInputs" class="row g-3 mb-3 d-none">
+                  <div class="col-md-6">
+                    <label for="deliveryDate" class="form-label">Date de livraison</label>
+                    <input type="date" class="form-control" id="deliveryDate">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="deliveryTime" class="form-label">Heure souhaitée</label>
+                    <input type="time" class="form-control" id="deliveryTime">
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg w-100 mt-4">
+                  ✅ Valider et lancer la commande
                 </button>
               </form>
             </div>
           </div>
         </div>
 
-        <!-- Estimation & Carte Leaflet Live GPS -->
+        <!-- Colonne Droite : Carte Leaflet & Estimation -->
         <div class="col-lg-5">
           <div class="card shadow-sm border-0 sticky-card">
             <div class="card-body p-4">
-              <h5 class="card-title mb-3">📍 Trajet & GPS Live</h5>
-              
+              <h5 class="card-title mb-3">📍 Trajet & Estimation Live</h5>
+
               <div id="map"></div>
 
               <hr class="my-4">
@@ -316,14 +384,18 @@
                 <span class="text-muted">Distance estimée :</span>
                 <strong id="distVal" class="fs-5">0.0 km</strong>
               </div>
-              <div class="d-flex justify-content-between align-items-center mb-2" id="boxReduction" style="display:none !important;">
-                <span class="text-danger">Réduction appliquée :</span>
-                <strong id="reductionVal" class="text-danger">-0 HTG</strong>
+              <div class="d-flex justify-content-between align-items-center mb-2 text-danger" id="boxReduction" style="display:none;">
+                <span>Réduction Promo :</span>
+                <strong id="reductionVal">-0 HTG</strong>
               </div>
               <div class="d-flex justify-content-between align-items-center">
                 <span class="text-muted">Tarif estimé :</span>
                 <strong id="priceVal" class="fs-3 text-success">250 HTG</strong>
               </div>
+
+              <p class="small text-muted mt-3 mb-0">
+                ℹ️ Le tarif s'ajuste automatiquement selon la distance, la zone, le véhicule et le poids du colis.
+              </p>
             </div>
           </div>
         </div>
@@ -336,9 +408,10 @@
       <div class="row justify-content-center">
         <div class="col-md-8">
           <div class="card shadow-sm border-0 p-4">
-            <h2>🔎 Suivre ma commande en Temps Réel</h2>
+            <h2>🔎 Suivre ma commande</h2>
+            <p class="text-muted small">Entrez votre numéro de téléphone ou ID de commande :</p>
             <div class="input-group mb-3">
-              <input type="text" id="numSuivi" class="form-control" placeholder="Entrez le téléphone ou ID commande">
+              <input type="text" id="numSuivi" class="form-control" placeholder="Ex: +509 3821 0256">
               <button class="btn btn-primary" onclick="chercherSuivi()">Chercher</button>
             </div>
             <div id="suiviResultat" class="mt-4" style="display: none;">
@@ -350,34 +423,85 @@
       </div>
     </div>
 
-    <!-- 3. SECTION LIVREUR -->
+    <!-- 3. SECTION LIVREUR / AUTHENTIFICATION -->
     <div id="section-livreur" class="section-app d-none">
       <div class="row justify-content-center">
         <div class="col-md-8">
           <div class="card shadow-sm border-0 p-4 mb-4" id="espaceMonCompte" style="display:none;">
-            <h2>👤 Espace Chauffeur / Livreur</h2>
+            <h2>👤 Mon Espace Livreur</h2>
             <div class="bg-light p-3 rounded mb-3">
               <p class="mb-1"><strong>Nom :</strong> <span id="profileNom"></span></p>
+              <p class="mb-1"><strong>Email :</strong> <span id="profileEmail"></span></p>
+              <p class="mb-1"><strong>Téléphone :</strong> <span id="profileTel"></span></p>
               <p class="mb-1"><strong>Zone :</strong> <span id="profileZone"></span></p>
             </div>
             <button onclick="deconnexion()" class="btn btn-danger">🔴 Se déconnecter</button>
           </div>
 
           <div class="card shadow-sm border-0 p-4 mb-4" id="authBox">
-            <h3>Connexion Livreur</h3>
+            <div class="btn-group w-100 mb-3">
+              <button type="button" id="tabConnexion" class="btn btn-outline-primary active" onclick="switchAuthTab('login')">Se connecter</button>
+              <button type="button" id="tabInscription" class="btn btn-outline-primary" onclick="switchAuthTab('signup')">Créer un compte</button>
+            </div>
+
+            <!-- Form Connexion -->
             <form id="formLogin">
               <div class="mb-3">
-                <label class="form-label">Email Livreur</label>
-                <input type="email" class="form-control" id="loginEmail" required placeholder="livreur@exemple.com">
+                <label class="form-label">Mode de connexion</label>
+                <select id="modeConnexion" class="form-select" onchange="toggleLoginMode()">
+                  <option value="otp">Code OTP / Lien Magique (Email)</option>
+                  <option value="password">Email + Mot de passe</option>
+                </select>
               </div>
               <div class="mb-3">
+                <label class="form-label">Adresse Email</label>
+                <input type="email" class="form-control" id="loginEmail" required placeholder="livreur@exemple.com">
+              </div>
+              <div class="mb-3" id="boxLoginPassword" style="display:none;">
                 <label class="form-label">Mot de passe</label>
                 <input type="password" class="form-control" id="loginPassword" placeholder="••••••••">
               </div>
-              <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+              <button type="submit" id="btnLoginSubmit" class="btn btn-primary w-100">Recevoir le code / lien OTP</button>
+            </form>
+
+            <!-- Verification OTP -->
+            <form id="formVerifyOtp" style="display: none;" class="mt-3">
+              <div class="alert alert-info">
+                📩 Un code OTP a été envoyé à <strong id="emailSentTo"></strong>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Code de vérification</label>
+                <input type="text" class="form-control text-center fs-4" id="otpCode" placeholder="123456" maxlength="6">
+              </div>
+              <button type="submit" class="btn btn-success w-100">Vérifier et me connecter</button>
+              <button type="button" onclick="resetOtpForm()" class="btn btn-link w-100 text-secondary mt-2">Changer d'email</button>
+            </form>
+
+            <!-- Form Inscription -->
+            <form id="formSignup" style="display: none;">
+              <div class="row g-2 mb-3">
+                <div class="col-6"><label class="form-label">Prénom</label><input type="text" class="form-control" id="signupPrenom" required></div>
+                <div class="col-6"><label class="form-label">Nom</label><input type="text" class="form-control" id="signupNom" required></div>
+              </div>
+              <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control" id="signupEmail" required></div>
+              <div class="mb-3"><label class="form-label">Téléphone</label><input type="tel" class="form-control" id="signupTel" required></div>
+              <div class="row g-2 mb-3">
+                <div class="col-6"><label class="form-label">Mot de passe</label><input type="password" class="form-control" id="signupPassword" minlength="6" required></div>
+                <div class="col-6"><label class="form-label">Confirmation</label><input type="password" class="form-control" id="signupConfirmPassword" minlength="6" required></div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Zone d'intervention</label>
+                <select class="form-select" id="signupZone" required>
+                  <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
+                  <option value="Pétion-Ville">Pétion-Ville</option>
+                  <option value="Delmas">Delmas</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Créer mon compte livreur</button>
             </form>
           </div>
 
+          <!-- Liste Livreurs -->
           <div class="card shadow-sm border-0 p-4">
             <h4>📋 Registre des Chauffeurs</h4>
             <div id="listeLivreurs" class="grid-layout mt-3"></div>
@@ -389,7 +513,7 @@
     <!-- 4. SECTION COURSES EN COURS -->
     <div id="section-commandes" class="section-app d-none">
       <div class="card shadow-sm border-0 p-4">
-        <h2>📦 Commandes en cours</h2>
+        <h2>📦 Commandes en cours & Marketplace</h2>
         <div id="listeCommandes" class="grid-layout mt-3"></div>
       </div>
     </div>
@@ -399,19 +523,73 @@
       <div class="row g-4">
         <div class="col-md-6">
           <div class="card shadow-sm border-0 p-4">
-            <h3>✉️ Support & Réclamations</h3>
+            <h3>✉️ Formulaire de Contact Direct</h3>
             <form id="supportForm" onsubmit="envoyerSupport(event)">
-              <div class="mb-3"><label class="form-label">Votre Nom</label><input type="text" class="form-control" required></div>
-              <div class="mb-3"><label class="form-label">Téléphone</label><input type="tel" class="form-control" required></div>
-              <div class="mb-3"><label class="form-label">Message</label><textarea class="form-control" rows="4" required></textarea></div>
+              <div class="mb-3">
+                <label class="form-label">Votre Nom</label>
+                <input type="text" class="form-control" id="supportNom" required placeholder="Ex: Jean Paul">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Téléphone / WhatsApp</label>
+                <input type="tel" class="form-control" id="supportTel" required placeholder="+509 ...">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Objet</label>
+                <select class="form-select" id="supportSujet">
+                  <option value="Renseignements Général">Renseignements Général</option>
+                  <option value="Réclamation / Retard">Réclamation / Retard</option>
+                  <option value="Devenir Partenaire">Devenir Partenaire</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Votre Message</label>
+                <textarea class="form-control" id="supportMsg" rows="4" required></textarea>
+              </div>
               <button type="submit" class="btn btn-primary w-100">Envoyer au Support</button>
             </form>
           </div>
         </div>
         <div class="col-md-6">
           <div class="card shadow-sm border-0 p-4">
-            <h3>❓ FAQ</h3>
-            <p class="text-muted">Pour toute question urgente, contactez notre support direct sur WhatsApp.</p>
+            <h3>❓ Foire Aux Questions (FAQ)</h3>
+            <div class="accordion mt-3" id="faqAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                    Quels sont les délais habituels de livraison ?
+                  </button>
+                </h2>
+                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Les livraisons standard en zone urbaine (Pétion-Ville, Delmas, Canapé-Vert) prennent en moyenne de 30 à 60 minutes selon la circulation et la sécurité.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                    Comment se calcule le tarif d'une livraison ?
+                  </button>
+                </h2>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Le tarif dépend de la zone de départ/arrivée, de la distance estimée, du type de véhicule (Moto, Tricycle, Voiture) et du poids du colis.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                    Quels moyens de paiement acceptez-vous ?
+                  </button>
+                </h2>
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Nous acceptons le paiement Cash à la livraison, MonCash et NatCash.
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -420,22 +598,37 @@
     <!-- 6. SECTION ADMIN -->
     <div id="section-admin" class="section-app d-none">
       <div class="card shadow-sm border-0 p-4">
-        <h2>📊 Tableau de Bord Administrateur</h2>
+        <h2>📊 Tableau de bord Administrateur</h2>
         <div class="row g-3 mt-2">
-          <div class="col-md-4"><div class="p-3 bg-light rounded text-center border"><h5>Chiffre d'Affaires</h5><div class="fs-3 text-primary fw-bold" id="statCA">0 HTG</div></div></div>
-          <div class="col-md-4"><div class="p-3 bg-light rounded text-center border"><h5>Commandes</h5><div class="fs-3 text-primary fw-bold" id="statCommandes">0</div></div></div>
-          <div class="col-md-4"><div class="p-3 bg-light rounded text-center border"><h5>Livreurs Inscrits</h5><div class="fs-3 text-primary fw-bold" id="statLivreurs">0</div></div></div>
+          <div class="col-md-4">
+            <div class="p-3 bg-light rounded text-center border">
+              <h5>Chiffre d'Affaires</h5>
+              <div class="fs-3 text-primary fw-bold" id="statCA">0 HTG</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 bg-light rounded text-center border">
+              <h5>Commandes Totales</h5>
+              <div class="fs-3 text-primary fw-bold" id="statCommandes">0</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 bg-light rounded text-center border">
+              <h5>Livreurs Inscrits</h5>
+              <div class="fs-3 text-primary fw-bold" id="statLivreurs">0</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
   </main>
 
-  <!-- Modal Avis -->
+  <!-- Modal Évaluation / Preuve de livraison -->
   <div class="modal fade" id="modalAvis" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="card modal-content p-4 border-0">
-        <h5 class="modal-title mb-3">⭐ Évaluer la livraison</h5>
+        <h5 class="modal-title mb-3">⭐ Laisser une évaluation</h5>
         <div class="mb-3 text-center">
           <span class="rating-stars" onclick="setRating(1)">★</span>
           <span class="rating-stars" onclick="setRating(2)">★</span>
@@ -443,20 +636,49 @@
           <span class="rating-stars" onclick="setRating(4)">★</span>
           <span class="rating-stars" onclick="setRating(5)">★</span>
         </div>
-        <textarea id="avisCommentaire" class="form-control mb-3" placeholder="Votre commentaire..."></textarea>
+        <textarea id="avisCommentaire" class="form-control mb-3" placeholder="Votre commentaire..." rows="3"></textarea>
         <button class="btn btn-success" onclick="soumettreAvis()">Envoyer mon avis</button>
       </div>
     </div>
   </div>
 
-  <!-- Pied de page -->
-  <footer class="bg-dark text-light pt-4 pb-3 mt-auto">
-    <div class="container text-center small text-muted">
-      &copy; 2026 LivraisonRapid. Tous droits réservés.
+  <!-- Pied de page (Footer) -->
+  <footer class="bg-dark text-light pt-5 pb-3 mt-auto">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h5 class="text-white">🚚 LivraisonRapid</h5>
+          <p class="small text-muted">Service de livraison rapide, fiable et sécurisé adapté aux zones de Port-au-Prince et ses environs.</p>
+        </div>
+        <div class="col-md-4">
+          <h5 class="text-white">Besoin d'aide ?</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <a href="https://wa.me/50938210256?text=Bonjour,%20j'ai%20une%20question%20concernant%20une%20livraison." target="_blank" class="btn btn-outline-success btn-sm text-white">
+                💬 Support WhatsApp direct
+              </a>
+            </li>
+            <li class="text-muted small">📞 +509 3821-0256</li>
+            <li class="text-muted small">✉️ support@livraisonrapid.ht</li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5 class="text-white">Informations légales</h5>
+          <ul class="list-unstyled small">
+            <li><a href="#" class="text-secondary text-decoration-none">Conditions Générales d'Utilisation</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Politique de Confidentialité</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Zones de Couverture & Sécurité</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="bg-secondary mt-4 mb-3">
+      <div class="text-center small text-muted">
+        &copy; 2026 LivraisonRapid. Tous droits réservés.
+      </div>
     </div>
   </footer>
 
-  <!-- Scripts -->
+  <!-- Scripts JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -467,23 +689,84 @@
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
     let map, markerDepart, markerArrivee, markerLivreurGps;
-    let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
-    let tarifActuel = 250;
-    let montantReduction = 0;
     let gpsWatchId = null;
     let deferredPrompt = null;
+
+    let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
+    let currentOtpEmail = '';
+    let tarifBase = 250;
+    let reductionMontant = 0;
+    let tarifActuel = 250;
+    let paiementEstValide = false;
+    let selectedRating = 5;
+    let currentCommandeId = null;
 
     const coordsZones = {
       "Port-au-Prince - Canapé-Vert": [18.5250, -72.3100],
       "Port-au-Prince - Turgeau": [18.5333, -72.3167],
       "Port-au-Prince - Pacot": [18.5310, -72.3250],
+      "Port-au-Prince - Haut-Peu-de-Chose": [18.5280, -72.3200],
       "Port-au-Prince - Bois Verna / Lalue": [18.5390, -72.3260],
       "Port-au-Prince - Nazon": [18.5480, -72.3180],
       "Pétion-Ville": [18.5125, -72.2853],
-      "Delmas": [18.5442, -72.3028]
+      "Delmas": [18.5442, -72.3028],
+      "Route de Frères": [18.5200, -72.2600],
+      "Juvénat": [18.5180, -72.2950],
+      "Thomassin": [18.4800, -72.2800]
     };
 
-    // Support PWA (Installation d'application)
+    const securiteZones = {
+      "Port-au-Prince - Canapé-Vert": "green",
+      "Port-au-Prince - Turgeau": "green",
+      "Port-au-Prince - Pacot": "green",
+      "Port-au-Prince - Haut-Peu-de-Chose": "green",
+      "Port-au-Prince - Bois Verna / Lalue": "yellow",
+      "Port-au-Prince - Nazon": "yellow",
+      "Pétion-Ville": "green",
+      "Delmas": "green",
+      "Route de Frères": "green",
+      "Juvénat": "green",
+      "Thomassin": "green"
+    };
+
+    window.onload = function () {
+      map = L.map('map').setView([18.5392, -72.3364], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+      verifierSession();
+      chargerLivreurs();
+      chargerCommandes();
+
+      document.getElementById('clientNom').addEventListener('input', function() {
+        if (document.getElementById('memeDestinataire').checked) {
+          document.getElementById('destinataireNom').value = this.value;
+        }
+      });
+
+      document.getElementById('clientTel').addEventListener('input', function() {
+        if (document.getElementById('memeDestinataire').checked) {
+          document.getElementById('destinataireTel').value = this.value;
+        }
+      });
+
+      if (supabaseClient) {
+        supabaseClient.channel('custom-all-channel')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'commandes' }, () => { chargerCommandes(); })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'livreurs' }, () => { chargerLivreurs(); })
+          .subscribe();
+      }
+    };
+
+    // Notification Toast Générale
+    function afficherToast(msg, type = 'success') {
+      const toastEl = document.getElementById('liveToast');
+      const toastBody = document.getElementById('toastMessage');
+      toastBody.textContent = msg;
+      toastEl.className = `toast align-items-center text-white border-0 bg-${type}`;
+      new bootstrap.Toast(toastEl).show();
+    }
+
+    // PWA Installation
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
@@ -493,30 +776,17 @@
     function installerPWA() {
       if (deferredPrompt) {
         deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(() => {
+        deferredPrompt.userChoice.then((choice) => {
+          if (choice.outcome === 'accepted') {
+            afficherToast("Application installée avec succès !");
+          }
           deferredPrompt = null;
           document.getElementById('btnPwaInstall').classList.add('d-none');
         });
       }
     }
 
-    window.onload = function () {
-      map = L.map('map').setView([18.5392, -72.3364], 12);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-      verifierSession();
-      chargerLivreurs();
-      chargerCommandes();
-    };
-
-    function afficherToast(msg, type = 'success') {
-      const toastEl = document.getElementById('liveToast');
-      document.getElementById('toastMessage').textContent = msg;
-      toastEl.className = `toast align-items-center text-white border-0 bg-${type}`;
-      new bootstrap.Toast(toastEl).show();
-    }
-
-    // Gestion du GPS Live en Temps Réel pour le livreur
+    // Géolocalisation GPS en direct
     function toggleGpsTracking() {
       const btn = document.getElementById('btnGpsToggle');
       const badge = document.getElementById('gpsBadge');
@@ -524,74 +794,111 @@
       if (gpsWatchId) {
         navigator.geolocation.clearWatch(gpsWatchId);
         gpsWatchId = null;
-        btn.textContent = "📍 Activer Partage GPS Live";
-        btn.className = "btn btn-warning btn-sm me-2";
+        btn.textContent = "📍 Partage GPS Live";
+        btn.className = "btn btn-warning btn-sm fw-bold";
         badge.textContent = "GPS Inactif";
         badge.className = "badge bg-secondary ms-2";
-        afficherToast("Partage GPS désactivé.", "info");
+        afficherToast("Géolocalisation désactivée", "info");
       } else {
         if (!navigator.geolocation) {
-          afficherToast("Géolocalisation non supportée.", "danger");
+          afficherToast("GPS non supporté par ce navigateur", "danger");
           return;
         }
 
-        gpsWatchId = navigator.geolocation.watchPosition(async (pos) => {
+        gpsWatchId = navigator.geolocation.watchPosition((pos) => {
           const lat = pos.coords.latitude;
           const lng = pos.coords.longitude;
 
           badge.textContent = "GPS Actif (En direct)";
           badge.className = "badge bg-success ms-2 gps-active";
           btn.textContent = "🛑 Arrêter Partage GPS";
-          btn.className = "btn btn-danger btn-sm me-2";
+          btn.className = "btn btn-danger btn-sm fw-bold";
 
-          // Mise à jour de la position sur la carte
           if (markerLivreurGps) map.removeLayer(markerLivreurGps);
-          markerLivreurGps = L.marker([lat, lng]).addTo(map).bindPopup("<b>Livreur en direct</b>").openPopup();
+          
+          const iconLivreur = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png',
+            iconSize: [38, 38]
+          });
 
-          // Envoi au serveur Supabase
-          if (currentUser && supabaseClient) {
-            await supabaseClient.from('livreurs').update({
-              lat: lat,
-              lng: lng,
-              last_updated: new Date()
-            }).eq('id', currentUser.id);
-          }
+          markerLivreurGps = L.marker([lat, lng], { icon: iconLivreur }).addTo(map)
+            .bindPopup("<b>Livreur en position live !</b>").openPopup();
+
+          map.setView([lat, lng], 14);
+
         }, (err) => {
-          afficherToast("Erreur GPS : " + err.message, "danger");
+          afficherToast("Erreur d'accès GPS : " + err.message, "danger");
         }, { enableHighAccuracy: true });
       }
     }
 
-    // Gestion des Codes Promo
-    function appliquerPromo() {
-      const code = document.getElementById('codePromo').value.trim().toUpperCase();
-      const status = document.getElementById('promoStatus');
-      const boxReduc = document.getElementById('boxReduction');
+    function copierInfoExpediteur() {
+      const isChecked = document.getElementById('memeDestinataire').checked;
+      const blockDest = document.getElementById('blockDestinataire');
+      const nomExp = document.getElementById('clientNom').value;
+      const telExp = document.getElementById('clientTel').value;
 
-      if (code === 'RAPID10') {
-        montantReduction = 100;
-        status.textContent = "✅ Code RAPID10 appliqué (-100 HTG)";
-        status.className = "small text-success d-block mt-1";
-        boxReduc.style.setProperty('display', 'flex', 'important');
-        document.getElementById('reductionVal').textContent = `-100 HTG`;
+      const destNomInput = document.getElementById('destinataireNom');
+      const destTelInput = document.getElementById('destinataireTel');
+
+      if (isChecked) {
+        blockDest.style.display = 'none';
+        destNomInput.removeAttribute('required');
+        destTelInput.removeAttribute('required');
+        destNomInput.value = nomExp;
+        destTelInput.value = telExp;
       } else {
-        montantReduction = 0;
-        status.textContent = "❌ Code promo invalide";
-        status.className = "small text-danger d-block mt-1";
-        boxReduc.style.setProperty('display', 'none', 'important');
+        blockDest.style.display = 'flex';
+        destNomInput.setAttribute('required', '');
+        destTelInput.setAttribute('required', '');
+        destNomInput.value = '';
+        destTelInput.value = '';
       }
-      calculerPrix();
     }
 
-    function calculerPrix() {
+    function toggleSchedule(show) {
+      const scheduleInputs = document.getElementById('scheduleInputs');
+      scheduleInputs.classList.toggle('d-none', !show);
+    }
+
+    function changerOnglet(nom, event) {
+      document.querySelectorAll('.section-app').forEach(s => s.classList.add('d-none'));
+      const targetSection = document.getElementById('section-' + nom);
+      if (targetSection) targetSection.classList.remove('d-none');
+
+      if (nom === 'client' && map) {
+        setTimeout(() => map.invalidateSize(), 300);
+      }
+    }
+
+    function calculerPrixEtSecurite() {
       const zDepart = document.getElementById("zoneDepart").value;
       const zArrivee = document.getElementById("zoneArrivee").value;
       const transport = document.getElementById("moyenTransport").value;
       const supplementPoids = parseInt(document.getElementById("poidsColis").value || 0);
 
+      const secAlert = document.getElementById('securityAlert');
+      const secIcon = document.getElementById('secIcon');
+      const secText = document.getElementById('secText');
+
+      if (zDepart && zArrivee) {
+        const secDep = securiteZones[zDepart] || 'green';
+        const secArr = securiteZones[zArrivee] || 'green';
+
+        if (secDep === 'yellow' || secArr === 'yellow') {
+          secAlert.className = "alert alert-warning d-flex align-items-center gap-2 mb-3";
+          secIcon.textContent = "🟡";
+          secText.textContent = "Attention : Trajet traversant une zone de vigilance. Légers retards possibles.";
+        } else {
+          secAlert.className = "alert alert-success d-flex align-items-center gap-2 mb-3";
+          secIcon.textContent = "🟢";
+          secText.textContent = "Zone sécurisée : Trajet fluide et totalement accessible.";
+        }
+      }
+
       if (!zDepart || !zArrivee) return;
 
-      let tarifBase = zDepart === zArrivee ? 250 : 450;
+      let calculTarifBase = zDepart === zArrivee ? 250 : (zDepart.includes("Thomassin") || zArrivee.includes("Thomassin") ? 750 : 500);
       let distanceKm = 0;
 
       if (coordsZones[zDepart] && coordsZones[zArrivee]) {
@@ -601,54 +908,309 @@
 
         if (markerDepart) map.removeLayer(markerDepart);
         if (markerArrivee) map.removeLayer(markerArrivee);
-        markerDepart = L.marker(coordsZones[zDepart]).addTo(map);
-        markerArrivee = L.marker(coordsZones[zArrivee]).addTo(map);
+        markerDepart = L.marker(coordsZones[zDepart]).addTo(map).bindPopup("Départ : " + zDepart);
+        markerArrivee = L.marker(coordsZones[zArrivee]).addTo(map).bindPopup("Arrivée : " + zArrivee);
+        const group = new L.featureGroup([markerDepart, markerArrivee]);
+        map.fitBounds(group.getBounds().pad(0.2));
       }
 
-      let totalCalculated = tarifBase + supplementPoids - montantReduction;
-      if (totalCalculated < 100) totalCalculated = 100; // Tarif minimum
+      let suppDistance = distanceKm > 3 ? (distanceKm - 3) * 30 : 0;
+      let totalCalculated = calculTarifBase + suppDistance + supplementPoids;
 
-      tarifActuel = Math.round(totalCalculated);
+      if (transport === 'Voiture') totalCalculated *= 1.5;
+      if (transport === 'Tricycle') totalCalculated *= 1.2;
+
+      tarifBase = Math.round(totalCalculated);
       document.getElementById("distVal").textContent = distanceKm + " km";
+      actualiserAffichagePrix();
+    }
+
+    function appliquerPromo() {
+      const code = document.getElementById('codePromo').value.trim().toUpperCase();
+      const status = document.getElementById('promoStatus');
+      const boxReduc = document.getElementById('boxReduction');
+
+      if (code === 'RAPID10') {
+        reductionMontant = 50;
+        status.innerHTML = `<span class="text-success fw-bold">✅ Code RAPID10 appliqué (-50 HTG)</span>`;
+        boxReduc.style.display = 'flex';
+        document.getElementById('reductionVal').textContent = `-50 HTG`;
+      } else if (code === 'LIVRAISON20') {
+        reductionMontant = 100;
+        status.innerHTML = `<span class="text-success fw-bold">✅ Code LIVRAISON20 appliqué (-100 HTG)</span>`;
+        boxReduc.style.display = 'flex';
+        document.getElementById('reductionVal').textContent = `-100 HTG`;
+      } else {
+        reductionMontant = 0;
+        status.innerHTML = `<span class="text-danger">❌ Code invalide</span>`;
+        boxReduc.style.display = 'none';
+      }
+      actualiserAffichagePrix();
+    }
+
+    function actualiserAffichagePrix() {
+      tarifActuel = tarifBase - reductionMontant;
+      if (tarifActuel < 100) tarifActuel = 100;
       document.getElementById("priceVal").textContent = tarifActuel + " HTG";
+    }
+
+    function toggleFormPaiement() {
+      const mode = document.getElementById('methodePaiement').value;
+      const box = document.getElementById('boxPaiementEnLigne');
+      if (mode === 'MonCash' || mode === 'NatCash') {
+        box.style.display = 'block';
+        document.getElementById('nomPasserelle').textContent = mode;
+        paiementEstValide = false;
+      } else {
+        box.style.display = 'none';
+        paiementEstValide = true;
+      }
+    }
+
+    function simulerPaiementAPI() {
+      const phone = document.getElementById('payPhone').value;
+      const status = document.getElementById('payStatus');
+
+      if (phone.length < 8) {
+        status.innerHTML = `<span class="text-danger">Numéro invalide.</span>`;
+        return;
+      }
+
+      status.innerHTML = `<span class="text-info">💬 Validation de transaction en cours...</span>`;
+      
+      setTimeout(() => {
+        paiementEstValide = true;
+        status.innerHTML = `<span class="text-success fw-bold">✅ Paiement sécurisé validé avec succès !</span>`;
+        afficherToast("Paiement MonCash/NatCash confirmé !");
+      }, 1500);
     }
 
     document.getElementById("orderForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
+      const paymentMethod = document.getElementById('methodePaiement').value;
+      if ((paymentMethod === 'MonCash' || paymentMethod === 'NatCash') && !paiementEstValide) {
+        afficherToast("Veuillez d'abord simuler et valider le paiement en ligne !", "warning");
+        return;
+      }
+
       const senderName = document.getElementById('clientNom').value;
+      const senderPhone = document.getElementById('clientTel').value;
+      const recipientName = document.getElementById('destinataireNom').value;
       const recipientPhone = document.getElementById('destinataireTel').value;
+      const fromZone = document.getElementById('zoneDepart').value;
+      const toZone = document.getElementById('zoneArrivee').value;
+      const fromAddress = document.getElementById('adresseDepart').value;
+      const toAddress = document.getElementById('adresseArrivee').value;
+      const packageType = document.getElementById('typeColis').value;
 
-      afficherToast("Commande envoyée avec succès !");
+      const isScheduled = document.getElementById('scheduled').checked;
+      let timingStr = 'Immédiat';
+      if (isScheduled) {
+        timingStr = `Planifié (${document.getElementById('deliveryDate').value} ${document.getElementById('deliveryTime').value})`;
+      }
 
-      // Notification WhatsApp directe au destinataire
-      const msgDestinataire = `Bonjour ! Une livraison de *${encodeURIComponent(senderName)}* est en cours vers vous via LivraisonRapid. HTG ${tarifActuel}.`;
-      window.open(`https://wa.me/${recipientPhone.replace(/\s+/g, '')}?text=${msgDestinataire}`, '_blank');
+      if (supabaseClient) {
+        await supabaseClient.from('commandes').insert([{
+          client_nom: senderName,
+          client_tel: senderPhone,
+          destinataire_nom: recipientName,
+          destinataire_tel: recipientPhone,
+          zone_depart: fromZone,
+          zone_arrivee: toZone,
+          adresse_depart: fromAddress,
+          adresse_arrivee: toAddress,
+          type_colis: `${packageType} - ${timingStr}`,
+          paiement: paymentMethod,
+          prix: tarifActuel,
+          statut: 'En attente'
+        }]);
+      }
 
+      afficherToast('Commande enregistrée avec succès !');
+
+      // WhatsApp d'alerte direct au destinataire
+      const messageWA = `Bonjour ${encodeURIComponent(recipientName)}, un colis vous a été envoyé par *${encodeURIComponent(senderName)}* (%0ATrajet: ${encodeURIComponent(fromZone)} ➔ ${encodeURIComponent(toZone)}.%0AMontant: ${tarifActuel} HTG).%0ASuivez votre livraison en direct !`;
+      const cleanPhone = recipientPhone.replace(/\s+/g, '').replace('+', '');
+      window.open(`https://wa.me/${cleanPhone}?text=${messageWA}`, '_blank');
+      
       this.reset();
+      document.getElementById('boxPaiementEnLigne').style.display = 'none';
+      document.getElementById('boxReduction').style.display = 'none';
+      reductionMontant = 0;
     });
 
-    function changerOnglet(nom, event) {
-      document.querySelectorAll('.section-app').forEach(s => s.classList.add('d-none'));
-      document.getElementById('section-' + nom).classList.remove('d-none');
+    async function chercherSuivi() {
+      const query = document.getElementById('numSuivi').value.trim();
+      if (!query || !supabaseClient) return;
+
+      const { data } = await supabaseClient
+        .from('commandes')
+        .select('*, livreurs(nom, prenom, telephone)')
+        .or(`client_tel.eq.${query},id.eq.${query}`)
+        .order('id', { ascending: false }).limit(1);
+
+      const conteneur = document.getElementById('suiviResultat');
+      const details = document.getElementById('suiviDetails');
+
+      if (!data || data.length === 0) {
+        afficherToast("Aucune commande trouvée.", "danger");
+        conteneur.style.display = 'none';
+        return;
+      }
+
+      const c = data[0];
+      conteneur.style.display = 'block';
+      details.innerHTML = `
+        <p><strong>Statut :</strong> <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span></p>
+        <p><strong>Colis :</strong> ${c.type_colis}</p>
+        <p><strong>Trajet :</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
+        <p><strong>Prix :</strong> ${c.prix} HTG</p>
+        ${c.preuve_url ? `<p><strong>Preuve de livraison :</strong> <a href="${c.preuve_url}" target="_blank">Voir la photo/preuve</a></p>` : ''}
+        ${c.statut === 'Livrée' ? `<button class="btn btn-outline-warning btn-sm mt-2" onclick="ouvrirAvisModal(${c.id})">⭐ Évaluer la livraison</button>` : ''}
+      `;
+    }
+
+    async function changerStatutCommande(id, nouveauStatut) {
+      if (!supabaseClient) return;
+      
+      let updateData = { statut: nouveauStatut };
+      if (nouveauStatut === 'Livrée') {
+        const urlPreuve = prompt("Optionnel : Collez un lien/URL de photo de preuve de livraison :");
+        if (urlPreuve) updateData.preuve_url = urlPreuve;
+      }
+
+      await supabaseClient.from('commandes').update(updateData).eq('id', id);
+      afficherToast(`Commande #${id} mise à jour : ${nouveauStatut}`);
+      chargerCommandes();
+    }
+
+    function switchAuthTab(type) {
+      if (type === 'login') {
+        document.getElementById('formLogin').style.display = 'block';
+        document.getElementById('formSignup').style.display = 'none';
+        document.getElementById('tabConnexion').classList.add('active');
+        document.getElementById('tabInscription').classList.remove('active');
+      } else {
+        document.getElementById('formLogin').style.display = 'none';
+        document.getElementById('formSignup').style.display = 'block';
+        document.getElementById('tabInscription').classList.add('active');
+        document.getElementById('tabConnexion').classList.remove('active');
+      }
+    }
+
+    function toggleLoginMode() {
+      const mode = document.getElementById('modeConnexion').value;
+      document.getElementById('boxLoginPassword').style.display = mode === 'password' ? 'block' : 'none';
+      document.getElementById('btnLoginSubmit').textContent = mode === 'password' ? 'Se connecter' : 'Recevoir le code / lien OTP';
     }
 
     function verifierSession() {
       if (currentUser) {
         document.getElementById('userBar').style.setProperty('display', 'flex', 'important');
-        document.getElementById('userInfo').textContent = `Connecté : ${currentUser.prenom || 'Chauffeur'}`;
+        document.getElementById('userInfo').textContent = `Connecté : ${currentUser.prenom} ${currentUser.nom}`;
+        document.getElementById('authBox').style.display = 'none';
+        document.getElementById('espaceMonCompte').style.display = 'block';
+        document.getElementById('profileNom').textContent = `${currentUser.prenom} ${currentUser.nom}`;
+      } else {
+        document.getElementById('userBar').style.setProperty('display', 'none', 'important');
+        document.getElementById('authBox').style.display = 'block';
+        document.getElementById('espaceMonCompte').style.display = 'none';
       }
     }
 
     function deconnexion() {
+      if (supabaseClient) supabaseClient.auth.signOut();
       localStorage.removeItem('user_livreur');
       currentUser = null;
-      location.reload();
+      verifierSession();
+      afficherToast("Déconnexion réussie.", "info");
     }
 
-    async function chargerLivreurs() {}
-    async function chargerCommandes() {}
-    function envoyerSupport(e) { e.preventDefault(); afficherToast("Message transmis au support !"); }
+    async function chargerLivreurs() {
+      if (!supabaseClient) return;
+      const { data } = await supabaseClient.from('livreurs').select('*');
+      const conteneur = document.getElementById("listeLivreurs");
+      conteneur.innerHTML = "";
+      document.getElementById("statLivreurs").textContent = data ? data.length : 0;
+      if (data) {
+        data.forEach(l => {
+          conteneur.innerHTML += `
+            <div class="item-card">
+              <span class="badge ${l.dispo === 'Disponible' ? 'badge-dispo' : 'badge-occupe'}">${l.dispo || 'Disponible'}</span>
+              <h5 class="mt-2">${l.prenom} ${l.nom}</h5>
+              <p class="mb-1 small">Zone: ${l.zone}</p>
+              <a class="btn-action btn-whatsapp mt-2" href="https://wa.me/${l.telephone ? l.telephone.replace(/\s+/g, '') : ''}" target="_blank">WhatsApp</a>
+            </div>
+          `;
+        });
+      }
+    }
+
+    async function chargerCommandes() {
+      if (!supabaseClient) return;
+      const { data } = await supabaseClient.from('commandes').select('*, livreurs(nom, prenom)');
+      const conteneur = document.getElementById("listeCommandes");
+      conteneur.innerHTML = "";
+      let totalCA = 0;
+      document.getElementById("statCommandes").textContent = data ? data.length : 0;
+
+      if (data) {
+        data.forEach(c => {
+          totalCA += Number(c.prix || 0);
+          
+          let actionsLivreur = '';
+          if (currentUser) {
+            actionsLivreur = `
+              <div class="mt-2 pt-2 border-top">
+                <small class="d-block text-muted mb-1">Changer statut :</small>
+                <button class="btn btn-sm btn-outline-info me-1" onclick="changerStatutCommande(${c.id}, 'En cours')">En cours</button>
+                <button class="btn btn-sm btn-outline-success" onclick="changerStatutCommande(${c.id}, 'Livrée')">Livrée</button>
+              </div>
+            `;
+          }
+
+          conteneur.innerHTML += `
+            <div class="item-card">
+              <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span>
+              <h5 class="mt-2">${c.type_colis}</h5>
+              <p class="mb-1 small"><strong>Expéditeur:</strong> ${c.client_nom}</p>
+              <p class="mb-1 small"><strong>Prix:</strong> ${c.prix} HTG</p>
+              <p class="mb-1 small"><strong>Trajet:</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
+              ${actionsLivreur}
+            </div>
+          `;
+        });
+      }
+      document.getElementById("statCA").textContent = totalCA + " HTG";
+    }
+
+    function envoyerSupport(e) {
+      e.preventDefault();
+      afficherToast("Votre message a été envoyé au support !");
+      document.getElementById('supportForm').reset();
+    }
+
+    function ouvrirAvisModal(commandeId) {
+      currentCommandeId = commandeId;
+      const modal = new bootstrap.Modal(document.getElementById('modalAvis'));
+      modal.show();
+    }
+
+    function setRating(val) {
+      selectedRating = val;
+      const stars = document.querySelectorAll('.rating-stars');
+      stars.forEach((s, idx) => {
+        s.style.color = idx < val ? '#ffc107' : '#ccc';
+      });
+    }
+
+    async function soumettreAvis() {
+      if (!currentCommandeId) return;
+      afficherToast(`Avis envoyé : ${selectedRating}/5 étoiles !`);
+      const modal = bootstrap.Modal.getInstance(document.getElementById('modalAvis'));
+      modal.hide();
+    }
   </script>
 </body>
 
