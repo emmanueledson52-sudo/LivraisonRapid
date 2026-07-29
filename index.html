@@ -5,8 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plateforme de Livraison Temps Réel & Sécurisée</title>
+
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1f4e79">
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
@@ -312,7 +314,7 @@
           </div>
         </div>
 
-        <!-- NOTE DE SÉCURITÉ / BONUS -->
+        <!-- NOTE DE SÉCURITÉ -->
         <div class="note-securite">
           🛡️ <strong>Note de sécurité :</strong> Afin d'assurer la sécurité de nos chauffeurs et la livraison rapide de vos colis, seules les zones actuellement sécurisées 🟢 ou moyennement sûres 🟡 sont ouvertes à la commande.
         </div>
@@ -325,30 +327,44 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div>
-            <label>Moyen de Transport</label>
-            <select id="moyenTransport" onchange="calculerPrix()" required>
-              <option value="Moto">Moto</option>
-              <option value="Voiture">Voiture</option>
-              <option value="Tricycle">Tricycle</option>
-            </select>
-          </div>
-          <div>
             <label>Type de colis</label>
             <select id="typeColis">
               <option>Document</option>
               <option>Nourriture</option>
               <option>Objet fragile</option>
+              <option>Électronique / Matériel</option>
               <option>Autre</option>
+            </select>
+          </div>
+          <div>
+            <label>Poids estimé du colis</label>
+            <select id="poidsColis" onchange="calculerPrix()" required>
+              <option value="leger">Léger (< 5 kg)</option>
+              <option value="moyen">Moyen (5 kg - 15 kg) [+150 HTG]</option>
+              <option value="lourd">Lourd (15 kg - 30 kg) [+350 HTG]</option>
+              <option value="tres_lourd">Très lourd (> 30 kg) [+700 HTG]</option>
             </select>
           </div>
         </div>
 
-        <label>Mode de paiement</label>
-        <select id="methodePaiement" required>
-          <option value="Cash à la livraison">Cash à la livraison</option>
-          <option value="MonCash">MonCash</option>
-          <option value="NatCash">NatCash</option>
-        </select>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label>Moyen de Transport</label>
+            <select id="moyenTransport" onchange="calculerPrix()" required>
+              <option value="Moto">Moto</option>
+              <option value="Tricycle">Tricycle</option>
+              <option value="Voiture">Voiture</option>
+            </select>
+          </div>
+          <div>
+            <label>Mode de paiement</label>
+            <select id="methodePaiement" required>
+              <option value="Cash à la livraison">Cash à la livraison</option>
+              <option value="MonCash">MonCash</option>
+              <option value="NatCash">NatCash</option>
+            </select>
+          </div>
+        </div>
 
         <div class="prix-box">
           Distance estimée : <span id="distanceAffichee">0 km</span><br>
@@ -536,24 +552,32 @@
       }
     }
 
-    // CALCUL DU PRIX (ZONES + DISTANCE LEAFLET)
+    // CALCUL DU PRIX (ZONES + DISTANCE LEAFLET + POIDS DU COLIS)
     function calculerPrix() {
       const zDepart = document.getElementById("zoneDepart").value;
       const zArrivee = document.getElementById("zoneArrivee").value;
-      const transport = document.getElementById("moyenTransport").value;
+      const transportSelect = document.getElementById("moyenTransport");
+      const poids = document.getElementById("poidsColis").value;
+
+      let transport = transportSelect.value;
 
       if (!zDepart || !zArrivee) return;
+
+      // --- CONTRAINTE SÉCURITÉ POIDS / VÉHICULE ---
+      if ((poids === 'lourd' || poids === 'tres_lourd') && transport === 'Moto') {
+        alert("Attention : Pour un colis lourd (>15 kg), la livraison par Moto n'est pas adaptée. Le véhicule a été ajusté en Tricycle / Voiture.");
+        transportSelect.value = poids === 'tres_lourd' ? 'Voiture' : 'Tricycle';
+        transport = transportSelect.value;
+      }
 
       // 1. Définition du tarif de base par zone
       let tarifBase = 0;
       if (zDepart === zArrivee) {
-        tarifBase = 250; // Course Intra-zone
-      } else if (
-        (zDepart.includes("Thomassin") || zArrivee.includes("Thomassin"))
-      ) {
-        tarifBase = 750; // Trajet montagne/éloigné
+        tarifBase = 250; 
+      } else if (zDepart.includes("Thomassin") || zArrivee.includes("Thomassin")) {
+        tarifBase = 750; 
       } else {
-        tarifBase = 500; // Inter-zones standard
+        tarifBase = 500; 
       }
 
       // 2. Calcul de la distance réelle avec Leaflet
@@ -572,15 +596,19 @@
         map.fitBounds(group.getBounds().pad(0.2));
       }
 
-      // 3. Majoration kilométrique (+30 HTG / km après 3km)
-      let supplementDistance = 0;
-      if (distanceKm > 3) {
-        supplementDistance = (distanceKm - 3) * 30;
-      }
+      // 3. Majoration distance (+30 HTG / km après 3km)
+      let supplementDistance = distanceKm > 3 ? (distanceKm - 3) * 30 : 0;
 
-      let totalCalculated = tarifBase + supplementDistance;
+      // 4. Majoration Poids du colis
+      let supplementPoids = 0;
+      if (poids === 'moyen') supplementPoids = 150;
+      if (poids === 'lourd') supplementPoids = 350;
+      if (poids === 'tres_lourd') supplementPoids = 700;
 
-      // 4. Coefficient selon le moyen de transport
+      // 5. Total intermédiaire
+      let totalCalculated = tarifBase + supplementDistance + supplementPoids;
+
+      // 6. Multiplicateur par type de véhicule
       if (transport === 'Voiture') totalCalculated *= 1.5;
       if (transport === 'Tricycle') totalCalculated *= 1.2;
 
@@ -664,6 +692,8 @@
       e.preventDefault();
       if (!supabaseClient) return alert("Base de données non initialisée");
 
+      const typeColisTexte = `${document.getElementById("typeColis").value} (${document.getElementById("poidsColis").options[document.getElementById("poidsColis").selectedIndex].text})`;
+
       const { error } = await supabaseClient.from('commandes').insert([{
         client_nom: document.getElementById("clientNom").value,
         client_tel: document.getElementById("clientTel").value,
@@ -671,7 +701,7 @@
         zone_arrivee: document.getElementById("zoneArrivee").value,
         adresse_depart: document.getElementById("adresseDepart").value,
         adresse_arrivee: document.getElementById("adresseArrivee").value,
-        type_colis: document.getElementById("typeColis").value,
+        type_colis: typeColisTexte,
         paiement: document.getElementById("methodePaiement").value,
         prix: tarifActuel
       }]);
