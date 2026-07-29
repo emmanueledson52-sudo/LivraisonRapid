@@ -27,6 +27,14 @@
       flex: 1;
     }
 
+    /* Style du logo dans la barre de navigation */
+    .navbar-brand-logo {
+      height: 45px;
+      width: auto;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+
     #map {
       height: 250px;
       border-radius: 8px;
@@ -78,10 +86,13 @@
 
 <body>
 
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+  <!-- Navigation avec Logo -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4 py-2">
     <div class="container">
-      <a class="navbar-brand fw-bold text-primary" href="#">🚚 LivraisonRapid</a>
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-primary" href="#">
+        <img src="watermarked_img_13510460191761401270.png" alt="LivraisonRapid Logo" class="navbar-brand-logo">
+        <span>LivraisonRapid</span>
+      </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -483,7 +494,10 @@
     <div class="container">
       <div class="row g-4">
         <div class="col-md-4">
-          <h5 class="text-white">🚚 LivraisonRapid</h5>
+          <h5 class="text-white d-flex align-items-center gap-2">
+            <img src="watermarked_img_13510460191761401270.png" alt="Logo" style="height: 30px; border-radius: 4px;">
+            LivraisonRapid
+          </h5>
           <p class="small text-muted">Service de livraison rapide, fiable et sécurisé adapté aux zones de Port-au-Prince et ses environs.</p>
         </div>
         <div class="col-md-4">
