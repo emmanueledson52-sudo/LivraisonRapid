@@ -9,139 +9,40 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1f4e79">
 
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
+      background-color: #f8f9fa;
       font-family: Arial, sans-serif;
-      background-color: #f4f6f8;
-      margin: 0;
-      padding: 20px;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
     }
 
-    .navigation-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      width: 100%;
-      max-width: 1000px;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
+    main {
       flex: 1;
-      min-width: 140px;
-      padding: 12px;
-      background-color: #e0e6ed;
-      color: #333;
-      border: none;
+    }
+
+    #map {
+      height: 250px;
       border-radius: 8px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
+      z-index: 1;
     }
 
-    .tab-btn.active {
-      background-color: #1f4e79;
-      color: white;
+    .sticky-card {
+      position: sticky;
+      top: 20px;
     }
 
-    .carte {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 25px;
-      width: 100%;
-      max-width: 1000px;
-      margin-bottom: 20px;
-    }
-
-    .carte-centree {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .section-app {
-      display: none;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .section-app.active {
-      display: block;
-    }
-
-    h1, h2, h3, h4 {
-      color: #1f4e79;
-      margin-top: 0;
-    }
-
-    h1 {
-      font-size: 22px;
-      text-align: center;
-    }
-
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: bold;
-      font-size: 13px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-top: 4px;
-    }
-
-    .note-securite {
-      background-color: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeeba;
-      border-radius: 6px;
-      padding: 10px 12px;
-      font-size: 12px;
-      margin-top: 12px;
-      line-height: 1.4;
-    }
-
-    button.btn-submit {
-      width: 100%;
-      margin-top: 18px;
-      padding: 12px;
-      background-color: #1f4e79;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button.btn-submit:hover {
-      background-color: #163a5c;
-    }
-
-    .btn-logout {
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 15px;
-    }
+    .badge-dispo { background-color: #28a745; }
+    .badge-occupe { background-color: #dc3545; }
+    .badge-attente { background-color: #ffc107; color: #333; }
+    .badge-cours { background-color: #17a2b8; }
+    .badge-livre { background-color: #6c757d; }
 
     .btn-action {
       padding: 6px 12px;
@@ -156,434 +57,464 @@
       align-items: center;
     }
 
-    .btn-whatsapp {
-      background-color: #25D366;
-      color: white;
-    }
-
-    .btn-status {
-      background-color: #1f4e79;
-      color: white;
-    }
-
-    .btn-accept {
-      background-color: #28a745;
-      color: white;
-      margin-top: 10px;
-    }
-
-    .prix-box {
-      background: #eef6ff;
-      border: 1px solid #b6d4fe;
-      padding: 12px;
-      border-radius: 6px;
-      margin-top: 15px;
-      text-align: center;
-      font-weight: bold;
-      color: #1f4e79;
-    }
-
-    .map-container {
-      height: 200px;
-      width: 100%;
-      border-radius: 8px;
-      margin-top: 12px;
-      border: 1px solid #ddd;
-    }
+    .btn-whatsapp { background-color: #25D366; color: white; }
+    .btn-status { background-color: #1f4e79; color: white; }
+    .btn-accept { background-color: #28a745; color: white; margin-top: 10px; }
 
     .grid-layout {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 15px;
-      margin-top: 15px;
     }
 
     .item-card {
       border: 1px solid #e0e0e0;
       border-radius: 8px;
       padding: 15px;
-      background: #fafafa;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 10px;
-      font-size: 11px;
-      font-weight: bold;
-      color: white;
-    }
-
-    .badge-dispo { background-color: #28a745; }
-    .badge-occupe { background-color: #dc3545; }
-    .badge-attente { background-color: #ffc107; color: #333; }
-    .badge-cours { background-color: #17a2b8; }
-    .badge-livre { background-color: #6c757d; }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-    }
-
-    .stat-card {
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    .stat-card .number {
-      font-size: 22px;
-      font-weight: bold;
-      color: #1f4e79;
-      margin-top: 5px;
-    }
-
-    .user-bar {
-      background: #eef6ff;
-      padding: 10px 15px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      width: 100%;
-      max-width: 1000px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: #ffffff;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- BARRE UTILISATEUR CONNECTÉ -->
-  <div id="userBar" class="user-bar" style="display:none;">
-    <span id="userInfo"></span>
-    <button onclick="deconnexion()" style="padding: 5px 10px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">Déconnexion</button>
-  </div>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="#">🚚 LivraisonRapid</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="navbar-nav ms-auto flex-row flex-wrap gap-2 mt-2 mt-lg-0">
+          <button class="btn btn-primary btn-sm" onclick="changerOnglet('client', event)">📦 Commander</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('livreur', event)">🛵 Espace Livreur</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('commandes', event)">📋 Courses en cours</button>
+          <button class="btn btn-outline-dark btn-sm" onclick="changerOnglet('admin', event)">📊 Admin</button>
+        </div>
+      </div>
+    </div>
+  </nav>
 
-  <!-- NAVEGATION PAR ONGLETS -->
-  <div class="navigation-tabs">
-    <button class="tab-btn active" onclick="changerOnglet('client', event)">🚚 Commander</button>
-    <button class="tab-btn" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis</button>
-    <button class="tab-btn" onclick="changerOnglet('livreur', event)">🛵 Espace Livreur</button>
-    <button class="tab-btn" onclick="changerOnglet('commandes', event)">📋 Courses en cours</button>
-    <button class="tab-btn" onclick="changerOnglet('admin', event)">📊 Admin</button>
-  </div>
+  <!-- Contenu Principal -->
+  <main class="container mb-5">
 
-  <!-- 1. COMMANDE CLIENT -->
-  <div id="section-client" class="section-app active">
-    <div class="carte carte-centree">
-      <h1>🚚 Commander une livraison</h1>
-      <form id="formCommande">
+    <!-- Barre d'Information Utilisateur Connecté -->
+    <div id="userBar" class="alert alert-info d-flex justify-content-between align-items-center mb-4" style="display:none !important;">
+      <span id="userInfo"></span>
+      <button onclick="deconnexion()" class="btn btn-danger btn-sm">Déconnexion</button>
+    </div>
+
+    <!-- 1. SECTION COMMANDE CLIENT -->
+    <div id="section-client" class="section-app">
+      <div class="row g-4">
         
-        <h3>1. Information Expéditeur (Vous)</h3>
-        <label>Nom complet *</label>
-        <input type="text" id="clientNom" required placeholder="Ex: Marie Joseph">
+        <!-- Colonne Gauche : Formulaire de Commande -->
+        <div class="col-lg-7">
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+              <h3 class="card-title mb-4">🚚 Commander une livraison</h3>
+              
+              <form id="orderForm">
+                
+                <!-- 1. Informations Expéditeur -->
+                <h5 class="text-secondary fs-6 mb-3">1. Information Expéditeur (Vous)</h5>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label for="clientNom" class="form-label">Nom complet *</label>
+                    <input type="text" class="form-control" id="clientNom" placeholder="Ex: Marie Joseph" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="clientTel" class="form-label">Téléphone WhatsApp *</label>
+                    <input type="tel" class="form-control" id="clientTel" placeholder="Ex: +509 3821 0256" required>
+                  </div>
+                </div>
 
-        <label>Téléphone WhatsApp *</label>
-        <input type="tel" id="clientTel" required placeholder="Ex: +509 3821 0256">
+                <!-- 2. Informations Destinataire -->
+                <h5 class="text-secondary fs-6 mb-3 mt-4">2. Information Destinataire</h5>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label for="destinataireNom" class="form-label">Nom du destinataire *</label>
+                    <input type="text" class="form-control" id="destinataireNom" placeholder="Ex: Jean Baptiste" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="destinataireTel" class="form-label">Téléphone / WhatsApp destinataire *</label>
+                    <input type="tel" class="form-control" id="destinataireTel" placeholder="Ex: +509 3700 0000" required>
+                  </div>
+                </div>
 
-        <h3 style="margin-top: 20px;">2. Information Destinataire</h3>
-        <label>Nom du destinataire *</label>
-        <input type="text" id="destinataireNom" required placeholder="Ex: Jean Baptiste">
+                <!-- 3. Trajet & Zones -->
+                <h5 class="text-secondary fs-6 mb-3 mt-4">3. Trajet & Adresses</h5>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label for="zoneDepart" class="form-label">Zone départ *</label>
+                    <select class="form-select" id="zoneDepart" onchange="calculerPrix()" required>
+                      <option value="">-- Choisir --</option>
+                      <optgroup label="Port-au-Prince (Zones Accessibles)">
+                        <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
+                        <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
+                        <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
+                        <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
+                        <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
+                        <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
+                      </optgroup>
+                      <optgroup label="Autres Communes Praticables">
+                        <option value="Pétion-Ville">Pétion-Ville 🟢</option>
+                        <option value="Delmas">Delmas 🟢</option>
+                        <option value="Route de Frères">Route de Frères 🟢</option>
+                        <option value="Juvénat">Juvénat 🟢</option>
+                        <option value="Thomassin">Thomassin 🟢</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="zoneArrivee" class="form-label">Zone arrivée *</label>
+                    <select class="form-select" id="zoneArrivee" onchange="calculerPrix()" required>
+                      <option value="">-- Choisir --</option>
+                      <optgroup label="Port-au-Prince (Zones Accessibles)">
+                        <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
+                        <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
+                        <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
+                        <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
+                        <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
+                        <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
+                      </optgroup>
+                      <optgroup label="Autres Communes Praticables">
+                        <option value="Pétion-Ville">Pétion-Ville 🟢</option>
+                        <option value="Delmas">Delmas 🟢</option>
+                        <option value="Route de Frères">Route de Frères 🟢</option>
+                        <option value="Juvénat">Juvénat 🟢</option>
+                        <option value="Thomassin">Thomassin 🟢</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                </div>
 
-        <label>Téléphone / WhatsApp destinataire *</label>
-        <input type="tel" id="destinataireTel" required placeholder="Ex: +509 3700 0000">
+                <div class="alert alert-warning py-2 small mb-3">
+                  🛡️ <strong>Note de sécurité :</strong> Seules les zones actuellement sécurisées 🟢 ou moyennement sûres 🟡 sont ouvertes à la commande.
+                </div>
 
-        <h3 style="margin-top: 20px;">3. Trajet & Adresses</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label>Zone départ *</label>
-            <select id="zoneDepart" onchange="calculerPrix()" required>
-              <option value="">-- Choisir --</option>
-              <optgroup label="Port-au-Prince (Zones Accessibles)">
-                <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
-                <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
-                <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
-                <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
-                <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
-                <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
-              </optgroup>
-              <optgroup label="Autres Communes Praticables">
-                <option value="Pétion-Ville">Pétion-Ville 🟢</option>
-                <option value="Delmas">Delmas 🟢</option>
-                <option value="Route de Frères">Route de Frères 🟢</option>
-                <option value="Juvénat">Juvénat 🟢</option>
-                <option value="Thomassin">Thomassin 🟢</option>
-              </optgroup>
-            </select>
-          </div>
+                <div class="mb-3">
+                  <label for="adresseDepart" class="form-label">Adresse exacte départ *</label>
+                  <input type="text" class="form-control" id="adresseDepart" placeholder="Ex: Rue Capois, près de..." required>
+                </div>
 
-          <div>
-            <label>Zone arrivée *</label>
-            <select id="zoneArrivee" onchange="calculerPrix()" required>
-              <option value="">-- Choisir --</option>
-              <optgroup label="Port-au-Prince (Zones Accessibles)">
-                <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
-                <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
-                <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
-                <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
-                <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
-                <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
-              </optgroup>
-              <optgroup label="Autres Communes Praticables">
-                <option value="Pétion-Ville">Pétion-Ville 🟢</option>
-                <option value="Delmas">Delmas 🟢</option>
-                <option value="Route de Frères">Route de Frères 🟢</option>
-                <option value="Juvénat">Juvénat 🟢</option>
-                <option value="Thomassin">Thomassin 🟢</option>
-              </optgroup>
-            </select>
+                <div class="mb-3">
+                  <label for="adresseArrivee" class="form-label">Adresse exacte arrivée *</label>
+                  <input type="text" class="form-control" id="adresseArrivee" placeholder="Ex: Impasse Lavaud, ..." required>
+                </div>
+
+                <!-- 4. Planification & Colis -->
+                <h5 class="text-secondary fs-6 mb-3 mt-4">4. Détails du colis & Horaire</h5>
+                
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label for="typeColis" class="form-label">Type de colis / Service *</label>
+                    <select class="form-select" id="typeColis" required>
+                      <optgroup label="🍔 Alimentation & Restauration">
+                        <option value="Repas / Plat préparé">Repas / Plat préparé</option>
+                        <option value="Courses de supermarché">Courses de supermarché</option>
+                        <option value="Boissons / Packs / Bières">Boissons / Packs / Bières</option>
+                      </optgroup>
+                      <optgroup label="📄 Documents & Urgences">
+                        <option value="Documents / Papiers officiels">Documents / Papiers officiels</option>
+                        <option value="Clés / Portefeuille / Chargeur">Clés / Portefeuille / Chargeur</option>
+                      </optgroup>
+                      <optgroup label="💊 Santé & Beauté">
+                        <option value="Pharmacie / Médicaments">Pharmacie / Médicaments</option>
+                      </optgroup>
+                      <optgroup label="📦 Charges Lourdes & Encombrants">
+                        <option value="Électroménager">Électroménager</option>
+                        <option value="Autre type de colis">Autre type de colis</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="poidsColis" class="form-label">Poids estimé *</label>
+                    <select class="form-select" id="poidsColis" onchange="calculerPrix()" required>
+                      <option value="0">Léger (&lt; 5 kg)</option>
+                      <option value="150">Moyen (5 kg - 15 kg) [+150 HTG]</option>
+                      <option value="350">Lourd (15 kg - 30 kg) [+350 HTG]</option>
+                      <option value="700">Très lourd (&gt; 30 kg) [+700 HTG]</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label for="moyenTransport" class="form-label">Moyen de Transport</label>
+                    <select class="form-select" id="moyenTransport" onchange="calculerPrix()">
+                      <option value="Moto">Moto</option>
+                      <option value="Tricycle">Tricycle</option>
+                      <option value="Voiture">Voiture</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="methodePaiement" class="form-label">Mode de paiement *</label>
+                    <select class="form-select" id="methodePaiement" required>
+                      <option value="Cash à la livraison">Cash à la livraison</option>
+                      <option value="MonCash">MonCash</option>
+                      <option value="NatCash">NatCash</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Planification -->
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Moment de la livraison</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="deliveryTiming" id="asap" value="asap" checked onclick="toggleSchedule(false)">
+                    <label class="form-check-label" for="asap">Livraison immédiate (Dès que possible)</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="deliveryTiming" id="scheduled" value="scheduled" onclick="toggleSchedule(true)">
+                    <label class="form-check-label" for="scheduled">Planifier pour plus tard</label>
+                  </div>
+                </div>
+
+                <div id="scheduleInputs" class="row g-3 mb-3 d-none">
+                  <div class="col-md-6">
+                    <label for="deliveryDate" class="form-label">Date de livraison</label>
+                    <input type="date" class="form-control" id="deliveryDate">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="deliveryTime" class="form-label">Heure souhaitée</label>
+                    <input type="time" class="form-control" id="deliveryTime">
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg w-100 mt-4">
+                  ✅ Valider et rechercher un livreur (WhatsApp / Supabase)
+                </button>
+              </form>
+            </div>
           </div>
         </div>
 
-        <div class="note-securite">
-          🛡️ <strong>Note de sécurité :</strong> Seules les zones actuellement sécurisées 🟢 ou moyennement sûres 🟡 sont ouvertes à la commande.
-        </div>
+        <!-- Colonne Droite : Carte Leaflet & Estimation -->
+        <div class="col-lg-5">
+          <div class="card shadow-sm border-0 sticky-card">
+            <div class="card-body p-4">
+              <h5 class="card-title mb-3">📍 Trajet & Estimation</h5>
+              
+              <div id="map"></div>
 
-        <label>Adresse exacte départ *</label>
-        <input type="text" id="adresseDepart" placeholder="Ex: Rue Capois, près de..." required>
+              <hr class="my-4">
 
-        <label>Adresse exacte arrivée *</label>
-        <input type="text" id="adresseArrivee" placeholder="Ex: Impasse Lavaud, ..." required>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted">Distance estimée :</span>
+                <strong id="distVal" class="fs-5">0.0 km</strong>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted">Tarif estimé :</span>
+                <strong id="priceVal" class="fs-3 text-success">250 HTG</strong>
+              </div>
 
-        <h3 style="margin-top: 20px;">4. Colis & Transport</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label>Type de colis / Service *</label>
-            <select id="typeColis" required>
-              <optgroup label="🍔 Alimentation & Restauration">
-                <option value="Repas / Restauration">Repas / Plat préparé</option>
-                <option value="Courses Alimentaires">Courses de supermarché</option>
-                <option value="Boissons / Casier">Boissons / Packs / Bières</option>
-              </optgroup>
-              <optgroup label="📄 Documents & Urgences">
-                <option value="Documents / Papiers">Documents / Papiers officiels</option>
-                <option value="Clés / Objet Oublié">Clés / Portefeuille / Chargeur</option>
-                <option value="Fournitures de bureau">Fournitures / Livres</option>
-              </optgroup>
-              <optgroup label="💊 Santé & Beauté">
-                <option value="Pharmacie / Médicaments">Pharmacie / Médicaments</option>
-                <option value="Cosmétiques / Beauté">Cosmétiques / Produits de beauté</option>
-              </optgroup>
-              <optgroup label="📱 High-Tech & Mode">
-                <option value="Électronique / Téléphone">Téléphone / High-Tech / Matériel</option>
-                <option value="Vêtements / Pressing">Vêtements / Chaussures / Pressing</option>
-                <option value="Cadeaux / Fleurs">Cadeaux / Fleurs / Chocolats</option>
-              </optgroup>
-              <optgroup label="📦 Charges Lourdes & Encombrants">
-                <option value="Électroménager">Électroménager (Micro-ondes, TV, etc.)</option>
-                <option value="Sac de Riz / Charbon / Eau">Sac de Riz / Bonbonne / Charbon</option>
-                <option value="Mobilier / Matériaux">Mobilier léger / Outillage</option>
-              </optgroup>
-              <option value="Autre">Autre type de colis</option>
-            </select>
-          </div>
-
-          <div>
-            <label>Poids estimé du colis *</label>
-            <select id="poidsColis" onchange="calculerPrix()" required>
-              <option value="leger">Léger (&lt; 5 kg)</option>
-              <option value="moyen">Moyen (5 kg - 15 kg) [+150 HTG]</option>
-              <option value="lourd">Lourd (15 kg - 30 kg) [+350 HTG]</option>
-              <option value="tres_lourd">Très lourd (&gt; 30 kg) [+700 HTG]</option>
-            </select>
+              <p class="small text-muted mt-3 mb-0">
+                ℹ️ Le tarif s'ajuste automatiquement selon la distance, le transport et le poids du colis.
+              </p>
+            </div>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label>Moyen de Transport *</label>
-            <select id="moyenTransport" onchange="calculerPrix()" required>
-              <option value="Moto">Moto</option>
-              <option value="Tricycle">Tricycle</option>
-              <option value="Voiture">Voiture</option>
-            </select>
-          </div>
-          <div>
-            <label>Mode de paiement *</label>
-            <select id="methodePaiement" required>
-              <option value="Cash à la livraison">Cash à la livraison</option>
-              <option value="MonCash">MonCash</option>
-              <option value="NatCash">NatCash</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="prix-box">
-          Distance estimée : <span id="distanceAffichee">0 km</span><br>
-          Tarif estimé : <span id="prixAffiche">0 HTG</span>
-        </div>
-        <div id="mapClient" class="map-container"></div>
-
-        <button type="submit" class="btn-submit">Valider et rechercher un livreur</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- 2. SUIVI DE COLIS -->
-  <div id="section-suivi" class="section-app">
-    <div class="carte carte-centree">
-      <h2>🔎 Suivre ma commande</h2>
-      <p style="font-size: 13px; color: #666;">Entrez votre numéro de téléphone ou ID de commande :</p>
-
-      <div style="display: flex; gap: 10px;">
-        <input type="text" id="numSuivi" placeholder="Ex: +509 3821 0256">
-        <button class="btn-submit" style="margin-top:0; width: 35%;" onclick="chercherSuivi()">Chercher</button>
       </div>
-
-      <div id="suiviResultat" style="margin-top: 25px; display: none;">
-        <hr style="border: 0.5px solid #eee; margin-bottom: 20px;">
-        <div id="suiviDetails" style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-size: 14px;"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. ESPACE LIVREUR / AUTHENTIFICATION PRO -->
-  <div id="section-livreur" class="section-app">
-    
-    <!-- COMPTE CONNECTÉ -->
-    <div class="carte carte-centree" id="espaceMonCompte" style="display:none;">
-      <h2>👤 Mon Espace Livreur</h2>
-      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-        <p style="margin: 5px 0;"><strong>Nom :</strong> <span id="profileNom"></span></p>
-        <p style="margin: 5px 0;"><strong>Email :</strong> <span id="profileEmail"></span></p>
-        <p style="margin: 5px 0;"><strong>Téléphone :</strong> <span id="profileTel"></span></p>
-        <p style="margin: 5px 0;"><strong>Zone :</strong> <span id="profileZone"></span></p>
-      </div>
-      <button onclick="deconnexion()" class="btn-logout">🔴 Se déconnecter</button>
     </div>
 
-    <!-- FORMULAIRE DE CONNEXION / INSCRIPTION -->
-    <div class="carte carte-centree" id="authBox">
-      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-        <button type="button" id="tabConnexion" class="tab-btn active" onclick="switchAuthTab('login')">Se connecter</button>
-        <button type="button" id="tabInscription" class="tab-btn" onclick="switchAuthTab('signup')">Créer un compte</button>
-      </div>
-
-      <!-- FORMULAIRE CONNEXION -->
-      <form id="formLogin">
-        <label>Mode de connexion :</label>
-        <select id="modeConnexion" onchange="toggleLoginMode()">
-          <option value="otp">Code OTP / Lien Magique (par E-mail)</option>
-          <option value="password">E-mail + Mot de passe</option>
-        </select>
-
-        <div id="boxLoginEmail">
-          <label>Adresse Email</label>
-          <input type="email" id="loginEmail" required placeholder="livreur@exemple.com">
-        </div>
-
-        <div id="boxLoginPassword" style="display:none;">
-          <label>Mot de passe</label>
-          <input type="password" id="loginPassword" placeholder="••••••••">
-        </div>
-
-        <button type="submit" id="btnLoginSubmit" class="btn-submit">Recevoir le code / lien OTP</button>
-      </form>
-
-      <!-- ÉTAPE VÉRIFICATION OTP -->
-      <form id="formVerifyOtp" style="display: none; margin-top: 15px;">
-        <div style="background: #eef6ff; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 10px;">
-          📩 Un code OTP a été envoyé à <strong id="emailSentTo"></strong>
-        </div>
-        <label>Code de vérification (6 chiffres)</label>
-        <input type="text" id="otpCode" placeholder="123456" maxlength="6" style="letter-spacing: 5px; font-size: 18px; text-align: center;">
-        <button type="submit" class="btn-submit" style="background-color: #28a745;">Vérifier et me connecter</button>
-        <button type="button" onclick="resetOtpForm()" style="background: none; border: none; color: #1f4e79; text-decoration: underline; margin-top: 10px; cursor: pointer; width: 100%;">Changer d'email</button>
-      </form>
-
-      <!-- FORMULAIRE INSCRIPTION -->
-      <form id="formSignup" style="display: none;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div><label>Prénom</label><input type="text" id="signupPrenom" required placeholder="Jean"></div>
-          <div><label>Nom</label><input type="text" id="signupNom" required placeholder="Dupont"></div>
-        </div>
-
-        <label>Adresse Email</label>
-        <input type="email" id="signupEmail" required placeholder="livreur@exemple.com">
-
-        <label>Téléphone WhatsApp</label>
-        <input type="tel" id="signupTel" required placeholder="+509 3400 0000">
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label>Mot de passe</label>
-            <input type="password" id="signupPassword" required placeholder="••••••••" minlength="6">
+    <!-- 2. SECTION SUIVI DE COLIS -->
+    <div id="section-suivi" class="section-app d-none">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card shadow-sm border-0 p-4">
+            <h2>🔎 Suivre ma commande</h2>
+            <p class="text-muted small">Entrez votre numéro de téléphone ou ID de commande :</p>
+            <div class="input-group mb-3">
+              <input type="text" id="numSuivi" class="form-control" placeholder="Ex: +509 3821 0256">
+              <button class="btn btn-primary" onclick="chercherSuivi()">Chercher</button>
+            </div>
+            <div id="suiviResultat" class="mt-4" style="display: none;">
+              <hr>
+              <div id="suiviDetails" class="bg-light p-3 rounded"></div>
+            </div>
           </div>
-          <div>
-            <label>Confirmation</label>
-            <input type="password" id="signupConfirmPassword" required placeholder="••••••••" minlength="6">
-          </div>
-        </div>
-
-        <label>Zone d'intervention</label>
-        <select id="signupZone" required>
-          <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
-          <option value="Port-au-Prince - Turgeau">Port-au-Prince - Turgeau</option>
-          <option value="Port-au-Prince - Pacot">Port-au-Prince - Pacot</option>
-          <option value="Pétion-Ville">Pétion-Ville</option>
-          <option value="Delmas">Delmas</option>
-          <option value="Route de Frères">Route de Frères</option>
-        </select>
-
-        <button type="submit" class="btn-submit">Créer mon compte livreur</button>
-      </form>
-    </div>
-
-    <!-- LISTE DES LIVREURS -->
-    <div class="carte" style="margin-top: 20px;">
-      <h2>📋 Registre des Chauffeurs</h2>
-      <div id="listeLivreurs" class="grid-layout"></div>
-    </div>
-  </div>
-
-  <!-- 4. COURSES EN COURS -->
-  <div id="section-commandes" class="section-app">
-    <div class="carte">
-      <h2>📦 Commandes en cours & Marketplace</h2>
-      <div id="listeCommandes" class="grid-layout"></div>
-    </div>
-  </div>
-
-  <!-- 5. ADMIN -->
-  <div id="section-admin" class="section-app">
-    <div class="carte">
-      <h2>📊 Tableau de bord Administrateur</h2>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <h4>Chiffre d'Affaires</h4>
-          <div class="number" id="statCA">0 HTG</div>
-        </div>
-        <div class="stat-card">
-          <h4>Commandes Totales</h4>
-          <div class="number" id="statCommandes">0</div>
-        </div>
-        <div class="stat-card">
-          <h4>Livreurs Inscrits</h4>
-          <div class="number" id="statLivreurs">0</div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- SCRIPTS EXTERNES -->
+    <!-- 3. SECTION LIVREUR / AUTHENTIFICATION -->
+    <div id="section-livreur" class="section-app d-none">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card shadow-sm border-0 p-4 mb-4" id="espaceMonCompte" style="display:none;">
+            <h2>👤 Mon Espace Livreur</h2>
+            <div class="bg-light p-3 rounded mb-3">
+              <p class="mb-1"><strong>Nom :</strong> <span id="profileNom"></span></p>
+              <p class="mb-1"><strong>Email :</strong> <span id="profileEmail"></span></p>
+              <p class="mb-1"><strong>Téléphone :</strong> <span id="profileTel"></span></p>
+              <p class="mb-1"><strong>Zone :</strong> <span id="profileZone"></span></p>
+            </div>
+            <button onclick="deconnexion()" class="btn btn-danger">🔴 Se déconnecter</button>
+          </div>
+
+          <div class="card shadow-sm border-0 p-4 mb-4" id="authBox">
+            <div class="btn-group w-100 mb-3">
+              <button type="button" id="tabConnexion" class="btn btn-outline-primary active" onclick="switchAuthTab('login')">Se connecter</button>
+              <button type="button" id="tabInscription" class="btn btn-outline-primary" onclick="switchAuthTab('signup')">Créer un compte</button>
+            </div>
+
+            <!-- Form Connexion -->
+            <form id="formLogin">
+              <div class="mb-3">
+                <label class="form-label">Mode de connexion</label>
+                <select id="modeConnexion" class="form-select" onchange="toggleLoginMode()">
+                  <option value="otp">Code OTP / Lien Magique (Email)</option>
+                  <option value="password">Email + Mot de passe</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Adresse Email</label>
+                <input type="email" class="form-control" id="loginEmail" required placeholder="livreur@exemple.com">
+              </div>
+              <div class="mb-3" id="boxLoginPassword" style="display:none;">
+                <label class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="loginPassword" placeholder="••••••••">
+              </div>
+              <button type="submit" id="btnLoginSubmit" class="btn btn-primary w-100">Recevoir le code / lien OTP</button>
+            </form>
+
+            <!-- Verification OTP -->
+            <form id="formVerifyOtp" style="display: none;" class="mt-3">
+              <div class="alert alert-info">
+                📩 Un code OTP a été envoyé à <strong id="emailSentTo"></strong>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Code de vérification</label>
+                <input type="text" class="form-control text-center fs-4" id="otpCode" placeholder="123456" maxlength="6">
+              </div>
+              <button type="submit" class="btn btn-success w-100">Vérifier et me connecter</button>
+              <button type="button" onclick="resetOtpForm()" class="btn btn-link w-100 text-secondary mt-2">Changer d'email</button>
+            </form>
+
+            <!-- Form Inscription -->
+            <form id="formSignup" style="display: none;">
+              <div class="row g-2 mb-3">
+                <div class="col-6"><label class="form-label">Prénom</label><input type="text" class="form-control" id="signupPrenom" required></div>
+                <div class="col-6"><label class="form-label">Nom</label><input type="text" class="form-control" id="signupNom" required></div>
+              </div>
+              <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control" id="signupEmail" required></div>
+              <div class="mb-3"><label class="form-label">Téléphone</label><input type="tel" class="form-control" id="signupTel" required></div>
+              <div class="row g-2 mb-3">
+                <div class="col-6"><label class="form-label">Mot de passe</label><input type="password" class="form-control" id="signupPassword" minlength="6" required></div>
+                <div class="col-6"><label class="form-label">Confirmation</label><input type="password" class="form-control" id="signupConfirmPassword" minlength="6" required></div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Zone d'intervention</label>
+                <select class="form-select" id="signupZone" required>
+                  <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
+                  <option value="Pétion-Ville">Pétion-Ville</option>
+                  <option value="Delmas">Delmas</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Créer mon compte livreur</button>
+            </form>
+          </div>
+
+          <!-- Liste Livreurs -->
+          <div class="card shadow-sm border-0 p-4">
+            <h4>📋 Registre des Chauffeurs</h4>
+            <div id="listeLivreurs" class="grid-layout mt-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. SECTION COURSES EN COURS -->
+    <div id="section-commandes" class="section-app d-none">
+      <div class="card shadow-sm border-0 p-4">
+        <h2>📦 Commandes en cours & Marketplace</h2>
+        <div id="listeCommandes" class="grid-layout mt-3"></div>
+      </div>
+    </div>
+
+    <!-- 5. SECTION ADMIN -->
+    <div id="section-admin" class="section-app d-none">
+      <div class="card shadow-sm border-0 p-4">
+        <h2>📊 Tableau de bord Administrateur</h2>
+        <div class="row g-3 mt-2">
+          <div class="col-md-4">
+            <div class="p-3 bg-light rounded text-center border">
+              <h5>Chiffre d'Affaires</h5>
+              <div class="fs-3 text-primary fw-bold" id="statCA">0 HTG</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 bg-light rounded text-center border">
+              <h5>Commandes Totales</h5>
+              <div class="fs-3 text-primary fw-bold" id="statCommandes">0</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 bg-light rounded text-center border">
+              <h5>Livreurs Inscrits</h5>
+              <div class="fs-3 text-primary fw-bold" id="statLivreurs">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Pied de page (Footer) -->
+  <footer class="bg-dark text-light pt-5 pb-3 mt-auto">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h5 class="text-white">🚚 LivraisonRapid</h5>
+          <p class="small text-muted">Service de livraison rapide, fiable et sécurisé adapté aux zones de Port-au-Prince et ses environs.</p>
+        </div>
+        <div class="col-md-4">
+          <h5 class="text-white">Besoin d'aide ?</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <a href="https://wa.me/50938210256?text=Bonjour,%20j'ai%20une%20question%20concernant%20une%20livraison." target="_blank" class="btn btn-outline-success btn-sm text-white">
+                💬 Support WhatsApp direct
+              </a>
+            </li>
+            <li class="text-muted small">📞 +509 3821-0256</li>
+            <li class="text-muted small">✉️ support@livraisonrapid.ht</li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5 class="text-white">Informations légales</h5>
+          <ul class="list-unstyled small">
+            <li><a href="#" class="text-secondary text-decoration-none">Conditions Générales d'Utilisation</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Politique de Confidentialité</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Zones de Couverture & Sécurité</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="bg-secondary mt-4 mb-3">
+      <div class="text-center small text-muted">
+        &copy; 2026 LivraisonRapid. Tous droits réservés.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // CONFIGURATION SUPABASE
     const SUPABASE_URL = 'https://hstgwiyztzfplxncuzxc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_2HWJPXVoD-A66Cdy3gJS3Q_9BM1_tgq';
-
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
     let map, markerDepart, markerArrivee;
     let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
     let currentOtpEmail = '';
-    let tarifActuel = 0;
+    let tarifActuel = 250;
 
     const coordsZones = {
       "Port-au-Prince - Canapé-Vert": [18.5250, -72.3100],
@@ -599,8 +530,8 @@
       "Thomassin": [18.4800, -72.2800]
     };
 
-    window.onload = async function () {
-      map = L.map('mapClient').setView([18.525, -72.310], 12);
+    window.onload = function () {
+      map = L.map('map').setView([18.5392, -72.3364], 12);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
       verifierSession();
@@ -615,190 +546,167 @@
       }
     };
 
-    // --- GESTION DE L'AUTHENTIFICATION PRO ---
+    function toggleSchedule(show) {
+      const scheduleInputs = document.getElementById('scheduleInputs');
+      if (show) {
+        scheduleInputs.classList.remove('d-none');
+      } else {
+        scheduleInputs.classList.add('d-none');
+      }
+    }
+
+    function changerOnglet(nom, event) {
+      document.querySelectorAll('.section-app').forEach(s => s.classList.add('d-none'));
+      const targetSection = document.getElementById('section-' + nom);
+      if (targetSection) targetSection.classList.remove('d-none');
+
+      if (nom === 'client' && map) {
+        setTimeout(() => map.invalidateSize(), 300);
+      }
+    }
+
+    function calculerPrix() {
+      const zDepart = document.getElementById("zoneDepart").value;
+      const zArrivee = document.getElementById("zoneArrivee").value;
+      const transport = document.getElementById("moyenTransport").value;
+      const supplementPoids = parseInt(document.getElementById("poidsColis").value || 0);
+
+      if (!zDepart || !zArrivee) return;
+
+      let tarifBase = zDepart === zArrivee ? 250 : (zDepart.includes("Thomassin") || zArrivee.includes("Thomassin") ? 750 : 500);
+      let distanceKm = 0;
+
+      if (coordsZones[zDepart] && coordsZones[zArrivee]) {
+        const p1 = L.latLng(coordsZones[zDepart]);
+        const p2 = L.latLng(coordsZones[zArrivee]);
+        distanceKm = (p1.distanceTo(p2) / 1000).toFixed(1);
+
+        if (markerDepart) map.removeLayer(markerDepart);
+        if (markerArrivee) map.removeLayer(markerArrivee);
+        markerDepart = L.marker(coordsZones[zDepart]).addTo(map);
+        markerArrivee = L.marker(coordsZones[zArrivee]).addTo(map);
+        const group = new L.featureGroup([markerDepart, markerArrivee]);
+        map.fitBounds(group.getBounds().pad(0.2));
+      }
+
+      let suppDistance = distanceKm > 3 ? (distanceKm - 3) * 30 : 0;
+      let totalCalculated = tarifBase + suppDistance + supplementPoids;
+
+      if (transport === 'Voiture') totalCalculated *= 1.5;
+      if (transport === 'Tricycle') totalCalculated *= 1.2;
+
+      tarifActuel = Math.round(totalCalculated);
+      document.getElementById("distVal").textContent = distanceKm + " km";
+      document.getElementById("priceVal").textContent = tarifActuel + " HTG";
+    }
+
+    document.getElementById("orderForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const senderName = document.getElementById('clientNom').value;
+      const senderPhone = document.getElementById('clientTel').value;
+      const recipientName = document.getElementById('destinataireNom').value;
+      const recipientPhone = document.getElementById('destinataireTel').value;
+      const fromZone = document.getElementById('zoneDepart').value;
+      const toZone = document.getElementById('zoneArrivee').value;
+      const fromAddress = document.getElementById('adresseDepart').value;
+      const toAddress = document.getElementById('adresseArrivee').value;
+      const packageType = document.getElementById('typeColis').value;
+      const paymentMethod = document.getElementById('methodePaiement').value;
+
+      const isScheduled = document.getElementById('scheduled').checked;
+      let timingStr = 'Immédiat';
+      if (isScheduled) {
+        timingStr = `Planifié (${document.getElementById('deliveryDate').value} ${document.getElementById('deliveryTime').value})`;
+      }
+
+      if (supabaseClient) {
+        await supabaseClient.from('commandes').insert([{
+          client_nom: senderName,
+          client_tel: senderPhone,
+          destinataire_nom: recipientName,
+          destinataire_tel: recipientPhone,
+          zone_depart: fromZone,
+          zone_arrivee: toZone,
+          adresse_depart: fromAddress,
+          adresse_arrivee: toAddress,
+          type_colis: `${packageType} - ${timingStr}`,
+          paiement: paymentMethod,
+          prix: tarifActuel,
+          statut: 'En attente'
+        }]);
+      }
+
+      const message = `*NOUVELLE COMMANDE LIVRAISONRAPID* 🚚%0A%0A` +
+        `*Expéditeur:* ${encodeURIComponent(senderName)} (${encodeURIComponent(senderPhone)})%0A` +
+        `*Destinataire:* ${encodeURIComponent(recipientName)} (${encodeURIComponent(recipientPhone)})%0A` +
+        `*Trajet:* ${encodeURIComponent(fromZone)} ➔ ${encodeURIComponent(toZone)}%0A` +
+        `*Colis:* ${encodeURIComponent(packageType)}%0A` +
+        `*Horaire:* ${encodeURIComponent(timingStr)}%0A` +
+        `*Tarif:* ${tarifActuel} HTG`;
+
+      window.open(`https://wa.me/50938210256?text=${message}`, '_blank');
+      this.reset();
+    });
+
+    async function chercherSuivi() {
+      const query = document.getElementById('numSuivi').value.trim();
+      if (!query || !supabaseClient) return;
+
+      const { data } = await supabaseClient
+        .from('commandes')
+        .select('*, livreurs(nom, prenom, telephone)')
+        .or(`client_tel.eq.${query},id.eq.${query}`)
+        .order('id', { ascending: false }).limit(1);
+
+      const conteneur = document.getElementById('suiviResultat');
+      const details = document.getElementById('suiviDetails');
+
+      if (!data || data.length === 0) {
+        alert("Aucune commande trouvée.");
+        conteneur.style.display = 'none';
+        return;
+      }
+
+      const c = data[0];
+      conteneur.style.display = 'block';
+      details.innerHTML = `
+        <p><strong>Statut :</strong> <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span></p>
+        <p><strong>Colis :</strong> ${c.type_colis}</p>
+        <p><strong>Trajet :</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
+        <p><strong>Prix :</strong> ${c.prix} HTG</p>
+      `;
+    }
 
     function switchAuthTab(type) {
-      const formLogin = document.getElementById('formLogin');
-      const formSignup = document.getElementById('formSignup');
-      const tabConnexion = document.getElementById('tabConnexion');
-      const tabInscription = document.getElementById('tabInscription');
-
       if (type === 'login') {
-        formLogin.style.display = 'block';
-        formSignup.style.display = 'none';
-        tabConnexion.classList.add('active');
-        tabInscription.classList.remove('active');
+        document.getElementById('formLogin').style.display = 'block';
+        document.getElementById('formSignup').style.display = 'none';
+        document.getElementById('tabConnexion').classList.add('active');
+        document.getElementById('tabInscription').classList.remove('active');
       } else {
-        formLogin.style.display = 'none';
-        formSignup.style.display = 'block';
-        tabInscription.classList.add('active');
-        tabConnexion.classList.remove('active');
+        document.getElementById('formLogin').style.display = 'none';
+        document.getElementById('formSignup').style.display = 'block';
+        document.getElementById('tabInscription').classList.add('active');
+        document.getElementById('tabConnexion').classList.remove('active');
       }
     }
 
     function toggleLoginMode() {
       const mode = document.getElementById('modeConnexion').value;
-      const boxPassword = document.getElementById('boxLoginPassword');
-      const btnSubmit = document.getElementById('btnLoginSubmit');
-
-      if (mode === 'password') {
-        boxPassword.style.display = 'block';
-        btnSubmit.textContent = 'Se connecter';
-      } else {
-        boxPassword.style.display = 'none';
-        btnSubmit.textContent = 'Recevoir le code / lien OTP';
-      }
-    }
-
-    // INSCRIPTION LIVREUR
-    document.getElementById('formSignup').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée.");
-
-      const prenom = document.getElementById('signupPrenom').value.trim();
-      const nom = document.getElementById('signupNom').value.trim();
-      const email = document.getElementById('signupEmail').value.trim().toLowerCase();
-      const telephone = document.getElementById('signupTel').value.trim();
-      const password = document.getElementById('signupPassword').value;
-      const confirmPassword = document.getElementById('signupConfirmPassword').value;
-      const zone = document.getElementById('signupZone').value;
-
-      if (password !== confirmPassword) {
-        return alert("Les mots de passe ne correspondent pas.");
-      }
-
-      const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-        email: email,
-        password: password
-      });
-
-      if (authError) return alert("Erreur d'inscription : " + authError.message);
-
-      const { error: dbError } = await supabaseClient.from('livreurs').insert([{
-        nom: nom,
-        prenom: prenom,
-        email: email,
-        telephone: telephone,
-        zone: zone,
-        dispo: 'Disponible'
-      }]);
-
-      if (dbError) {
-        alert("Compte Auth créé, mais erreur table livreurs : " + dbError.message);
-      } else {
-        alert("Compte créé avec succès !");
-        await chargerEtSauvegarderProfilLivreur(email);
-      }
-    });
-
-    // CONNEXION LIVREUR
-    document.getElementById('formLogin').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée.");
-
-      const mode = document.getElementById('modeConnexion').value;
-      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-
-      if (mode === 'otp') {
-        const { error } = await supabaseClient.auth.signInWithOtp({ email: email });
-
-        if (error) {
-          alert("Erreur lors de l'envoi OTP : " + error.message);
-        } else {
-          currentOtpEmail = email;
-          document.getElementById('emailSentTo').textContent = email;
-          document.getElementById('formLogin').style.display = 'none';
-          document.getElementById('formVerifyOtp').style.display = 'block';
-        }
-      } else {
-        const password = document.getElementById('loginPassword').value;
-
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
-
-        if (error) {
-          alert("Identifiants incorrects : " + error.message);
-        } else {
-          await chargerEtSauvegarderProfilLivreur(email);
-        }
-      }
-    });
-
-    // VÉRIFICATION CODE OTP
-    document.getElementById('formVerifyOtp').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée.");
-
-      const token = document.getElementById('otpCode').value.trim();
-
-      const { data, error } = await supabaseClient.auth.verifyOtp({
-        email: currentOtpEmail,
-        token: token,
-        type: 'email'
-      });
-
-      if (error) {
-        alert("Code OTP invalide ou expiré : " + error.message);
-      } else {
-        await chargerEtSauvegarderProfilLivreur(currentOtpEmail);
-      }
-    });
-
-    function resetOtpForm() {
-      document.getElementById('formLogin').style.display = 'block';
-      document.getElementById('formVerifyOtp').style.display = 'none';
-      document.getElementById('otpCode').value = '';
-    }
-
-    async function chargerEtSauvegarderProfilLivreur(email) {
-      if (!supabaseClient) return;
-
-      let { data: profil } = await supabaseClient
-        .from('livreurs')
-        .select('*')
-        .eq('email', email)
-        .maybeSingle();
-
-      if (!profil) {
-        const { data: newProfil, error } = await supabaseClient
-          .from('livreurs')
-          .insert([{
-            email: email,
-            nom: 'Livreur',
-            prenom: 'Nouveau',
-            telephone: 'Non renseigné',
-            zone: 'Port-au-Prince - Canapé-Vert',
-            dispo: 'Disponible'
-          }])
-          .select()
-          .single();
-
-        if (!error) profil = newProfil;
-      }
-
-      if (profil) {
-        currentUser = profil;
-        localStorage.setItem('user_livreur', JSON.stringify(profil));
-      }
-
-      verifierSession();
+      document.getElementById('boxLoginPassword').style.display = mode === 'password' ? 'block' : 'none';
+      document.getElementById('btnLoginSubmit').textContent = mode === 'password' ? 'Se connecter' : 'Recevoir le code / lien OTP';
     }
 
     function verifierSession() {
       if (currentUser) {
-        document.getElementById('userBar').style.display = 'flex';
+        document.getElementById('userBar').style.setProperty('display', 'flex', 'important');
         document.getElementById('userInfo').textContent = `Connecté : ${currentUser.prenom} ${currentUser.nom}`;
         document.getElementById('authBox').style.display = 'none';
-        
         document.getElementById('espaceMonCompte').style.display = 'block';
         document.getElementById('profileNom').textContent = `${currentUser.prenom} ${currentUser.nom}`;
-        document.getElementById('profileEmail').textContent = currentUser.email || 'Non renseigné';
-        document.getElementById('profileTel').textContent = currentUser.telephone || 'Non renseigné';
-        document.getElementById('profileZone').textContent = currentUser.zone || 'Non renseignée';
       } else {
-        document.getElementById('userBar').style.display = 'none';
+        document.getElementById('userBar').style.setProperty('display', 'none', 'important');
         document.getElementById('authBox').style.display = 'block';
         document.getElementById('espaceMonCompte').style.display = 'none';
       }
@@ -811,168 +719,22 @@
       verifierSession();
     }
 
-    function changerOnglet(nom, event) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.section-app').forEach(s => s.classList.remove('active'));
-
-      if (event && event.target) {
-        event.target.classList.add('active');
-      }
-
-      const el = document.getElementById('section-' + nom);
-      if (el) {
-        el.classList.add('active');
-      }
-
-      if (nom === 'client' && map) {
-        setTimeout(() => map.invalidateSize(), 300);
-      }
-    }
-
-    // --- CALCUL TARIF ET SOUMISSION COMMANDE ---
-
-    function calculerPrix() {
-      const zDepart = document.getElementById("zoneDepart").value;
-      const zArrivee = document.getElementById("zoneArrivee").value;
-      const transportSelect = document.getElementById("moyenTransport");
-      const poids = document.getElementById("poidsColis").value;
-
-      let transport = transportSelect.value;
-
-      if (!zDepart || !zArrivee) return;
-
-      if ((poids === 'lourd' || poids === 'tres_lourd') && transport === 'Moto') {
-        alert("Attention : Pour un colis lourd (>15 kg), le véhicule a été ajusté en Tricycle / Voiture.");
-        transportSelect.value = poids === 'tres_lourd' ? 'Voiture' : 'Tricycle';
-        transport = transportSelect.value;
-      }
-
-      let tarifBase = 0;
-      if (zDepart === zArrivee) {
-        tarifBase = 250; 
-      } else if (zDepart.includes("Thomassin") || zArrivee.includes("Thomassin")) {
-        tarifBase = 750; 
-      } else {
-        tarifBase = 500; 
-      }
-
-      let distanceKm = 0;
-      if (coordsZones[zDepart] && coordsZones[zArrivee]) {
-        const p1 = L.latLng(coordsZones[zDepart]);
-        const p2 = L.latLng(coordsZones[zArrivee]);
-
-        distanceKm = (p1.distanceTo(p2) / 1000).toFixed(1);
-
-        if (markerDepart) map.removeLayer(markerDepart);
-        if (markerArrivee) map.removeLayer(markerArrivee);
-        markerDepart = L.marker(coordsZones[zDepart]).addTo(map);
-        markerArrivee = L.marker(coordsZones[zArrivee]).addTo(map);
-        const group = new L.featureGroup([markerDepart, markerArrivee]);
-        map.fitBounds(group.getBounds().pad(0.2));
-      }
-
-      let supplementDistance = distanceKm > 3 ? (distanceKm - 3) * 30 : 0;
-
-      let supplementPoids = 0;
-      if (poids === 'moyen') supplementPoids = 150;
-      if (poids === 'lourd') supplementPoids = 350;
-      if (poids === 'tres_lourd') supplementPoids = 700;
-
-      let totalCalculated = tarifBase + supplementDistance + supplementPoids;
-
-      if (transport === 'Voiture') totalCalculated *= 1.5;
-      if (transport === 'Tricycle') totalCalculated *= 1.2;
-
-      tarifActuel = Math.round(totalCalculated);
-
-      document.getElementById("distanceAffichee").textContent = distanceKm + " km";
-      document.getElementById("prixAffiche").textContent = tarifActuel + " HTG";
-    }
-
-    document.getElementById("formCommande").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée");
-
-      const typeColisTexte = `${document.getElementById("typeColis").value} (${document.getElementById("poidsColis").options[document.getElementById("poidsColis").selectedIndex].text})`;
-
-      const { error } = await supabaseClient.from('commandes').insert([{
-        client_nom: document.getElementById("clientNom").value,
-        client_tel: document.getElementById("clientTel").value,
-        destinataire_nom: document.getElementById("destinataireNom").value,
-        destinataire_tel: document.getElementById("destinataireTel").value,
-        zone_depart: document.getElementById("zoneDepart").value,
-        zone_arrivee: document.getElementById("zoneArrivee").value,
-        adresse_depart: document.getElementById("adresseDepart").value,
-        adresse_arrivee: document.getElementById("adresseArrivee").value,
-        type_colis: typeColisTexte,
-        paiement: document.getElementById("methodePaiement").value,
-        prix: tarifActuel,
-        statut: 'En attente'
-      }]);
-
-      if (error) alert("Erreur : " + error.message);
-      else { alert("Commande envoyée avec succès !"); this.reset(); }
-    });
-
-    async function chercherSuivi() {
-      const query = document.getElementById('numSuivi').value.trim();
-      if (!query || !supabaseClient) return;
-
-      const { data, error } = await supabaseClient
-        .from('commandes')
-        .select('*, livreurs(nom, prenom, telephone)')
-        .or(`client_tel.eq.${query},id.eq.${query}`)
-        .order('id', { ascending: false })
-        .limit(1);
-
-      const conteneur = document.getElementById('suiviResultat');
-      const details = document.getElementById('suiviDetails');
-
-      if (error || !data || data.length === 0) {
-        alert("Aucune commande trouvée avec cette référence.");
-        conteneur.style.display = 'none';
-        return;
-      }
-
-      const c = data[0];
-      conteneur.style.display = 'block';
-
-      let chauffeur = c.livreurs 
-        ? `${c.livreurs.prenom} ${c.livreurs.nom} (${c.livreurs.telephone})` 
-        : 'Attribution en cours...';
-
-      details.innerHTML = `
-        <p><strong>Statut :</strong> <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span></p>
-        <p><strong>Colis :</strong> ${c.type_colis}</p>
-        <p><strong>Trajet :</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
-        <p><strong>Livreur :</strong> ${chauffeur}</p>
-        <p><strong>Prix :</strong> ${c.prix} HTG</p>
-      `;
-    }
-
     async function chargerLivreurs() {
       if (!supabaseClient) return;
       const { data } = await supabaseClient.from('livreurs').select('*');
       const conteneur = document.getElementById("listeLivreurs");
       conteneur.innerHTML = "";
       document.getElementById("statLivreurs").textContent = data ? data.length : 0;
-
       if (data) {
         data.forEach(l => {
-          const carte = document.createElement("div");
-          carte.className = "item-card";
-          carte.innerHTML = `
-            <span class="badge ${l.dispo === 'Disponible' ? 'badge-dispo' : 'badge-occupe'}">${l.dispo || 'Disponible'}</span>
-            <h3>${l.prenom} ${l.nom}</h3>
-            <p><strong>Email :</strong> ${l.email || 'N/A'}</p>
-            <p><strong>Zone :</strong> ${l.zone}</p>
-            <p><strong>Tél :</strong> ${l.telephone}</p>
-            <div style="margin-top:10px;">
-              <a class="btn-action btn-whatsapp" href="https://wa.me/${l.telephone.replace(/\s+/g, '')}" target="_blank">WhatsApp</a>
-              ${currentUser && currentUser.id === l.id ? `<button class="btn-action btn-status" onclick="changerStatutLivreur('${l.id}', '${l.dispo}')">Changer Statut</button>` : ''}
+          conteneur.innerHTML += `
+            <div class="item-card">
+              <span class="badge ${l.dispo === 'Disponible' ? 'badge-dispo' : 'badge-occupe'}">${l.dispo || 'Disponible'}</span>
+              <h5>${l.prenom} ${l.nom}</h5>
+              <p class="mb-1 small">Zone: ${l.zone}</p>
+              <a class="btn-action btn-whatsapp mt-2" href="https://wa.me/${l.telephone ? l.telephone.replace(/\s+/g, '') : ''}" target="_blank">WhatsApp</a>
             </div>
           `;
-          conteneur.appendChild(carte);
         });
       }
     }
@@ -983,43 +745,23 @@
       const conteneur = document.getElementById("listeCommandes");
       conteneur.innerHTML = "";
       let totalCA = 0;
-
       document.getElementById("statCommandes").textContent = data ? data.length : 0;
 
       if (data) {
         data.forEach(c => {
           totalCA += Number(c.prix || 0);
-          const carte = document.createElement("div");
-          carte.className = "item-card";
-          carte.innerHTML = `
-            <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span>
-            <h3>Colis: ${c.type_colis} (${c.prix} HTG)</h3>
-            <p><strong>Client :</strong> ${c.client_nom} (${c.client_tel})</p>
-            <p><strong>Trajet :</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
-            <p><strong>Paiement :</strong> ${c.paiement}</p>
-            <p><strong>Chauffeur :</strong> ${c.livreurs ? c.livreurs.prenom + ' ' + c.livreurs.nom : 'Non assigné'}</p>
-            <div style="margin-top:8px;">
-              ${c.statut === 'En attente' && currentUser ? `<button class="btn-action btn-accept" onclick="changerStatutCommande('${c.id}', 'En cours')">Accepter Course</button>` : ''}
-              ${c.statut === 'En cours' && currentUser ? `<button class="btn-action btn-accept" onclick="changerStatutCommande('${c.id}', 'Livré')">Terminer Course</button>` : ''}
+          conteneur.innerHTML += `
+            <div class="item-card">
+              <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span>
+              <h5 class="mt-2">${c.type_colis}</h5>
+              <p class="mb-1 small"><strong>Expéditeur:</strong> ${c.client_nom}</p>
+              <p class="mb-1 small"><strong>Prix:</strong> ${c.prix} HTG</p>
+              <p class="mb-1 small"><strong>Trajet:</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
             </div>
           `;
-          conteneur.appendChild(carte);
         });
       }
       document.getElementById("statCA").textContent = totalCA + " HTG";
-    }
-
-    async function changerStatutLivreur(id, statutActuel) {
-      if (!supabaseClient) return;
-      const nouveau = statutActuel === 'Disponible' ? 'Occupé' : 'Disponible';
-      await supabaseClient.from('livreurs').update({ dispo: nouveau }).eq('id', id);
-    }
-
-    async function changerStatutCommande(id, nouveauStatut) {
-      if (!supabaseClient) return;
-      const maj = { statut: nouveauStatut };
-      if (nouveauStatut === 'En cours' && currentUser) maj.livreur_id = currentUser.id;
-      await supabaseClient.from('commandes').update(maj).eq('id', id);
     }
   </script>
 </body>
