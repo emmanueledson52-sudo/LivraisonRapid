@@ -52,7 +52,7 @@
                 </div>
                 <div class="col-md-6">
                   <label for="senderPhone" class="form-label">Téléphone WhatsApp *</label>
-                  <input type="tel" class="form-control" id="senderPhone" placeholder="Ex: +509 3400 0000" required>
+                  <input type="tel" class="form-control" id="senderPhone" placeholder="Ex: +509 3821 0256" required>
                 </div>
               </div>
 
@@ -244,11 +244,11 @@
           <h5 class="text-white">Besoin d'aide ?</h5>
           <ul class="list-unstyled">
             <li class="mb-2">
-              <a href="https://wa.me/50934000000" target="_blank" class="btn btn-outline-success btn-sm text-white">
+              <a href="https://wa.me/50938210256?text=Bonjour,%20j'ai%20une%20question%20concernant%20une%20livraison." target="_blank" class="btn btn-outline-success btn-sm text-white">
                 💬 Support WhatsApp direct
               </a>
             </li>
-            <li class="text-muted small">📞 +509 3400-0000</li>
+            <li class="text-muted small">📞 +509 3821-0256</li>
             <li class="text-muted small">✉️ support@livraisonrapid.ht</li>
           </ul>
         </div>
@@ -293,6 +293,9 @@
     function handleFormSubmit(e) {
       e.preventDefault();
 
+      // Votre numéro WhatsApp configuré
+      const myWhatsAppNumber = "50938210256";
+
       const senderName = document.getElementById('senderName').value;
       const senderPhone = document.getElementById('senderPhone').value;
       const recipientName = document.getElementById('recipientName').value;
@@ -315,20 +318,20 @@
 
       const price = document.getElementById('priceVal').innerText;
 
-      // Construction du message WhatsApp
+      // Construction du message WhatsApp encodé
       const message = `*NOUVELLE COMMANDE LIVRAISONRAPID* 🚚%0A%0A` +
-        `*Expéditeur:* ${senderName} (${senderPhone})%0A` +
-        `*Destinataire:* ${recipientName} (${recipientPhone})%0A` +
-        `*Trajet:* ${fromZone} ➔ ${toZone}%0A` +
-        `*Adresse départ:* ${fromAddress}%0A` +
-        `*Adresse arrivée:* ${toAddress}%0A` +
-        `*Type de colis:* ${packageType}%0A` +
-        `*Paiement:* ${paymentMethod}%0A` +
-        `*Horaire:* ${timingStr}%0A` +
-        `*Tarif estimé:* ${price}`;
+        `*Expéditeur:* ${encodeURIComponent(senderName)} (${encodeURIComponent(senderPhone)})%0A` +
+        `*Destinataire:* ${encodeURIComponent(recipientName)} (${encodeURIComponent(recipientPhone)})%0A` +
+        `*Trajet:* ${encodeURIComponent(fromZone)} ➔ ${encodeURIComponent(toZone)}%0A` +
+        `*Adresse départ:* ${encodeURIComponent(fromAddress)}%0A` +
+        `*Adresse arrivée:* ${encodeURIComponent(toAddress)}%0A` +
+        `*Type de colis:* ${encodeURIComponent(packageType)}%0A` +
+        `*Paiement:* ${encodeURIComponent(paymentMethod)}%0A` +
+        `*Horaire:* ${encodeURIComponent(timingStr)}%0A` +
+        `*Tarif estimé:* ${encodeURIComponent(price)}`;
 
       // Redirection vers le numéro WhatsApp de l'entreprise
-      window.open(`https://wa.me/50934000000?text=${message}`, '_blank');
+      window.open(`https://wa.me/${myWhatsAppNumber}?text=${message}`, '_blank');
     }
   </script>
 </body>
