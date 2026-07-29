@@ -410,10 +410,10 @@
           <div>
             <label>Poids estimé du colis</label>
             <select id="poidsColis" onchange="calculerPrix()" required>
-              <option value="leger">Léger (< 5 kg)</option>
+              <option value="leger">Léger (&lt; 5 kg)</option>
               <option value="moyen">Moyen (5 kg - 15 kg) [+150 HTG]</option>
               <option value="lourd">Lourd (15 kg - 30 kg) [+350 HTG]</option>
-              <option value="tres_lourd">Très lourd (> 30 kg) [+700 HTG]</option>
+              <option value="tres_lourd">Très lourd (&gt; 30 kg) [+700 HTG]</option>
             </select>
           </div>
         </div>
@@ -466,23 +466,28 @@
     </div>
   </div>
 
-  <!-- 3. LIVREUR / INSCRIPTION & CONNEXION -->
+  <!-- 3. ESPACE LIVREUR / AUTHENTIFICATION PRO -->
   <div id="section-livreur" class="section-app">
     
-    <!-- ESPACE COMPTE CONNECTÉ -->
+    <!-- COMPTE CONNECTÉ -->
     <div class="carte carte-centree" id="espaceMonCompte" style="display:none;">
       <h2>👤 Mon Espace Livreur</h2>
       <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
         <p style="margin: 5px 0;"><strong>Nom :</strong> <span id="profileNom"></span></p>
         <p style="margin: 5px 0;"><strong>Email :</strong> <span id="profileEmail"></span></p>
         <p style="margin: 5px 0;"><strong>Téléphone :</strong> <span id="profileTel"></span></p>
+        <p style="margin: 5px 0;"><strong>Zone :</strong> <span id="profileZone"></span></p>
       </div>
       <button onclick="deconnexion()" class="btn-logout">🔴 Se déconnecter</button>
     </div>
 
-    <!-- FORMULAIRE DE CONNEXION -->
+    <!-- FORMULAIRE DE CONNEXION / INSCRIPTION -->
     <div class="carte carte-centree" id="authBox">
-      <h2>🔑 Connexion Livreur</h2>
+      <!-- Onglets Connexion / Inscription -->
+      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button type="button" id="tabConnexion" class="tab-btn active" onclick="switchAuthTab('login')">Se connecter</button>
+        <button type="button" id="tabInscription" class="tab-btn" onclick="switchAuthTab('signup')">Créer un compte</button>
+      </div>
 
       <!-- BOUTON GOOGLE -->
       <button type="button" class="btn-google" onclick="connexionGoogle()">
@@ -492,59 +497,66 @@
 
       <div class="separator">OU</div>
 
+      <!-- FORMULAIRE CONNEXION -->
       <form id="formLogin">
         <label>Mode de connexion :</label>
-        <select id="modeConnexion" onchange="basculerModeConnexion()">
-          <option value="email">Adresse Email (sans mot de passe)</option>
-          <option value="tel">Numéro de téléphone (+ mot de passe)</option>
+        <select id="modeConnexion" onchange="toggleLoginMode()">
+          <option value="otp">Code OTP / Lien Magique (par E-mail)</option>
+          <option value="password">E-mail + Mot de passe</option>
         </select>
 
-        <!-- Champ Email (sans mot de passe) -->
-        <div id="champEmail">
+        <!-- Saisie Email -->
+        <div id="boxLoginEmail">
           <label>Adresse Email</label>
-          <input type="email" id="loginEmail" placeholder="Ex: livreur@gmail.com">
+          <input type="email" id="loginEmail" required placeholder="livreur@exemple.com">
         </div>
 
-        <!-- Champ Téléphone + Mot de passe -->
-        <div id="champTel" style="display:none;">
-          <label>Numéro de téléphone</label>
-          <input type="tel" id="loginTel" placeholder="Ex: +509 3400 0000">
-
+        <!-- Saisie Mot de passe -->
+        <div id="boxLoginPassword" style="display:none;">
           <label>Mot de passe</label>
-          <input type="password" id="loginPassword" placeholder="Saisissez votre mot de passe">
+          <input type="password" id="loginPassword" placeholder="••••••••">
         </div>
 
-        <button type="submit" class="btn-submit">Se connecter</button>
+        <button type="submit" id="btnLoginSubmit" class="btn-submit">Recevoir le code / lien OTP</button>
       </form>
-    </div>
 
-    <!-- FORMULAIRE D'INSCRIPTION LIVREUR -->
-    <div class="carte" id="inscriptionBox">
-      <h2>🛵 Inscription d'un Livreur</h2>
-      <form id="formLivreur">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div><label>Nom</label><input type="text" id="nomLivreur" required></div>
-          <div><label>Prénom</label><input type="text" id="prenomLivreur" required></div>
+      <!-- ÉTAPE VÉRIFICATION CODE OTP (Masqué par défaut) -->
+      <form id="formVerifyOtp" style="display: none; margin-top: 15px;">
+        <div style="background: #eef6ff; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 10px;">
+          📩 Un code OTP a été envoyé à <strong id="emailSentTo"></strong>
         </div>
+        <label>Code de vérification (6 chiffres)</label>
+        <input type="text" id="otpCode" placeholder="123456" maxlength="6" style="letter-spacing: 5px; font-size: 18px; text-align: center;">
+        <button type="submit" class="btn-submit" style="background-color: #28a745;">Vérifier et me connecter</button>
+        <button type="button" onclick="resetOtpForm()" style="background: none; border: none; color: #1f4e79; text-decoration: underline; margin-top: 10px; cursor: pointer; width: 100%;">Changer d'email</button>
+      </form>
+
+      <!-- FORMULAIRE INSCRIPTION -->
+      <form id="formSignup" style="display: none;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div><label>Adresse Email</label><input type="email" id="emailLivreur" required placeholder="livreur@gmail.com"></div>
-          <div><label>Téléphone</label><input type="tel" id="teleLivreur" required placeholder="+509 ..."></div>
+          <div><label>Prénom</label><input type="text" id="signupPrenom" required placeholder="Jean"></div>
+          <div><label>Nom</label><input type="text" id="signupNom" required placeholder="Dupont"></div>
         </div>
 
-        <!-- Mot de passe pour le numéro de téléphone -->
+        <label>Adresse Email</label>
+        <input type="email" id="signupEmail" required placeholder="livreur@exemple.com">
+
+        <label>Téléphone WhatsApp</label>
+        <input type="tel" id="signupTel" required placeholder="+509 3400 0000">
+
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div>
-            <label>Mot de passe (pour connexion tél)</label>
-            <input type="password" id="passLivreur" required placeholder="••••••••">
+            <label>Mot de passe</label>
+            <input type="password" id="signupPassword" required placeholder="••••••••" minlength="6">
           </div>
           <div>
-            <label>Confirmer le mot de passe</label>
-            <input type="password" id="confirmPassLivreur" required placeholder="••••••••">
+            <label>Confirmation</label>
+            <input type="password" id="signupConfirmPassword" required placeholder="••••••••" minlength="6">
           </div>
         </div>
 
-        <label>Zone principale d'intervention</label>
-        <select id="zoneLivreur" required>
+        <label>Zone d'intervention</label>
+        <select id="signupZone" required>
           <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
           <option value="Port-au-Prince - Turgeau">Port-au-Prince - Turgeau</option>
           <option value="Port-au-Prince - Pacot">Port-au-Prince - Pacot</option>
@@ -552,10 +564,12 @@
           <option value="Delmas">Delmas</option>
           <option value="Route de Frères">Route de Frères</option>
         </select>
+
         <button type="submit" class="btn-submit">Créer mon compte livreur</button>
       </form>
     </div>
 
+    <!-- LISTE DES LIVREURS -->
     <div class="carte">
       <h2>📋 Registre des Chauffeurs</h2>
       <div id="listeLivreurs" class="grid-layout"></div>
@@ -604,6 +618,7 @@
 
     let map, markerDepart, markerArrivee;
     let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
+    let currentOtpEmail = '';
     let tarifActuel = 0;
 
     const coordsZones = {
@@ -636,26 +651,171 @@
       }
     };
 
-    function basculerModeConnexion() {
-      const mode = document.getElementById("modeConnexion").value;
-      if (mode === "tel") {
-        document.getElementById("champTel").style.display = "block";
-        document.getElementById("champEmail").style.display = "none";
+    // --- GESTION DE L'AUTHENTIFICATION PRO ---
+
+    function switchAuthTab(type) {
+      const formLogin = document.getElementById('formLogin');
+      const formSignup = document.getElementById('formSignup');
+      const tabConnexion = document.getElementById('tabConnexion');
+      const tabInscription = document.getElementById('tabInscription');
+
+      if (type === 'login') {
+        formLogin.style.display = 'block';
+        formSignup.style.display = 'none';
+        tabConnexion.classList.add('active');
+        tabInscription.classList.remove('active');
       } else {
-        document.getElementById("champTel").style.display = "none";
-        document.getElementById("champEmail").style.display = "block";
+        formLogin.style.display = 'none';
+        formSignup.style.display = 'block';
+        tabInscription.classList.add('active');
+        tabConnexion.classList.remove('active');
+      }
+    }
+
+    function toggleLoginMode() {
+      const mode = document.getElementById('modeConnexion').value;
+      const boxPassword = document.getElementById('boxLoginPassword');
+      const btnSubmit = document.getElementById('btnLoginSubmit');
+
+      if (mode === 'password') {
+        boxPassword.style.display = 'block';
+        btnSubmit.textContent = 'Se connecter';
+      } else {
+        boxPassword.style.display = 'none';
+        btnSubmit.textContent = 'Recevoir le code / lien OTP';
       }
     }
 
     async function connexionGoogle() {
       if (!supabaseClient) return alert("Base de données non initialisée");
-      const { data, error } = await supabaseClient.auth.signInWithOAuth({
+      const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
-        options: {
-          redirectTo: window.location.href
-        }
+        options: { redirectTo: window.location.href }
       });
       if (error) alert("Erreur Google OAuth : " + error.message);
+    }
+
+    // 1. INSCRIPTION SÉCURISÉE PAR EMAIL + SUPABASE AUTH
+    document.getElementById('formSignup').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!supabaseClient) return alert("Base de données non initialisée.");
+
+      const prenom = document.getElementById('signupPrenom').value.trim();
+      const nom = document.getElementById('signupNom').value.trim();
+      const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+      const telephone = document.getElementById('signupTel').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const confirmPassword = document.getElementById('signupConfirmPassword').value;
+      const zone = document.getElementById('signupZone').value;
+
+      if (password !== confirmPassword) {
+        return alert("Les mots de passe ne correspondent pas.");
+      }
+
+      // Étape A : Création du compte dans Supabase Auth
+      const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password
+      });
+
+      if (authError) return alert("Erreur d'inscription : " + authError.message);
+
+      // Étape B : Insertion dans la table 'livreurs'
+      const { error: dbError } = await supabaseClient.from('livreurs').insert([{
+        nom: nom,
+        prenom: prenom,
+        email: email,
+        telephone: telephone,
+        zone: zone,
+        dispo: 'Disponible'
+      }]);
+
+      if (dbError) {
+        alert("Compte Auth créé, mais erreur table livreurs : " + dbError.message);
+      } else {
+        alert("Compte créé avec succès ! Un e-mail de confirmation peut vous être envoyé.");
+        location.reload();
+      }
+    });
+
+    // 2. CONNEXION LIVREUR (OTP OU MOT DE PASSE)
+    document.getElementById('formLogin').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!supabaseClient) return alert("Base de données non initialisée.");
+
+      const mode = document.getElementById('modeConnexion').value;
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+
+      if (mode === 'otp') {
+        // Mode OTP / Lien magique
+        const { error } = await supabaseClient.auth.signInWithOtp({ email: email });
+
+        if (error) {
+          alert("Erreur lors de l'envoi OTP : " + error.message);
+        } else {
+          currentOtpEmail = email;
+          document.getElementById('emailSentTo').textContent = email;
+          document.getElementById('formLogin').style.display = 'none';
+          document.getElementById('formVerifyOtp').style.display = 'block';
+        }
+
+      } else {
+        // Mode E-mail + Mot de passe
+        const password = document.getElementById('loginPassword').value;
+
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+        if (error) {
+          alert("Identifiants incorrects : " + error.message);
+        } else {
+          await chargerEtSauvegarderProfilLivreur(email);
+        }
+      }
+    });
+
+    // VÉRICATION DU CODE OTP
+    document.getElementById('formVerifyOtp').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!supabaseClient) return alert("Base de données non initialisée.");
+
+      const token = document.getElementById('otpCode').value.trim();
+
+      const { data, error } = await supabaseClient.auth.verifyOtp({
+        email: currentOtpEmail,
+        token: token,
+        type: 'email'
+      });
+
+      if (error) {
+        alert("Code OTP invalide ou expiré : " + error.message);
+      } else {
+        await chargerEtSauvegarderProfilLivreur(currentOtpEmail);
+      }
+    });
+
+    function resetOtpForm() {
+      document.getElementById('formLogin').style.display = 'block';
+      document.getElementById('formVerifyOtp').style.display = 'none';
+      document.getElementById('otpCode').value = '';
+    }
+
+    async function chargerEtSauvegarderProfilLivreur(email) {
+      const { data: profil } = await supabaseClient
+        .from('livreurs')
+        .select('*')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (profil) {
+        localStorage.setItem('user_livreur', JSON.stringify(profil));
+      } else {
+        localStorage.setItem('user_livreur', JSON.stringify({ email: email, nom: 'Livreur', prenom: 'Utilisateur' }));
+      }
+      alert("Connexion réussie !");
+      location.reload();
     }
 
     function verifierSession() {
@@ -663,21 +823,21 @@
         document.getElementById('userBar').style.display = 'flex';
         document.getElementById('userInfo').textContent = `Connecté : ${currentUser.prenom} ${currentUser.nom}`;
         document.getElementById('authBox').style.display = 'none';
-        document.getElementById('inscriptionBox').style.display = 'none';
         
         document.getElementById('espaceMonCompte').style.display = 'block';
         document.getElementById('profileNom').textContent = `${currentUser.prenom} ${currentUser.nom}`;
         document.getElementById('profileEmail').textContent = currentUser.email || 'Non renseigné';
         document.getElementById('profileTel').textContent = currentUser.telephone || 'Non renseigné';
+        document.getElementById('profileZone').textContent = currentUser.zone || 'Non renseignée';
       } else {
         document.getElementById('userBar').style.display = 'none';
         document.getElementById('authBox').style.display = 'block';
-        document.getElementById('inscriptionBox').style.display = 'block';
         document.getElementById('espaceMonCompte').style.display = 'none';
       }
     }
 
     function deconnexion() {
+      if (supabaseClient) supabaseClient.auth.signOut();
       localStorage.removeItem('user_livreur');
       location.reload();
     }
@@ -700,6 +860,8 @@
       }
     }
 
+    // --- LOGIQUE DE COMMANDE ET CALCUL DES PRIX ---
+
     function calculerPrix() {
       const zDepart = document.getElementById("zoneDepart").value;
       const zArrivee = document.getElementById("zoneArrivee").value;
@@ -711,7 +873,7 @@
       if (!zDepart || !zArrivee) return;
 
       if ((poids === 'lourd' || poids === 'tres_lourd') && transport === 'Moto') {
-        alert("Attention : Pour un colis lourd (>15 kg), la livraison par Moto n'est pas adaptée. Le véhicule a été ajusté en Tricycle / Voiture.");
+        alert("Attention : Pour un colis lourd (>15 kg), le véhicule a été ajusté en Tricycle / Voiture.");
         transportSelect.value = poids === 'tres_lourd' ? 'Voiture' : 'Tricycle';
         transport = transportSelect.value;
       }
@@ -758,6 +920,28 @@
       document.getElementById("prixAffiche").textContent = tarifActuel + " HTG";
     }
 
+    document.getElementById("formCommande").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (!supabaseClient) return alert("Base de données non initialisée");
+
+      const typeColisTexte = `${document.getElementById("typeColis").value} (${document.getElementById("poidsColis").options[document.getElementById("poidsColis").selectedIndex].text})`;
+
+      const { error } = await supabaseClient.from('commandes').insert([{
+        client_nom: document.getElementById("clientNom").value,
+        client_tel: document.getElementById("clientTel").value,
+        zone_depart: document.getElementById("zoneDepart").value,
+        zone_arrivee: document.getElementById("zoneArrivee").value,
+        adresse_depart: document.getElementById("adresseDepart").value,
+        adresse_arrivee: document.getElementById("adresseArrivee").value,
+        type_colis: typeColisTexte,
+        paiement: document.getElementById("methodePaiement").value,
+        prix: tarifActuel
+      }]);
+
+      if (error) alert("Erreur : " + error.message);
+      else { alert("Commande envoyée avec succès !"); this.reset(); }
+    });
+
     async function chercherSuivi() {
       const query = document.getElementById('numSuivi').value.trim();
       if (!query || !supabaseClient) return;
@@ -793,104 +977,6 @@
         <p><strong>Prix :</strong> ${c.prix} HTG</p>
       `;
     }
-
-    // INSCRIPTION LIVREUR (AVEC MOT DE PASSE POUR LE TÉLÉPHONE)
-    document.getElementById("formLivreur").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée");
-
-      const pass = document.getElementById("passLivreur").value;
-      const confirmPass = document.getElementById("confirmPassLivreur").value;
-
-      if (pass !== confirmPass) {
-        return alert("Les mots de passe ne correspondent pas !");
-      }
-
-      const { data, error } = await supabaseClient.from('livreurs').insert([{
-        nom: document.getElementById("nomLivreur").value,
-        prenom: document.getElementById("prenomLivreur").value,
-        email: document.getElementById("emailLivreur").value,
-        telephone: document.getElementById("teleLivreur").value,
-        password: pass,
-        zone: document.getElementById("zoneLivreur").value
-      }]).select();
-
-      if (error) alert("Erreur : " + error.message);
-      else { 
-        alert("Compte créé avec succès ! Vous pouvez vous connecter."); 
-        this.reset(); 
-      }
-    });
-
-    // CONNEXION LIVREUR
-    document.getElementById("formLogin").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée");
-
-      const mode = document.getElementById("modeConnexion").value;
-
-      if (mode === 'email') {
-        // CONNEXION PAR EMAIL SANS MOT DE PASSE
-        const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-        if (!email) return alert("Veuillez entrer une adresse email.");
-
-        const { data, error } = await supabaseClient
-          .from('livreurs')
-          .select('*')
-          .eq('email', email)
-          .single();
-
-        if (data) {
-          localStorage.setItem('user_livreur', JSON.stringify(data));
-          location.reload();
-        } else {
-          alert("Aucun livreur trouvé avec cette adresse email.");
-        }
-
-      } else {
-        // CONNEXION PAR TÉLÉPHONE AVEC MOT DE PASSE
-        const tel = document.getElementById("loginTel").value.trim();
-        const pass = document.getElementById("loginPassword").value;
-
-        if (!tel || !pass) return alert("Veuillez saisir votre numéro et votre mot de passe.");
-
-        const { data, error } = await supabaseClient
-          .from('livreurs')
-          .select('*')
-          .eq('telephone', tel)
-          .eq('password', pass)
-          .single();
-
-        if (data) {
-          localStorage.setItem('user_livreur', JSON.stringify(data));
-          location.reload();
-        } else {
-          alert("Numéro de téléphone ou mot de passe incorrect.");
-        }
-      }
-    });
-
-    document.getElementById("formCommande").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée");
-
-      const typeColisTexte = `${document.getElementById("typeColis").value} (${document.getElementById("poidsColis").options[document.getElementById("poidsColis").selectedIndex].text})`;
-
-      const { error } = await supabaseClient.from('commandes').insert([{
-        client_nom: document.getElementById("clientNom").value,
-        client_tel: document.getElementById("clientTel").value,
-        zone_depart: document.getElementById("zoneDepart").value,
-        zone_arrivee: document.getElementById("zoneArrivee").value,
-        adresse_depart: document.getElementById("adresseDepart").value,
-        adresse_arrivee: document.getElementById("adresseArrivee").value,
-        type_colis: typeColisTexte,
-        paiement: document.getElementById("methodePaiement").value,
-        prix: tarifActuel
-      }]);
-
-      if (error) alert("Erreur : " + error.message);
-      else { alert("Commande envoyée avec succès !"); this.reset(); }
-    });
 
     async function chargerLivreurs() {
       if (!supabaseClient) return;
