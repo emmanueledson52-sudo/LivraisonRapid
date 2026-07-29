@@ -191,8 +191,14 @@
                   </div>
                 </div>
 
-                <div class="alert alert-warning py-2 small mb-3">
-                  🛡️ <strong>Note de sécurité :</strong> Seules les zones actuellement sécurisées 🟢 ou moyennement sûres 🟡 sont ouvertes à la commande.
+                <!-- Note de sécurité corrigée -->
+                <div class="alert alert-warning py-2 small mb-3 d-flex align-items-center gap-1">
+                  <span class="me-1">🛡️</span>
+                  <div>
+                    <strong>Note de sécurité :</strong> Seules les zones actuellement sécurisées 
+                    <span class="badge bg-success rounded-pill">Sûre</span> ou moyennement sûres 
+                    <span class="badge bg-warning text-dark rounded-pill">Moyenne</span> sont ouvertes à la commande.
+                  </div>
                 </div>
 
                 <div class="mb-3">
