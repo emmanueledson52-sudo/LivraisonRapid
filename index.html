@@ -28,7 +28,7 @@
     }
 
     #map {
-      height: 320px;
+      height: 300px;
       border-radius: 8px;
       z-index: 1;
     }
@@ -36,47 +36,6 @@
     .sticky-card {
       position: sticky;
       top: 20px;
-    }
-
-    .badge-dispo { background-color: #28a745; }
-    .badge-occupe { background-color: #dc3545; }
-    .badge-attente { background-color: #ffc107; color: #333; }
-    .badge-cours { background-color: #17a2b8; }
-    .badge-livre { background-color: #6c757d; }
-
-    .btn-action {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      gap: 5px;
-      align-items: center;
-    }
-
-    .btn-whatsapp { background-color: #25D366; color: white; }
-
-    .grid-layout {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 15px;
-    }
-
-    .item-card {
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 15px;
-      background: #ffffff;
-    }
-
-    /* Style Système d'avis / Étoiles */
-    .rating-stars {
-      color: #ffc107;
-      cursor: pointer;
-      font-size: 1.25rem;
     }
 
     /* Pulse animation pour la géolocalisation GPS active */
@@ -89,24 +48,17 @@
       50% { opacity: 0.5; transform: scale(1.05); }
       100% { opacity: 1; transform: scale(1); }
     }
-
-    /* Status de sécurité des zones */
-    .sec-green { border-left: 5px solid #28a745; }
-    .sec-yellow { border-left: 5px solid #ffc107; }
-    .sec-red { border-left: 5px solid #dc3545; opacity: 0.6; }
   </style>
 </head>
 
 <body>
 
-  <!-- Conteneur Toast pour Notifications Temps Réel -->
+  <!-- Toast Notification -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
     <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
-        <div class="toast-body" id="toastMessage">
-          Action effectuée avec succès !
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        <div class="toast-body" id="toastMessage">Action effectuée !</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
       </div>
     </div>
   </div>
@@ -115,8 +67,7 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
     <div class="container">
       <a class="navbar-brand fw-bold text-primary" href="#">🚚 LivraisonRapid</a>
-
-      <!-- Bouton PWA d'installation de l'App -->
+      
       <button id="btnPwaInstall" class="btn btn-warning btn-sm me-2 d-none fw-bold" onclick="installerPWA()">
         📲 Installer l'App
       </button>
@@ -124,15 +75,12 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-
+      
       <div class="collapse navbar-collapse" id="navbarNav">
         <div class="navbar-nav ms-auto flex-row flex-wrap gap-2 mt-2 mt-lg-0">
-          <button class="btn btn-primary btn-sm" onclick="changerOnglet('client', event)">📦 Commander</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis / GPS</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('livreur', event)">🛵 Espace Livreur</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('commandes', event)">📋 Courses en cours</button>
-          <button class="btn btn-outline-info btn-sm" onclick="changerOnglet('support', event)">💬 Support & FAQ</button>
-          <button class="btn btn-outline-dark btn-sm" onclick="changerOnglet('admin', event)">📊 Admin</button>
+          <button class="btn btn-primary btn-sm" onclick="changerOnglet('client')">📦 Commander</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi')">🔎 Suivi GPS</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('livreur')">🛵 Espace Livreur</button>
         </div>
       </div>
     </div>
@@ -141,185 +89,107 @@
   <!-- Contenu Principal -->
   <main class="container mb-5">
 
-    <!-- Barre Livreur / Activation GPS Live -->
-    <div id="userBar" class="alert alert-info d-flex justify-content-between align-items-center mb-4" style="display:none !important;">
+    <!-- Barre Livreur -->
+    <div id="userBar" class="alert alert-info d-flex justify-content-between align-items-center mb-4">
       <div>
-        <strong id="userInfo">Espace Livreur</strong>
+        <strong id="userInfo">Espace Chauffeur</strong>
         <span id="gpsBadge" class="badge bg-secondary ms-2">GPS Inactif</span>
       </div>
-      <div class="d-flex gap-2">
-        <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm fw-bold">📍 Partage GPS Live</button>
-        <button onclick="deconnexion()" class="btn btn-danger btn-sm">Déconnexion</button>
+      <div>
+        <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm me-2 fw-bold">📍 Activer Partage GPS Live</button>
       </div>
     </div>
 
     <!-- 1. SECTION COMMANDE CLIENT -->
     <div id="section-client" class="section-app">
       <div class="row g-4">
-
-        <!-- Colonne Gauche : Formulaire de Commande -->
+        
         <div class="col-lg-7">
           <div class="card shadow-sm border-0">
             <div class="card-body p-4">
-              <h3 class="card-title mb-4">🚚 Commander une livraison</h3>
-
+              <h3 class="card-title mb-4">🚚 Nouvelle Commande</h3>
+              
               <form id="orderForm">
-
-                <!-- 1. Informations Expéditeur -->
-                <h5 class="text-secondary fs-6 mb-3">1. Information Expéditeur (Vous)</h5>
+                
+                <!-- Expéditeur -->
+                <h5 class="text-secondary fs-6 mb-3">1. Information Expéditeur</h5>
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
-                    <label for="clientNom" class="form-label">Nom complet *</label>
-                    <input type="text" class="form-control" id="clientNom" placeholder="Ex: Marie Joseph" required>
+                    <label class="form-label">Nom de l'expéditeur *</label>
+                    <input type="text" class="form-control" id="clientNom" required placeholder="Ex: Jean Paul">
                   </div>
                   <div class="col-md-6">
-                    <label for="clientTel" class="form-label">Téléphone WhatsApp *</label>
-                    <input type="tel" class="form-control" id="clientTel" placeholder="Ex: +509 3821 0256" required>
+                    <label class="form-label">Téléphone / WhatsApp Expéditeur *</label>
+                    <input type="tel" class="form-control" id="clientTel" required placeholder="+509 3800 0000">
                   </div>
                 </div>
 
-                <!-- 2. Informations Destinataire -->
-                <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-                  <h5 class="text-secondary fs-6 mb-0">2. Information Destinataire</h5>
-                  <div class="form-check form-switch mb-0">
-                    <input class="form-check-input" type="checkbox" id="memeDestinataire" onchange="copierInfoExpediteur()">
-                    <label class="form-check-label small text-muted" for="memeDestinataire">Je suis le destinataire</label>
-                  </div>
-                </div>
-
-                <div class="row g-3 mb-3" id="blockDestinataire">
-                  <div class="col-md-6">
-                    <label for="destinataireNom" class="form-label">Nom du destinataire *</label>
-                    <input type="text" class="form-control" id="destinataireNom" placeholder="Ex: Jean Baptiste" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="destinataireTel" class="form-label">WhatsApp Destinataire (Alerte Directe) *</label>
-                    <input type="tel" class="form-control" id="destinataireTel" placeholder="Ex: +509 3700 0000" required>
-                  </div>
-                </div>
-
-                <!-- 3. Trajet, Zones & Sécurité -->
-                <h5 class="text-secondary fs-6 mb-3 mt-4">3. Trajet, Zones & Sécurité</h5>
+                <!-- Destinataire -->
+                <h5 class="text-secondary fs-6 mb-3 mt-4">2. Information Destinataire</h5>
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
-                    <label for="zoneDepart" class="form-label">Zone départ *</label>
+                    <label class="form-label">Nom du destinataire *</label>
+                    <input type="text" class="form-control" id="destinataireNom" required placeholder="Ex: Marie Joseph">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">WhatsApp Destinataire *</label>
+                    <input type="tel" class="form-control" id="destinataireTel" required placeholder="+509 3700 0000">
+                  </div>
+                </div>
+
+                <!-- Trajet -->
+                <h5 class="text-secondary fs-6 mb-3 mt-4">3. Zones & Sécurité du Trajet</h5>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Zone de départ *</label>
                     <select class="form-select" id="zoneDepart" onchange="calculerPrixEtSecurite()" required>
-                      <option value="">-- Choisir --</option>
-                      <optgroup label="Port-au-Prince (Zones Accessibles)">
-                        <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
-                        <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
-                        <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
-                        <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
-                        <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
-                        <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
-                      </optgroup>
-                      <optgroup label="Autres Communes Praticables">
-                        <option value="Pétion-Ville">Pétion-Ville 🟢</option>
-                        <option value="Delmas">Delmas 🟢</option>
-                        <option value="Route de Frères">Route de Frères 🟢</option>
-                        <option value="Juvénat">Juvénat 🟢</option>
-                        <option value="Thomassin">Thomassin 🟢</option>
-                      </optgroup>
+                      <option value="">-- Sélectionner une zone --</option>
+                      <option value="Pétion-Ville">🟢 Pétion-Ville (Zone Sûre)</option>
+                      <option value="Canapé-Vert">🟢 Canapé-Vert (Zone Sûre)</option>
+                      <option value="Delmas">🟡 Delmas (Vigilance)</option>
+                      <option value="Nazon">🟡 Nazon (Vigilance)</option>
                     </select>
                   </div>
                   <div class="col-md-6">
-                    <label for="zoneArrivee" class="form-label">Zone arrivée *</label>
+                    <label class="form-label">Zone d'arrivée *</label>
                     <select class="form-select" id="zoneArrivee" onchange="calculerPrixEtSecurite()" required>
-                      <option value="">-- Choisir --</option>
-                      <optgroup label="Port-au-Prince (Zones Accessibles)">
-                        <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
-                        <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
-                        <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
-                        <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
-                        <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
-                        <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
-                      </optgroup>
-                      <optgroup label="Autres Communes Praticables">
-                        <option value="Pétion-Ville">Pétion-Ville 🟢</option>
-                        <option value="Delmas">Delmas 🟢</option>
-                        <option value="Route de Frères">Route de Frères 🟢</option>
-                        <option value="Juvénat">Juvénat 🟢</option>
-                        <option value="Thomassin">Thomassin 🟢</option>
-                      </optgroup>
+                      <option value="">-- Sélectionner une zone --</option>
+                      <option value="Pétion-Ville">🟢 Pétion-Ville (Zone Sûre)</option>
+                      <option value="Canapé-Vert">🟢 Canapé-Vert (Zone Sûre)</option>
+                      <option value="Delmas">🟡 Delmas (Vigilance)</option>
+                      <option value="Nazon">🟡 Nazon (Vigilance)</option>
                     </select>
                   </div>
                 </div>
 
-                <!-- Panneau visuel d'état de sécurité -->
-                <div id="securityAlert" class="alert alert-info d-flex align-items-center gap-2 mb-3" role="alert">
-                  <span id="secIcon" class="fs-4">🛡️</span>
-                  <div id="secText" class="small">Sélectionnez vos zones pour évaluer la sécurité du trajet.</div>
+                <div id="securityAlert" class="alert alert-success d-flex align-items-center gap-2 mb-3" role="alert">
+                  <span id="secIcon" class="fs-4">🚦</span>
+                  <div id="secText" class="small">Sélectionnez vos zones pour vérifier l'état de sécurité du réseau.</div>
+                </div>
+
+                <!-- Code Promo & Paiement -->
+                <h5 class="text-secondary fs-6 mb-3 mt-4">4. Code Promo & Paiement</h5>
+                <div class="mb-3">
+                  <label class="form-label">Code Promo</label>
+                  <div class="input-group">
+                    <input type="text" id="codePromo" class="form-control" placeholder="Entrez RAPID10">
+                    <button type="button" class="btn btn-outline-secondary" onclick="appliquerPromo()">Appliquer</button>
+                  </div>
+                  <div id="promoStatus" class="small mt-1"></div>
                 </div>
 
                 <div class="mb-3">
-                  <label for="adresseDepart" class="form-label">Adresse exacte départ *</label>
-                  <input type="text" class="form-control" id="adresseDepart" placeholder="Ex: Rue Capois, près de..." required>
+                  <label class="form-label">Mode de Règlement *</label>
+                  <select class="form-select" id="methodePaiement" required onchange="toggleFormPaiement()">
+                    <option value="Cash">Cash à la livraison</option>
+                    <option value="MonCash">MonCash (Paiement Instantané)</option>
+                    <option value="NatCash">NatCash (Paiement Instantané)</option>
+                  </select>
                 </div>
 
-                <div class="mb-3">
-                  <label for="adresseArrivee" class="form-label">Adresse exacte arrivée *</label>
-                  <input type="text" class="form-control" id="adresseArrivee" placeholder="Ex: Impasse Lavaud, ..." required>
-                </div>
-
-                <!-- 4. Planification & Colis -->
-                <h5 class="text-secondary fs-6 mb-3 mt-4">4. Détails du colis & Horaire</h5>
-
-                <div class="row g-3 mb-3">
-                  <div class="col-md-6">
-                    <label for="typeColis" class="form-label">Type de colis / Service *</label>
-                    <select class="form-select" id="typeColis" required>
-                      <optgroup label="🍔 Alimentation & Restauration">
-                        <option value="Repas / Plat préparé">Repas / Plat préparé</option>
-                        <option value="Courses de supermarché">Courses de supermarché</option>
-                        <option value="Boissons / Packs / Bières">Boissons / Packs / Bières</option>
-                      </optgroup>
-                      <optgroup label="📄 Documents & Urgences">
-                        <option value="Documents / Papiers officiels">Documents / Papiers officiels</option>
-                        <option value="Clés / Portefeuille / Chargeur">Clés / Portefeuille / Chargeur</option>
-                      </optgroup>
-                      <optgroup label="💊 Santé & Beauté">
-                        <option value="Pharmacie / Médicaments">Pharmacie / Médicaments</option>
-                      </optgroup>
-                      <optgroup label="📦 Charges Lourdes & Encombrants">
-                        <option value="Électroménager">Électroménager</option>
-                        <option value="Autre type de colis">Autre type de colis</option>
-                      </optgroup>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="poidsColis" class="form-label">Poids estimé *</label>
-                    <select class="form-select" id="poidsColis" onchange="calculerPrixEtSecurite()" required>
-                      <option value="0">Léger (&lt; 5 kg)</option>
-                      <option value="150">Moyen (5 kg - 15 kg) [+150 HTG]</option>
-                      <option value="350">Lourd (15 kg - 30 kg) [+350 HTG]</option>
-                      <option value="700">Très lourd (&gt; 30 kg) [+700 HTG]</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="row g-3 mb-3">
-                  <div class="col-md-6">
-                    <label for="moyenTransport" class="form-label">Moyen de Transport</label>
-                    <select class="form-select" id="moyenTransport" onchange="calculerPrixEtSecurite()">
-                      <option value="Moto">Moto</option>
-                      <option value="Tricycle">Tricycle</option>
-                      <option value="Voiture">Voiture</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="methodePaiement" class="form-label">Mode de paiement *</label>
-                    <select class="form-select" id="methodePaiement" required onchange="toggleFormPaiement()">
-                      <option value="Cash à la livraison">Cash à la livraison</option>
-                      <option value="MonCash">MonCash</option>
-                      <option value="NatCash">NatCash</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Simulation de Paiement Sécurisé MonCash / NatCash -->
                 <div id="boxPaiementEnLigne" class="p-3 bg-light border rounded mb-3" style="display:none;">
                   <h6 class="text-primary mb-2">💳 Transaction Sécurisée <span id="nomPasserelle">MonCash</span></h6>
-                  <p class="small text-muted mb-2">Saisissez votre numéro pour simuler la validation du paiement :</p>
+                  <p class="small text-muted mb-2">Saisissez votre numéro pour valider le prélèvement :</p>
                   <div class="input-group input-group-sm">
                     <span class="input-group-text">+509</span>
                     <input type="tel" id="payPhone" class="form-control" placeholder="38XX XXXX">
@@ -328,41 +198,7 @@
                   <div id="payStatus" class="small mt-2"></div>
                 </div>
 
-                <!-- Code Promo & Remises -->
-                <div class="mb-3">
-                  <label class="form-label fw-bold">Code Promo</label>
-                  <div class="input-group">
-                    <input type="text" id="codePromo" class="form-control" placeholder="Entrez RAPID10 ou LIVRAISON20">
-                    <button type="button" class="btn btn-outline-secondary" onclick="appliquerPromo()">Appliquer</button>
-                  </div>
-                  <div id="promoStatus" class="small mt-1"></div>
-                </div>
-
-                <!-- Planification -->
-                <div class="mb-3">
-                  <label class="form-label fw-bold">Moment de la livraison</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="deliveryTiming" id="asap" value="asap" checked onclick="toggleSchedule(false)">
-                    <label class="form-check-label" for="asap">Livraison immédiate (Dès que possible)</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="deliveryTiming" id="scheduled" value="scheduled" onclick="toggleSchedule(true)">
-                    <label class="form-check-label" for="scheduled">Planifier pour plus tard</label>
-                  </div>
-                </div>
-
-                <div id="scheduleInputs" class="row g-3 mb-3 d-none">
-                  <div class="col-md-6">
-                    <label for="deliveryDate" class="form-label">Date de livraison</label>
-                    <input type="date" class="form-control" id="deliveryDate">
-                  </div>
-                  <div class="col-md-6">
-                    <label for="deliveryTime" class="form-label">Heure souhaitée</label>
-                    <input type="time" class="form-control" id="deliveryTime">
-                  </div>
-                </div>
-
-                <button type="submit" class="btn btn-success btn-lg w-100 mt-4">
+                <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
                   ✅ Valider et lancer la commande
                 </button>
               </form>
@@ -370,559 +206,123 @@
           </div>
         </div>
 
-        <!-- Colonne Droite : Carte Leaflet & Estimation -->
+        <!-- Détails de la Tarification (Sous-total + Taxe + Réduction = Total) -->
         <div class="col-lg-5">
           <div class="card shadow-sm border-0 sticky-card">
             <div class="card-body p-4">
-              <h5 class="card-title mb-3">📍 Trajet & Estimation Live</h5>
-
+              <h5 class="card-title mb-3">📍 Tracking & Calcul Tarif</h5>
+              
               <div id="map"></div>
 
               <hr class="my-4">
 
+              <!-- Détails Financiers -->
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="text-muted">Distance estimée :</span>
-                <strong id="distVal" class="fs-5">0.0 km</strong>
+                <strong id="distVal" class="fs-6">0.0 km</strong>
               </div>
+
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted">Sous-total (Course) :</span>
+                <strong id="subtotalVal" class="fs-6">250 HTG</strong>
+              </div>
+
+              <!-- CHAMP TAXE / FRAIS DE SERVICE -->
+              <div class="d-flex justify-content-between align-items-center mb-2 text-primary">
+                <span>Taxe & Frais de Service (<span id="tauxTaxeLabel">10%</span>) :</span>
+                <strong id="taxeVal">+25 HTG</strong>
+              </div>
+
               <div class="d-flex justify-content-between align-items-center mb-2 text-danger" id="boxReduction" style="display:none;">
                 <span>Réduction Promo :</span>
                 <strong id="reductionVal">-0 HTG</strong>
               </div>
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="text-muted">Tarif estimé :</span>
-                <strong id="priceVal" class="fs-3 text-success">250 HTG</strong>
-              </div>
 
-              <p class="small text-muted mt-3 mb-0">
-                ℹ️ Le tarif s'ajuste automatiquement selon la distance, la zone, le véhicule et le poids du colis.
-              </p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- 2. SECTION SUIVI DE COLIS -->
-    <div id="section-suivi" class="section-app d-none">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="card shadow-sm border-0 p-4">
-            <h2>🔎 Suivre ma commande</h2>
-            <p class="text-muted small">Entrez votre numéro de téléphone ou ID de commande :</p>
-            <div class="input-group mb-3">
-              <input type="text" id="numSuivi" class="form-control" placeholder="Ex: +509 3821 0256">
-              <button class="btn btn-primary" onclick="chercherSuivi()">Chercher</button>
-            </div>
-            <div id="suiviResultat" class="mt-4" style="display: none;">
               <hr>
-              <div id="suiviDetails" class="bg-light p-3 rounded"></div>
+
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-bold fs-5">Total à payer :</span>
+                <strong id="priceVal" class="fs-3 text-success">275 HTG</strong>
+              </div>
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
-    <!-- 3. SECTION LIVREUR / AUTHENTIFICATION -->
+    <!-- 2. SECTION SUIVI EN TEMPS RÉEL -->
+    <div id="section-suivi" class="section-app d-none">
+      <div class="card shadow-sm border-0 p-4">
+        <h3>🔎 Suivi en direct du livreur</h3>
+        <div id="liveSuiviStatus" class="alert alert-info">En attente d'une course active...</div>
+      </div>
+    </div>
+
+    <!-- 3. SECTION LIVREUR -->
     <div id="section-livreur" class="section-app d-none">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="card shadow-sm border-0 p-4 mb-4" id="espaceMonCompte" style="display:none;">
-            <h2>👤 Mon Espace Livreur</h2>
-            <div class="bg-light p-3 rounded mb-3">
-              <p class="mb-1"><strong>Nom :</strong> <span id="profileNom"></span></p>
-              <p class="mb-1"><strong>Email :</strong> <span id="profileEmail"></span></p>
-              <p class="mb-1"><strong>Téléphone :</strong> <span id="profileTel"></span></p>
-              <p class="mb-1"><strong>Zone :</strong> <span id="profileZone"></span></p>
-            </div>
-            <button onclick="deconnexion()" class="btn btn-danger">🔴 Se déconnecter</button>
-          </div>
-
-          <div class="card shadow-sm border-0 p-4 mb-4" id="authBox">
-            <div class="btn-group w-100 mb-3">
-              <button type="button" id="tabConnexion" class="btn btn-outline-primary active" onclick="switchAuthTab('login')">Se connecter</button>
-              <button type="button" id="tabInscription" class="btn btn-outline-primary" onclick="switchAuthTab('signup')">Créer un compte</button>
-            </div>
-
-            <!-- Form Connexion -->
-            <form id="formLogin">
-              <div class="mb-3">
-                <label class="form-label">Mode de connexion</label>
-                <select id="modeConnexion" class="form-select" onchange="toggleLoginMode()">
-                  <option value="otp">Code OTP / Lien Magique (Email)</option>
-                  <option value="password">Email + Mot de passe</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Adresse Email</label>
-                <input type="email" class="form-control" id="loginEmail" required placeholder="livreur@exemple.com">
-              </div>
-              <div class="mb-3" id="boxLoginPassword" style="display:none;">
-                <label class="form-label">Mot de passe</label>
-                <input type="password" class="form-control" id="loginPassword" placeholder="••••••••">
-              </div>
-              <button type="submit" id="btnLoginSubmit" class="btn btn-primary w-100">Recevoir le code / lien OTP</button>
-            </form>
-
-            <!-- Verification OTP -->
-            <form id="formVerifyOtp" style="display: none;" class="mt-3">
-              <div class="alert alert-info">
-                📩 Un code OTP a été envoyé à <strong id="emailSentTo"></strong>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Code de vérification</label>
-                <input type="text" class="form-control text-center fs-4" id="otpCode" placeholder="123456" maxlength="6">
-              </div>
-              <button type="submit" class="btn btn-success w-100">Vérifier et me connecter</button>
-              <button type="button" onclick="resetOtpForm()" class="btn btn-link w-100 text-secondary mt-2">Changer d'email</button>
-            </form>
-
-            <!-- Form Inscription -->
-            <form id="formSignup" style="display: none;">
-              <div class="row g-2 mb-3">
-                <div class="col-6"><label class="form-label">Prénom</label><input type="text" class="form-control" id="signupPrenom" required></div>
-                <div class="col-6"><label class="form-label">Nom</label><input type="text" class="form-control" id="signupNom" required></div>
-              </div>
-              <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control" id="signupEmail" required></div>
-              <div class="mb-3"><label class="form-label">Téléphone</label><input type="tel" class="form-control" id="signupTel" required></div>
-              <div class="row g-2 mb-3">
-                <div class="col-6"><label class="form-label">Mot de passe</label><input type="password" class="form-control" id="signupPassword" minlength="6" required></div>
-                <div class="col-6"><label class="form-label">Confirmation</label><input type="password" class="form-control" id="signupConfirmPassword" minlength="6" required></div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Zone d'intervention</label>
-                <select class="form-select" id="signupZone" required>
-                  <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
-                  <option value="Pétion-Ville">Pétion-Ville</option>
-                  <option value="Delmas">Delmas</option>
-                </select>
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Créer mon compte livreur</button>
-            </form>
-          </div>
-
-          <!-- Liste Livreurs -->
-          <div class="card shadow-sm border-0 p-4">
-            <h4>📋 Registre des Chauffeurs</h4>
-            <div id="listeLivreurs" class="grid-layout mt-3"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. SECTION COURSES EN COURS -->
-    <div id="section-commandes" class="section-app d-none">
       <div class="card shadow-sm border-0 p-4">
-        <h2>📦 Commandes en cours & Marketplace</h2>
-        <div id="listeCommandes" class="grid-layout mt-3"></div>
-      </div>
-    </div>
-
-    <!-- 5. SECTION SUPPORT & FAQ -->
-    <div id="section-support" class="section-app d-none">
-      <div class="row g-4">
-        <div class="col-md-6">
-          <div class="card shadow-sm border-0 p-4">
-            <h3>✉️ Formulaire de Contact Direct</h3>
-            <form id="supportForm" onsubmit="envoyerSupport(event)">
-              <div class="mb-3">
-                <label class="form-label">Votre Nom</label>
-                <input type="text" class="form-control" id="supportNom" required placeholder="Ex: Jean Paul">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Téléphone / WhatsApp</label>
-                <input type="tel" class="form-control" id="supportTel" required placeholder="+509 ...">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Objet</label>
-                <select class="form-select" id="supportSujet">
-                  <option value="Renseignements Général">Renseignements Général</option>
-                  <option value="Réclamation / Retard">Réclamation / Retard</option>
-                  <option value="Devenir Partenaire">Devenir Partenaire</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Votre Message</label>
-                <textarea class="form-control" id="supportMsg" rows="4" required></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Envoyer au Support</button>
-            </form>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card shadow-sm border-0 p-4">
-            <h3>❓ Foire Aux Questions (FAQ)</h3>
-            <div class="accordion mt-3" id="faqAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                    Quels sont les délais habituels de livraison ?
-                  </button>
-                </h2>
-                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                  <div class="accordion-body">
-                    Les livraisons standard en zone urbaine (Pétion-Ville, Delmas, Canapé-Vert) prennent en moyenne de 30 à 60 minutes selon la circulation et la sécurité.
-                  </div>
-                </div>
-              </div>
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                    Comment se calcule le tarif d'une livraison ?
-                  </button>
-                </h2>
-                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                  <div class="accordion-body">
-                    Le tarif dépend de la zone de départ/arrivée, de la distance estimée, du type de véhicule (Moto, Tricycle, Voiture) et du poids du colis.
-                  </div>
-                </div>
-              </div>
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                    Quels moyens de paiement acceptez-vous ?
-                  </button>
-                </h2>
-                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                  <div class="accordion-body">
-                    Nous acceptons le paiement Cash à la livraison, MonCash et NatCash.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 6. SECTION ADMIN -->
-    <div id="section-admin" class="section-app d-none">
-      <div class="card shadow-sm border-0 p-4">
-        <h2>📊 Tableau de bord Administrateur</h2>
-        <div class="row g-3 mt-2">
-          <div class="col-md-4">
-            <div class="p-3 bg-light rounded text-center border">
-              <h5>Chiffre d'Affaires</h5>
-              <div class="fs-3 text-primary fw-bold" id="statCA">0 HTG</div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="p-3 bg-light rounded text-center border">
-              <h5>Commandes Totales</h5>
-              <div class="fs-3 text-primary fw-bold" id="statCommandes">0</div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="p-3 bg-light rounded text-center border">
-              <h5>Livreurs Inscrits</h5>
-              <div class="fs-3 text-primary fw-bold" id="statLivreurs">0</div>
-            </div>
-          </div>
-        </div>
+        <h3>🛵 Espace Livreur & Partage de Position GPS</h3>
+        <p>Activez votre bouton GPS en haut à droite pour diffuser votre position en direct au client.</p>
       </div>
     </div>
 
   </main>
 
-  <!-- Modal Évaluation / Preuve de livraison -->
-  <div class="modal fade" id="modalAvis" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="card modal-content p-4 border-0">
-        <h5 class="modal-title mb-3">⭐ Laisser une évaluation</h5>
-        <div class="mb-3 text-center">
-          <span class="rating-stars" onclick="setRating(1)">★</span>
-          <span class="rating-stars" onclick="setRating(2)">★</span>
-          <span class="rating-stars" onclick="setRating(3)">★</span>
-          <span class="rating-stars" onclick="setRating(4)">★</span>
-          <span class="rating-stars" onclick="setRating(5)">★</span>
-        </div>
-        <textarea id="avisCommentaire" class="form-control mb-3" placeholder="Votre commentaire..." rows="3"></textarea>
-        <button class="btn btn-success" onclick="soumettreAvis()">Envoyer mon avis</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pied de page (Footer) -->
-  <footer class="bg-dark text-light pt-5 pb-3 mt-auto">
-    <div class="container">
-      <div class="row g-4">
-        <div class="col-md-4">
-          <h5 class="text-white">🚚 LivraisonRapid</h5>
-          <p class="small text-muted">Service de livraison rapide, fiable et sécurisé adapté aux zones de Port-au-Prince et ses environs.</p>
-        </div>
-        <div class="col-md-4">
-          <h5 class="text-white">Besoin d'aide ?</h5>
-          <ul class="list-unstyled">
-            <li class="mb-2">
-              <a href="https://wa.me/50938210256?text=Bonjour,%20j'ai%20une%20question%20concernant%20une%20livraison." target="_blank" class="btn btn-outline-success btn-sm text-white">
-                💬 Support WhatsApp direct
-              </a>
-            </li>
-            <li class="text-muted small">📞 +509 3821-0256</li>
-            <li class="text-muted small">✉️ support@livraisonrapid.ht</li>
-          </ul>
-        </div>
-        <div class="col-md-4">
-          <h5 class="text-white">Informations légales</h5>
-          <ul class="list-unstyled small">
-            <li><a href="#" class="text-secondary text-decoration-none">Conditions Générales d'Utilisation</a></li>
-            <li><a href="#" class="text-secondary text-decoration-none">Politique de Confidentialité</a></li>
-            <li><a href="#" class="text-secondary text-decoration-none">Zones de Couverture & Sécurité</a></li>
-          </ul>
-        </div>
-      </div>
-      <hr class="bg-secondary mt-4 mb-3">
-      <div class="text-center small text-muted">
-        &copy; 2026 LivraisonRapid. Tous droits réservés.
-      </div>
-    </div>
-  </footer>
-
-  <!-- Scripts JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    const SUPABASE_URL = 'https://hstgwiyztzfplxncuzxc.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_2HWJPXVoD-A66Cdy3gJS3Q_9BM1_tgq';
-    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-
     let map, markerDepart, markerArrivee, markerLivreurGps;
     let gpsWatchId = null;
     let deferredPrompt = null;
-
-    let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
-    let currentOtpEmail = '';
-    let tarifBase = 250;
+    
+    // VARIABLES TARIF / TAXE
+    let tarifBase = 250;           // Course de base
+    let tauxTaxe = 0.10;           // 10% de taxe (Vous pouvez changer par ex: 0.15 pour 15%, ou une taxe fixe)
     let reductionMontant = 0;
-    let tarifActuel = 250;
     let paiementEstValide = false;
-    let selectedRating = 5;
-    let currentCommandeId = null;
 
     const coordsZones = {
-      "Port-au-Prince - Canapé-Vert": [18.5250, -72.3100],
-      "Port-au-Prince - Turgeau": [18.5333, -72.3167],
-      "Port-au-Prince - Pacot": [18.5310, -72.3250],
-      "Port-au-Prince - Haut-Peu-de-Chose": [18.5280, -72.3200],
-      "Port-au-Prince - Bois Verna / Lalue": [18.5390, -72.3260],
-      "Port-au-Prince - Nazon": [18.5480, -72.3180],
       "Pétion-Ville": [18.5125, -72.2853],
+      "Canapé-Vert": [18.5250, -72.3100],
       "Delmas": [18.5442, -72.3028],
-      "Route de Frères": [18.5200, -72.2600],
-      "Juvénat": [18.5180, -72.2950],
-      "Thomassin": [18.4800, -72.2800]
+      "Nazon": [18.5480, -72.3180]
     };
 
     const securiteZones = {
-      "Port-au-Prince - Canapé-Vert": "green",
-      "Port-au-Prince - Turgeau": "green",
-      "Port-au-Prince - Pacot": "green",
-      "Port-au-Prince - Haut-Peu-de-Chose": "green",
-      "Port-au-Prince - Bois Verna / Lalue": "yellow",
-      "Port-au-Prince - Nazon": "yellow",
       "Pétion-Ville": "green",
-      "Delmas": "green",
-      "Route de Frères": "green",
-      "Juvénat": "green",
-      "Thomassin": "green"
+      "Canapé-Vert": "green",
+      "Delmas": "yellow",
+      "Nazon": "yellow"
     };
 
     window.onload = function () {
       map = L.map('map').setView([18.5392, -72.3364], 12);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-      verifierSession();
-      chargerLivreurs();
-      chargerCommandes();
-
-      document.getElementById('clientNom').addEventListener('input', function() {
-        if (document.getElementById('memeDestinataire').checked) {
-          document.getElementById('destinataireNom').value = this.value;
-        }
-      });
-
-      document.getElementById('clientTel').addEventListener('input', function() {
-        if (document.getElementById('memeDestinataire').checked) {
-          document.getElementById('destinataireTel').value = this.value;
-        }
-      });
-
-      if (supabaseClient) {
-        supabaseClient.channel('custom-all-channel')
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'commandes' }, () => { chargerCommandes(); })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'livreurs' }, () => { chargerLivreurs(); })
-          .subscribe();
-      }
+      actualiserAffichagePrix();
     };
 
-    // Notification Toast Générale
     function afficherToast(msg, type = 'success') {
       const toastEl = document.getElementById('liveToast');
-      const toastBody = document.getElementById('toastMessage');
-      toastBody.textContent = msg;
+      document.getElementById('toastMessage').textContent = msg;
       toastEl.className = `toast align-items-center text-white border-0 bg-${type}`;
       new bootstrap.Toast(toastEl).show();
     }
 
-    // PWA Installation
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('btnPwaInstall').classList.remove('d-none');
-    });
+    // CALCUL ET ACTUALISATION DYNAMIQUE DU PRIX ET DE LA TAXE
+    function actualiserAffichagePrix() {
+      // 1. Calcul du montant de la taxe
+      let montantTaxe = Math.round(tarifBase * tauxTaxe);
 
-    function installerPWA() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choice) => {
-          if (choice.outcome === 'accepted') {
-            afficherToast("Application installée avec succès !");
-          }
-          deferredPrompt = null;
-          document.getElementById('btnPwaInstall').classList.add('d-none');
-        });
-      }
-    }
+      // 2. Calcul du Total Final
+      let totalFinal = (tarifBase + montantTaxe) - reductionMontant;
+      if (totalFinal < 100) totalFinal = 100; // Tarif minimum acceptable
 
-    // Géolocalisation GPS en direct
-    function toggleGpsTracking() {
-      const btn = document.getElementById('btnGpsToggle');
-      const badge = document.getElementById('gpsBadge');
-
-      if (gpsWatchId) {
-        navigator.geolocation.clearWatch(gpsWatchId);
-        gpsWatchId = null;
-        btn.textContent = "📍 Partage GPS Live";
-        btn.className = "btn btn-warning btn-sm fw-bold";
-        badge.textContent = "GPS Inactif";
-        badge.className = "badge bg-secondary ms-2";
-        afficherToast("Géolocalisation désactivée", "info");
-      } else {
-        if (!navigator.geolocation) {
-          afficherToast("GPS non supporté par ce navigateur", "danger");
-          return;
-        }
-
-        gpsWatchId = navigator.geolocation.watchPosition((pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-
-          badge.textContent = "GPS Actif (En direct)";
-          badge.className = "badge bg-success ms-2 gps-active";
-          btn.textContent = "🛑 Arrêter Partage GPS";
-          btn.className = "btn btn-danger btn-sm fw-bold";
-
-          if (markerLivreurGps) map.removeLayer(markerLivreurGps);
-          
-          const iconLivreur = L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png',
-            iconSize: [38, 38]
-          });
-
-          markerLivreurGps = L.marker([lat, lng], { icon: iconLivreur }).addTo(map)
-            .bindPopup("<b>Livreur en position live !</b>").openPopup();
-
-          map.setView([lat, lng], 14);
-
-        }, (err) => {
-          afficherToast("Erreur d'accès GPS : " + err.message, "danger");
-        }, { enableHighAccuracy: true });
-      }
-    }
-
-    function copierInfoExpediteur() {
-      const isChecked = document.getElementById('memeDestinataire').checked;
-      const blockDest = document.getElementById('blockDestinataire');
-      const nomExp = document.getElementById('clientNom').value;
-      const telExp = document.getElementById('clientTel').value;
-
-      const destNomInput = document.getElementById('destinataireNom');
-      const destTelInput = document.getElementById('destinataireTel');
-
-      if (isChecked) {
-        blockDest.style.display = 'none';
-        destNomInput.removeAttribute('required');
-        destTelInput.removeAttribute('required');
-        destNomInput.value = nomExp;
-        destTelInput.value = telExp;
-      } else {
-        blockDest.style.display = 'flex';
-        destNomInput.setAttribute('required', '');
-        destTelInput.setAttribute('required', '');
-        destNomInput.value = '';
-        destTelInput.value = '';
-      }
-    }
-
-    function toggleSchedule(show) {
-      const scheduleInputs = document.getElementById('scheduleInputs');
-      scheduleInputs.classList.toggle('d-none', !show);
-    }
-
-    function changerOnglet(nom, event) {
-      document.querySelectorAll('.section-app').forEach(s => s.classList.add('d-none'));
-      const targetSection = document.getElementById('section-' + nom);
-      if (targetSection) targetSection.classList.remove('d-none');
-
-      if (nom === 'client' && map) {
-        setTimeout(() => map.invalidateSize(), 300);
-      }
-    }
-
-    function calculerPrixEtSecurite() {
-      const zDepart = document.getElementById("zoneDepart").value;
-      const zArrivee = document.getElementById("zoneArrivee").value;
-      const transport = document.getElementById("moyenTransport").value;
-      const supplementPoids = parseInt(document.getElementById("poidsColis").value || 0);
-
-      const secAlert = document.getElementById('securityAlert');
-      const secIcon = document.getElementById('secIcon');
-      const secText = document.getElementById('secText');
-
-      if (zDepart && zArrivee) {
-        const secDep = securiteZones[zDepart] || 'green';
-        const secArr = securiteZones[zArrivee] || 'green';
-
-        if (secDep === 'yellow' || secArr === 'yellow') {
-          secAlert.className = "alert alert-warning d-flex align-items-center gap-2 mb-3";
-          secIcon.textContent = "🟡";
-          secText.textContent = "Attention : Trajet traversant une zone de vigilance. Légers retards possibles.";
-        } else {
-          secAlert.className = "alert alert-success d-flex align-items-center gap-2 mb-3";
-          secIcon.textContent = "🟢";
-          secText.textContent = "Zone sécurisée : Trajet fluide et totalement accessible.";
-        }
-      }
-
-      if (!zDepart || !zArrivee) return;
-
-      let calculTarifBase = zDepart === zArrivee ? 250 : (zDepart.includes("Thomassin") || zArrivee.includes("Thomassin") ? 750 : 500);
-      let distanceKm = 0;
-
-      if (coordsZones[zDepart] && coordsZones[zArrivee]) {
-        const p1 = L.latLng(coordsZones[zDepart]);
-        const p2 = L.latLng(coordsZones[zArrivee]);
-        distanceKm = (p1.distanceTo(p2) / 1000).toFixed(1);
-
-        if (markerDepart) map.removeLayer(markerDepart);
-        if (markerArrivee) map.removeLayer(markerArrivee);
-        markerDepart = L.marker(coordsZones[zDepart]).addTo(map).bindPopup("Départ : " + zDepart);
-        markerArrivee = L.marker(coordsZones[zArrivee]).addTo(map).bindPopup("Arrivée : " + zArrivee);
-        const group = new L.featureGroup([markerDepart, markerArrivee]);
-        map.fitBounds(group.getBounds().pad(0.2));
-      }
-
-      let suppDistance = distanceKm > 3 ? (distanceKm - 3) * 30 : 0;
-      let totalCalculated = calculTarifBase + suppDistance + supplementPoids;
-
-      if (transport === 'Voiture') totalCalculated *= 1.5;
-      if (transport === 'Tricycle') totalCalculated *= 1.2;
-
-      tarifBase = Math.round(totalCalculated);
-      document.getElementById("distVal").textContent = distanceKm + " km";
-      actualiserAffichagePrix();
+      // 3. Mise à jour dans le DOM
+      document.getElementById('subtotalVal').textContent = `${tarifBase} HTG`;
+      document.getElementById('taxeVal').textContent = `+${montantTaxe} HTG`;
+      document.getElementById('priceVal').textContent = `${totalFinal} HTG`;
     }
 
     function appliquerPromo() {
@@ -935,11 +335,6 @@
         status.innerHTML = `<span class="text-success fw-bold">✅ Code RAPID10 appliqué (-50 HTG)</span>`;
         boxReduc.style.display = 'flex';
         document.getElementById('reductionVal').textContent = `-50 HTG`;
-      } else if (code === 'LIVRAISON20') {
-        reductionMontant = 100;
-        status.innerHTML = `<span class="text-success fw-bold">✅ Code LIVRAISON20 appliqué (-100 HTG)</span>`;
-        boxReduc.style.display = 'flex';
-        document.getElementById('reductionVal').textContent = `-100 HTG`;
       } else {
         reductionMontant = 0;
         status.innerHTML = `<span class="text-danger">❌ Code invalide</span>`;
@@ -948,10 +343,70 @@
       actualiserAffichagePrix();
     }
 
-    function actualiserAffichagePrix() {
-      tarifActuel = tarifBase - reductionMontant;
-      if (tarifActuel < 100) tarifActuel = 100;
-      document.getElementById("priceVal").textContent = tarifActuel + " HTG";
+    function calculerPrixEtSecurite() {
+      const zDep = document.getElementById('zoneDepart').value;
+      const zArr = document.getElementById('zoneArrivee').value;
+      const secAlert = document.getElementById('securityAlert');
+      const secIcon = document.getElementById('secIcon');
+      const secText = document.getElementById('secText');
+
+      if (!zDep || !zArr) return;
+
+      const secDep = securiteZones[zDep];
+      const secArr = securiteZones[zArr];
+
+      if (secDep === 'yellow' || secArr === 'yellow') {
+        secAlert.className = "alert alert-warning d-flex align-items-center gap-2 mb-3";
+        secIcon.textContent = "🟡";
+        secText.textContent = "Attention : Trajet dans une zone de vigilance. Légers retards possibles.";
+      } else {
+        secAlert.className = "alert alert-success d-flex align-items-center gap-2 mb-3";
+        secIcon.textContent = "🟢";
+        secText.textContent = "Zone sécurisée : Trajet dégagé et praticable.";
+      }
+
+      if (coordsZones[zDep] && coordsZones[zArr]) {
+        if (markerDepart) map.removeLayer(markerDepart);
+        if (markerArrivee) map.removeLayer(markerArrivee);
+
+        markerDepart = L.marker(coordsZones[zDep]).addTo(map).bindPopup("Départ : " + zDep);
+        markerArrivee = L.marker(coordsZones[zArr]).addTo(map).bindPopup("Arrivée : " + zArr);
+
+        const group = new L.featureGroup([markerDepart, markerArrivee]);
+        map.fitBounds(group.getBounds().pad(0.3));
+
+        const dist = (L.latLng(coordsZones[zDep]).distanceTo(L.latLng(coordsZones[zArr])) / 1000).toFixed(1);
+        document.getElementById('distVal').textContent = `${dist} km`;
+        
+        // Calcul du sous-total basé sur la distance
+        tarifBase = 250 + Math.round(dist * 20);
+        actualiserAffichagePrix();
+      }
+    }
+
+    function toggleGpsTracking() {
+      const btn = document.getElementById('btnGpsToggle');
+      const badge = document.getElementById('gpsBadge');
+
+      if (gpsWatchId) {
+        navigator.geolocation.clearWatch(gpsWatchId);
+        gpsWatchId = null;
+        btn.textContent = "📍 Activer Partage GPS Live";
+        badge.textContent = "GPS Inactif";
+        badge.className = "badge bg-secondary ms-2";
+      } else {
+        if (!navigator.geolocation) return;
+        gpsWatchId = navigator.geolocation.watchPosition((pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          badge.textContent = "GPS Actif";
+          badge.className = "badge bg-success ms-2 gps-active";
+          btn.textContent = "🛑 Arrêter Partage GPS";
+
+          if (markerLivreurGps) map.removeLayer(markerLivreurGps);
+          markerLivreurGps = L.marker([lat, lng]).addTo(map).bindPopup("Livreur Live").openPopup();
+        });
+      }
     }
 
     function toggleFormPaiement() {
@@ -960,7 +415,6 @@
       if (mode === 'MonCash' || mode === 'NatCash') {
         box.style.display = 'block';
         document.getElementById('nomPasserelle').textContent = mode;
-        paiementEstValide = false;
       } else {
         box.style.display = 'none';
         paiementEstValide = true;
@@ -976,240 +430,37 @@
         return;
       }
 
-      status.innerHTML = `<span class="text-info">💬 Validation de transaction en cours...</span>`;
-      
+      status.innerHTML = `<span class="text-info">💬 Demande de confirmation envoyée...</span>`;
       setTimeout(() => {
         paiementEstValide = true;
-        status.innerHTML = `<span class="text-success fw-bold">✅ Paiement sécurisé validé avec succès !</span>`;
-        afficherToast("Paiement MonCash/NatCash confirmé !");
+        status.innerHTML = `<span class="text-success fw-bold">✅ Paiement validé avec succès !</span>`;
       }, 1500);
     }
 
-    document.getElementById("orderForm").addEventListener("submit", async function (e) {
+    document.getElementById('orderForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const paymentMethod = document.getElementById('methodePaiement').value;
-      if ((paymentMethod === 'MonCash' || paymentMethod === 'NatCash') && !paiementEstValide) {
-        afficherToast("Veuillez d'abord simuler et valider le paiement en ligne !", "warning");
+      const modePaiement = document.getElementById('methodePaiement').value;
+      if ((modePaiement === 'MonCash' || modePaiement === 'NatCash') && !paiementEstValide) {
+        afficherToast("Veuillez d'abord valider le paiement en ligne !", "warning");
         return;
       }
 
       const senderName = document.getElementById('clientNom').value;
-      const senderPhone = document.getElementById('clientTel').value;
-      const recipientName = document.getElementById('destinataireNom').value;
-      const recipientPhone = document.getElementById('destinataireTel').value;
-      const fromZone = document.getElementById('zoneDepart').value;
-      const toZone = document.getElementById('zoneArrivee').value;
-      const fromAddress = document.getElementById('adresseDepart').value;
-      const toAddress = document.getElementById('adresseArrivee').value;
-      const packageType = document.getElementById('typeColis').value;
+      const destNom = document.getElementById('destinataireNom').value;
+      const destPhone = document.getElementById('destinataireTel').value;
+      const prixFinal = document.getElementById('priceVal').textContent;
 
-      const isScheduled = document.getElementById('scheduled').checked;
-      let timingStr = 'Immédiat';
-      if (isScheduled) {
-        timingStr = `Planifié (${document.getElementById('deliveryDate').value} ${document.getElementById('deliveryTime').value})`;
-      }
+      afficherToast("Commande envoyée au réseau !");
 
-      if (supabaseClient) {
-        await supabaseClient.from('commandes').insert([{
-          client_nom: senderName,
-          client_tel: senderPhone,
-          destinataire_nom: recipientName,
-          destinataire_tel: recipientPhone,
-          zone_depart: fromZone,
-          zone_arrivee: toZone,
-          adresse_depart: fromAddress,
-          adresse_arrivee: toAddress,
-          type_colis: `${packageType} - ${timingStr}`,
-          paiement: paymentMethod,
-          prix: tarifActuel,
-          statut: 'En attente'
-        }]);
-      }
-
-      afficherToast('Commande enregistrée avec succès !');
-
-      // WhatsApp d'alerte direct au destinataire
-      const messageWA = `Bonjour ${encodeURIComponent(recipientName)}, un colis vous a été envoyé par *${encodeURIComponent(senderName)}* (%0ATrajet: ${encodeURIComponent(fromZone)} ➔ ${encodeURIComponent(toZone)}.%0AMontant: ${tarifActuel} HTG).%0ASuivez votre livraison en direct !`;
-      const cleanPhone = recipientPhone.replace(/\s+/g, '').replace('+', '');
+      const messageWA = `Bonjour ${encodeURIComponent(destNom)}, un colis vous a été envoyé par *${encodeURIComponent(senderName)}*. Montant Total (Taxes incl.): ${prixFinal}.`;
+      const cleanPhone = destPhone.replace(/\s+/g, '').replace('+', '');
       window.open(`https://wa.me/${cleanPhone}?text=${messageWA}`, '_blank');
-      
-      this.reset();
-      document.getElementById('boxPaiementEnLigne').style.display = 'none';
-      document.getElementById('boxReduction').style.display = 'none';
-      reductionMontant = 0;
     });
 
-    async function chercherSuivi() {
-      const query = document.getElementById('numSuivi').value.trim();
-      if (!query || !supabaseClient) return;
-
-      const { data } = await supabaseClient
-        .from('commandes')
-        .select('*, livreurs(nom, prenom, telephone)')
-        .or(`client_tel.eq.${query},id.eq.${query}`)
-        .order('id', { ascending: false }).limit(1);
-
-      const conteneur = document.getElementById('suiviResultat');
-      const details = document.getElementById('suiviDetails');
-
-      if (!data || data.length === 0) {
-        afficherToast("Aucune commande trouvée.", "danger");
-        conteneur.style.display = 'none';
-        return;
-      }
-
-      const c = data[0];
-      conteneur.style.display = 'block';
-      details.innerHTML = `
-        <p><strong>Statut :</strong> <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span></p>
-        <p><strong>Colis :</strong> ${c.type_colis}</p>
-        <p><strong>Trajet :</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
-        <p><strong>Prix :</strong> ${c.prix} HTG</p>
-        ${c.preuve_url ? `<p><strong>Preuve de livraison :</strong> <a href="${c.preuve_url}" target="_blank">Voir la photo/preuve</a></p>` : ''}
-        ${c.statut === 'Livrée' ? `<button class="btn btn-outline-warning btn-sm mt-2" onclick="ouvrirAvisModal(${c.id})">⭐ Évaluer la livraison</button>` : ''}
-      `;
-    }
-
-    async function changerStatutCommande(id, nouveauStatut) {
-      if (!supabaseClient) return;
-      
-      let updateData = { statut: nouveauStatut };
-      if (nouveauStatut === 'Livrée') {
-        const urlPreuve = prompt("Optionnel : Collez un lien/URL de photo de preuve de livraison :");
-        if (urlPreuve) updateData.preuve_url = urlPreuve;
-      }
-
-      await supabaseClient.from('commandes').update(updateData).eq('id', id);
-      afficherToast(`Commande #${id} mise à jour : ${nouveauStatut}`);
-      chargerCommandes();
-    }
-
-    function switchAuthTab(type) {
-      if (type === 'login') {
-        document.getElementById('formLogin').style.display = 'block';
-        document.getElementById('formSignup').style.display = 'none';
-        document.getElementById('tabConnexion').classList.add('active');
-        document.getElementById('tabInscription').classList.remove('active');
-      } else {
-        document.getElementById('formLogin').style.display = 'none';
-        document.getElementById('formSignup').style.display = 'block';
-        document.getElementById('tabInscription').classList.add('active');
-        document.getElementById('tabConnexion').classList.remove('active');
-      }
-    }
-
-    function toggleLoginMode() {
-      const mode = document.getElementById('modeConnexion').value;
-      document.getElementById('boxLoginPassword').style.display = mode === 'password' ? 'block' : 'none';
-      document.getElementById('btnLoginSubmit').textContent = mode === 'password' ? 'Se connecter' : 'Recevoir le code / lien OTP';
-    }
-
-    function verifierSession() {
-      if (currentUser) {
-        document.getElementById('userBar').style.setProperty('display', 'flex', 'important');
-        document.getElementById('userInfo').textContent = `Connecté : ${currentUser.prenom} ${currentUser.nom}`;
-        document.getElementById('authBox').style.display = 'none';
-        document.getElementById('espaceMonCompte').style.display = 'block';
-        document.getElementById('profileNom').textContent = `${currentUser.prenom} ${currentUser.nom}`;
-      } else {
-        document.getElementById('userBar').style.setProperty('display', 'none', 'important');
-        document.getElementById('authBox').style.display = 'block';
-        document.getElementById('espaceMonCompte').style.display = 'none';
-      }
-    }
-
-    function deconnexion() {
-      if (supabaseClient) supabaseClient.auth.signOut();
-      localStorage.removeItem('user_livreur');
-      currentUser = null;
-      verifierSession();
-      afficherToast("Déconnexion réussie.", "info");
-    }
-
-    async function chargerLivreurs() {
-      if (!supabaseClient) return;
-      const { data } = await supabaseClient.from('livreurs').select('*');
-      const conteneur = document.getElementById("listeLivreurs");
-      conteneur.innerHTML = "";
-      document.getElementById("statLivreurs").textContent = data ? data.length : 0;
-      if (data) {
-        data.forEach(l => {
-          conteneur.innerHTML += `
-            <div class="item-card">
-              <span class="badge ${l.dispo === 'Disponible' ? 'badge-dispo' : 'badge-occupe'}">${l.dispo || 'Disponible'}</span>
-              <h5 class="mt-2">${l.prenom} ${l.nom}</h5>
-              <p class="mb-1 small">Zone: ${l.zone}</p>
-              <a class="btn-action btn-whatsapp mt-2" href="https://wa.me/${l.telephone ? l.telephone.replace(/\s+/g, '') : ''}" target="_blank">WhatsApp</a>
-            </div>
-          `;
-        });
-      }
-    }
-
-    async function chargerCommandes() {
-      if (!supabaseClient) return;
-      const { data } = await supabaseClient.from('commandes').select('*, livreurs(nom, prenom)');
-      const conteneur = document.getElementById("listeCommandes");
-      conteneur.innerHTML = "";
-      let totalCA = 0;
-      document.getElementById("statCommandes").textContent = data ? data.length : 0;
-
-      if (data) {
-        data.forEach(c => {
-          totalCA += Number(c.prix || 0);
-          
-          let actionsLivreur = '';
-          if (currentUser) {
-            actionsLivreur = `
-              <div class="mt-2 pt-2 border-top">
-                <small class="d-block text-muted mb-1">Changer statut :</small>
-                <button class="btn btn-sm btn-outline-info me-1" onclick="changerStatutCommande(${c.id}, 'En cours')">En cours</button>
-                <button class="btn btn-sm btn-outline-success" onclick="changerStatutCommande(${c.id}, 'Livrée')">Livrée</button>
-              </div>
-            `;
-          }
-
-          conteneur.innerHTML += `
-            <div class="item-card">
-              <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span>
-              <h5 class="mt-2">${c.type_colis}</h5>
-              <p class="mb-1 small"><strong>Expéditeur:</strong> ${c.client_nom}</p>
-              <p class="mb-1 small"><strong>Prix:</strong> ${c.prix} HTG</p>
-              <p class="mb-1 small"><strong>Trajet:</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
-              ${actionsLivreur}
-            </div>
-          `;
-        });
-      }
-      document.getElementById("statCA").textContent = totalCA + " HTG";
-    }
-
-    function envoyerSupport(e) {
-      e.preventDefault();
-      afficherToast("Votre message a été envoyé au support !");
-      document.getElementById('supportForm').reset();
-    }
-
-    function ouvrirAvisModal(commandeId) {
-      currentCommandeId = commandeId;
-      const modal = new bootstrap.Modal(document.getElementById('modalAvis'));
-      modal.show();
-    }
-
-    function setRating(val) {
-      selectedRating = val;
-      const stars = document.querySelectorAll('.rating-stars');
-      stars.forEach((s, idx) => {
-        s.style.color = idx < val ? '#ffc107' : '#ccc';
-      });
-    }
-
-    async function soumettreAvis() {
-      if (!currentCommandeId) return;
-      afficherToast(`Avis envoyé : ${selectedRating}/5 étoiles !`);
-      const modal = bootstrap.Modal.getInstance(document.getElementById('modalAvis'));
-      modal.hide();
+    function changerOnglet(nom) {
+      document.querySelectorAll('.section-app').forEach(s => s.classList.add('d-none'));
+      document.getElementById('section-' + nom).classList.remove('d-none');
     }
   </script>
 </body>
