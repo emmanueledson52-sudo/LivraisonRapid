@@ -1,1148 +1,335 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plateforme de Livraison Temps Réel & Sécurisée</title>
-
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1f4e79">
-
+  <title>LivraisonRapid - Plateforme de Livraison Temps Réel & Sécurisée</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f6f8;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .navigation-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      width: 100%;
-      max-width: 1000px;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      flex: 1;
-      min-width: 140px;
-      padding: 12px;
-      background-color: #e0e6ed;
-      color: #333;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .tab-btn.active {
-      background-color: #1f4e79;
-      color: white;
-    }
-
-    .carte {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 25px;
-      width: 100%;
-      max-width: 1000px;
-      margin-bottom: 20px;
-    }
-
-    .carte-centree {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .section-app {
-      display: none;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .section-app.active {
-      display: block;
-    }
-
-    h1, h2, h3 {
-      color: #1f4e79;
-      margin-top: 0;
-    }
-
-    h1 {
-      font-size: 22px;
-      text-align: center;
-    }
-
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: bold;
-      font-size: 13px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-family: inherit;
-    }
-
-    .note-securite {
-      background-color: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeeba;
-      border-radius: 6px;
-      padding: 10px 12px;
-      font-size: 12px;
-      margin-top: 12px;
-      line-height: 1.4;
-    }
-
-    button.btn-submit {
-      width: 100%;
-      margin-top: 18px;
-      padding: 12px;
-      background-color: #1f4e79;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button.btn-submit:hover {
-      background-color: #163a5c;
-    }
-
-    .btn-logout {
-      background-color: #dc3545;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 15px;
-    }
-
-    .btn-action {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      gap: 5px;
-    }
-
-    .btn-whatsapp {
-      background-color: #25D366;
-      color: white;
-    }
-
-    .btn-status {
-      background-color: #1f4e79;
-      color: white;
-    }
-
-    .btn-accept {
-      background-color: #28a745;
-      color: white;
-      margin-top: 10px;
-    }
-
-    .prix-box {
-      background: #eef6ff;
-      border: 1px solid #b6d4fe;
-      padding: 12px;
-      border-radius: 6px;
-      margin-top: 15px;
-      text-align: center;
-      font-weight: bold;
-      color: #1f4e79;
-    }
-
-    .map-container {
-      height: 200px;
-      width: 100%;
-      border-radius: 8px;
-      margin-top: 12px;
-      border: 1px solid #ddd;
-    }
-
-    .grid-layout {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .item-card {
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 15px;
-      background: #fafafa;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 10px;
-      font-size: 11px;
-      font-weight: bold;
-      color: white;
-    }
-
-    .badge-dispo { background-color: #28a745; }
-    .badge-occupe { background-color: #dc3545; }
-    .badge-attente { background-color: #ffc107; color: #333; }
-    .badge-cours { background-color: #17a2b8; }
-    .badge-livre { background-color: #6c757d; }
-    .badge-client { background-color: #1f4e79; }
-    .badge-chauffeur { background-color: #fd7e14; }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-    }
-
-    .stat-card {
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    .stat-card .number {
-      font-size: 22px;
-      font-weight: bold;
-      color: #1f4e79;
-      margin-top: 5px;
-    }
-
-    .user-bar {
-      background: #eef6ff;
-      padding: 10px 15px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      width: 100%;
-      max-width: 1000px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .comment-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 12px;
-    }
-
-    .comment-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .stars {
-      color: #ffc107;
-      font-size: 14px;
-    }
+    body { background-color: #f8f9fa; }
+    #map { height: 350px; border-radius: 8px; z-index: 1; }
+    .sticky-card { position: sticky; top: 20px; }
   </style>
 </head>
-
 <body>
 
-  <div id="userBar" class="user-bar" style="display:none;">
-    <span id="userInfo"></span>
-    <button onclick="deconnexion()"
-      style="padding: 5px 10px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">Déconnexion</button>
-  </div>
-
-  <div class="navigation-tabs">
-    <button class="tab-btn active" onclick="changerOnglet('client', event)">📦 Commander</button>
-    <button class="tab-btn" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis</button>
-    <button class="tab-btn" onclick="changerOnglet('livreur', event)">🛵 Espace Livreur</button>
-    <button class="tab-btn" onclick="changerOnglet('commandes', event)">📋 Courses en cours</button>
-    <button class="tab-btn" onclick="changerOnglet('avis', event)">💬 Avis & Commentaires</button>
-    <button class="tab-btn" onclick="changerOnglet('admin', event)">📊 Admin</button>
-  </div>
-
-  <!-- 1. COMMANDE CLIENT -->
-  <div id="section-client" class="section-app active">
-    <div class="carte carte-centree">
-      <h1>🚚 Commander une livraison</h1>
-      <form id="formCommande">
-        <label>Nom complet</label>
-        <input type="text" id="clientNom" required placeholder="Ex: Marie Joseph">
-
-        <label>Téléphone WhatsApp</label>
-        <input type="tel" id="clientTel" required placeholder="Ex: +509 3400 0000">
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label>Zone départ</label>
-            <select id="zoneDepart" onchange="calculerPrix()" required>
-              <option value="">-- Choisir --</option>
-              <optgroup label="Port-au-Prince (Zones Accessibles)">
-                <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
-                <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
-                <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
-                <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
-                <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
-                <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
-              </optgroup>
-              <optgroup label="Autres Communes Praticables">
-                <option value="Pétion-Ville">Pétion-Ville 🟢</option>
-                <option value="Delmas">Delmas 🟢</option>
-                <option value="Route de Frères">Route de Frères 🟢</option>
-                <option value="Juvénat">Juvénat 🟢</option>
-                <option value="Thomassin">Thomassin 🟢</option>
-              </optgroup>
-            </select>
-          </div>
-
-          <div>
-            <label>Zone arrivée</label>
-            <select id="zoneArrivee" onchange="calculerPrix()" required>
-              <option value="">-- Choisir --</option>
-              <optgroup label="Port-au-Prince (Zones Accessibles)">
-                <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
-                <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
-                <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
-                <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
-                <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
-                <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
-              </optgroup>
-              <optgroup label="Autres Communes Praticables">
-                <option value="Pétion-Ville">Pétion-Ville 🟢</option>
-                <option value="Delmas">Delmas 🟢</option>
-                <option value="Route de Frères">Route de Frères 🟢</option>
-                <option value="Juvénat">Juvénat 🟢</option>
-                <option value="Thomassin">Thomassin 🟢</option>
-              </optgroup>
-            </select>
-          </div>
-        </div>
-
-        <div class="note-securite">
-          🛡️ <strong>Note de sécurité :</strong> Afin d'assurer la sécurité de nos chauffeurs et la livraison rapide de vos colis, seules les zones actuellement sécurisées 🟢 ou moyennement sûres 🟡 sont ouvertes à la commande.
-        </div>
-
-        <label>Adresse exacte départ</label>
-        <input type="text" id="adresseDepart" placeholder="Ex: Rue Capois, près de..." required>
-
-        <label>Adresse exacte arrivée</label>
-        <input type="text" id="adresseArrivee" placeholder="Ex: Impasse Lavaud, ..." required>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label>Type de colis / Service</label>
-            <select id="typeColis" required>
-              <optgroup label="🍔 Alimentation & Restauration">
-                <option value="Repas / Restauration">Repas / Plat préparé</option>
-                <option value="Courses Alimentaires">Courses de supermarché</option>
-                <option value="Boissons / Casier">Boissons / Packs / Bières</option>
-              </optgroup>
-              <optgroup label="📄 Documents & Urgences">
-                <option value="Documents / Papiers">Documents / Papiers officiels</option>
-                <option value="Clés / Objet Oublié">Clés / Portefeuille / Chargeur</option>
-                <option value="Fournitures de bureau">Fournitures / Livres</option>
-              </optgroup>
-              <optgroup label="💊 Santé & Beauté">
-                <option value="Pharmacie / Médicaments">Pharmacie / Médicaments</option>
-                <option value="Cosmétiques / Beauté">Cosmétiques / Produits de beauté</option>
-              </optgroup>
-              <optgroup label="📱 High-Tech & Mode">
-                <option value="Électronique / Téléphone">Téléphone / High-Tech / Matériel</option>
-                <option value="Vêtements / Pressing">Vêtements / Chaussures / Pressing</option>
-                <option value="Cadeaux / Fleurs">Cadeaux / Fleurs / Chocolats</option>
-              </optgroup>
-              <optgroup label="📦 Charges Lourdes & Encombrants">
-                <option value="Électroménager">Électroménager (Micro-ondes, TV, etc.)</option>
-                <option value="Sac de Riz / Charbon / Eau">Sac de Riz / Bonbonne / Charbon</option>
-                <option value="Mobilier / Matériaux">Mobilier léger / Outillage</option>
-              </optgroup>
-              <option value="Autre">Autre type de colis</option>
-            </select>
-          </div>
-
-          <div>
-            <label>Poids estimé du colis</label>
-            <select id="poidsColis" onchange="calculerPrix()" required>
-              <option value="leger">Léger (&lt; 5 kg)</option>
-              <option value="moyen">Moyen (5 kg - 15 kg) [+150 HTG]</option>
-              <option value="lourd">Lourd (15 kg - 30 kg) [+350 HTG]</option>
-              <option value="tres_lourd">Très lourd (&gt; 30 kg) [+700 HTG]</option>
-            </select>
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label>Moyen de Transport</label>
-            <select id="moyenTransport" onchange="calculerPrix()" required>
-              <option value="Moto">Moto</option>
-              <option value="Tricycle">Tricycle</option>
-              <option value="Voiture">Voiture</option>
-            </select>
-          </div>
-          <div>
-            <label>Mode de paiement</label>
-            <select id="methodePaiement" required>
-              <option value="Cash à la livraison">Cash à la livraison</option>
-              <option value="MonCash">MonCash</option>
-              <option value="NatCash">NatCash</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="prix-box">
-          Distance estimée : <span id="distanceAffichee">0 km</span><br>
-          Tarif estimé : <span id="prixAffiche">0 HTG</span>
-        </div>
-        <div id="mapClient" class="map-container"></div>
-
-        <button type="submit" class="btn-submit">Valider et rechercher un livreur</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- 2. SUIVI DE COLIS -->
-  <div id="section-suivi" class="section-app">
-    <div class="carte carte-centree">
-      <h2>🔎 Suivre ma commande</h2>
-      <p style="font-size: 13px; color: #666;">Entrez votre numéro de téléphone ou ID de commande :</p>
-
-      <div style="display: flex; gap: 10px;">
-        <input type="text" id="numSuivi" placeholder="Ex: +509 3400 0000">
-        <button class="btn-submit" style="margin-top:0; width: 35%;" onclick="chercherSuivi()">Chercher</button>
-      </div>
-
-      <div id="suiviResultat" style="margin-top: 25px; display: none;">
-        <hr style="border: 0.5px solid #eee; margin-bottom: 20px;">
-        <div id="suiviDetails" style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-size: 14px;"></div>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="#">🚚 LivraisonRapid</a>
+      <div class="navbar-nav ms-auto flex-row gap-2">
+        <a class="btn btn-primary btn-sm" href="#">📦 Commander</a>
+        <a class="btn btn-outline-secondary btn-sm" href="#">🔎 Suivi Colis</a>
+        <a class="btn btn-outline-secondary btn-sm" href="#">🛵 Espace Livreur</a>
+        <a class="btn btn-outline-secondary btn-sm" href="#">📋 Courses en cours</a>
+        <a class="btn btn-outline-secondary btn-sm" href="#">💬 Avis</a>
+        <a class="btn btn-outline-dark btn-sm" href="#">📊 Admin</a>
       </div>
     </div>
-  </div>
+  </nav>
 
-  <!-- 3. ESPACE LIVREUR / AUTHENTIFICATION PRO -->
-  <div id="section-livreur" class="section-app">
-    
-    <!-- COMPTE CONNECTÉ -->
-    <div class="carte carte-centree" id="espaceMonCompte" style="display:none;">
-      <h2>👤 Mon Espace Livreur</h2>
-      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-        <p style="margin: 5px 0;"><strong>Nom :</strong> <span id="profileNom"></span></p>
-        <p style="margin: 5px 0;"><strong>Email :</strong> <span id="profileEmail"></span></p>
-        <p style="margin: 5px 0;"><strong>Téléphone :</strong> <span id="profileTel"></span></p>
-        <p style="margin: 5px 0;"><strong>Zone :</strong> <span id="profileZone"></span></p>
-      </div>
-      <button onclick="deconnexion()" class="btn-logout">🔴 Se déconnecter</button>
-    </div>
+  <!-- Contenu Principal -->
+  <main class="container my-4">
+    <div class="row g-4">
+      
+      <!-- Colonne Gauche : Formulaire de Commande -->
+      <div class="col-lg-7">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-4">
+            <h3 class="card-title mb-4">🚚 Commander une livraison</h3>
+            
+            <form id="orderForm" onsubmit="handleFormSubmit(event)">
+              
+              <!-- 1. Informations Expéditeur -->
+              <h5 class="text-secondary fs-6 mb-3">1. Information Expéditeur (Vous)</h5>
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="senderName" class="form-label">Nom complet *</label>
+                  <input type="text" class="form-control" id="senderName" placeholder="Ex: Marie Joseph" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="senderPhone" class="form-label">Téléphone WhatsApp *</label>
+                  <input type="tel" class="form-control" id="senderPhone" placeholder="Ex: +509 3400 0000" required>
+                </div>
+              </div>
 
-    <!-- FORMULAIRE DE CONNEXION / INSCRIPTION -->
-    <div class="carte carte-centree" id="authBox">
-      <!-- Onglets Connexion / Inscription -->
-      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-        <button type="button" id="tabConnexion" class="tab-btn active" onclick="switchAuthTab('login')">Se connecter</button>
-        <button type="button" id="tabInscription" class="tab-btn" onclick="switchAuthTab('signup')">Créer un compte</button>
-      </div>
+              <!-- 2. Informations Destinataire -->
+              <h5 class="text-secondary fs-6 mb-3 mt-4">2. Information Destinataire</h5>
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="recipientName" class="form-label">Nom du destinataire *</label>
+                  <input type="text" class="form-control" id="recipientName" placeholder="Ex: Jean Baptiste" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="recipientPhone" class="form-label">Téléphone / WhatsApp destinataire *</label>
+                  <input type="tel" class="form-control" id="recipientPhone" placeholder="Ex: +509 3700 0000" required>
+                </div>
+              </div>
 
-      <!-- FORMULAIRE CONNEXION -->
-      <form id="formLogin">
-        <label>Mode de connexion :</label>
-        <select id="modeConnexion" onchange="toggleLoginMode()">
-          <option value="otp">Code OTP / Lien Magique (par E-mail)</option>
-          <option value="password">E-mail + Mot de passe</option>
-        </select>
+              <!-- 3. Trajet & Zones -->
+              <h5 class="text-secondary fs-6 mb-3 mt-4">3. Trajet & Adresses</h5>
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="fromZone" class="form-label">Zone départ *</label>
+                  <select class="form-select" id="fromZone" required>
+                    <option value="">-- Choisir --</option>
+                    <option value="Canapé-Vert">Canapé-Vert 🟢</option>
+                    <option value="Turgeau">Turgeau 🟢</option>
+                    <option value="Pacot">Pacot 🟢</option>
+                    <option value="Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
+                    <option value="Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
+                    <option value="Nazon">Nazon 🟡</option>
+                    <option value="Pétion-Ville">Pétion-Ville 🟢</option>
+                    <option value="Delmas">Delmas 🟢</option>
+                    <option value="Route de Frères">Route de Frères 🟢</option>
+                    <option value="Juvénat">Juvénat 🟢</option>
+                    <option value="Thomassin">Thomassin 🟢</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="toZone" class="form-label">Zone arrivée *</label>
+                  <select class="form-select" id="toZone" required>
+                    <option value="">-- Choisir --</option>
+                    <option value="Canapé-Vert">Canapé-Vert 🟢</option>
+                    <option value="Turgeau">Turgeau 🟢</option>
+                    <option value="Pacot">Pacot 🟢</option>
+                    <option value="Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
+                    <option value="Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
+                    <option value="Nazon">Nazon 🟡</option>
+                    <option value="Pétion-Ville">Pétion-Ville 🟢</option>
+                    <option value="Delmas">Delmas 🟢</option>
+                    <option value="Route de Frères">Route de Frères 🟢</option>
+                    <option value="Juvénat">Juvénat 🟢</option>
+                    <option value="Thomassin">Thomassin 🟢</option>
+                  </select>
+                </div>
+              </div>
 
-        <!-- Saisie Email -->
-        <div id="boxLoginEmail">
-          <label>Adresse Email</label>
-          <input type="email" id="loginEmail" required placeholder="livreur@exemple.com">
-        </div>
+              <div class="alert alert-warning py-2 small mb-3">
+                🛡️ <strong>Note de sécurité :</strong> Seules les zones actuellement sécurisées 🟢 ou moyennement sûres 🟡 sont ouvertes à la commande.
+              </div>
 
-        <!-- Saisie Mot de passe -->
-        <div id="boxLoginPassword" style="display:none;">
-          <label>Mot de passe</label>
-          <input type="password" id="loginPassword" placeholder="••••••••">
-        </div>
+              <div class="mb-3">
+                <label for="fromAddress" class="form-label">Adresse exacte départ *</label>
+                <input type="text" class="form-control" id="fromAddress" placeholder="Ex: Rue Capois, près de..." required>
+              </div>
 
-        <button type="submit" id="btnLoginSubmit" class="btn-submit">Recevoir le code / lien OTP</button>
-      </form>
+              <div class="mb-3">
+                <label for="toAddress" class="form-label">Adresse exacte arrivée *</label>
+                <input type="text" class="form-control" id="toAddress" placeholder="Ex: Impasse Lavaud, ..." required>
+              </div>
 
-      <!-- ÉTAPE VÉRIFICATION CODE OTP (Masqué par défaut) -->
-      <form id="formVerifyOtp" style="display: none; margin-top: 15px;">
-        <div style="background: #eef6ff; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 10px;">
-          📩 Un code OTP a été envoyé à <strong id="emailSentTo"></strong>
-        </div>
-        <label>Code de vérification (6 chiffres)</label>
-        <input type="text" id="otpCode" placeholder="123456" maxlength="6" style="letter-spacing: 5px; font-size: 18px; text-align: center;">
-        <button type="submit" class="btn-submit" style="background-color: #28a745;">Vérifier et me connecter</button>
-        <button type="button" onclick="resetOtpForm()" style="background: none; border: none; color: #1f4e79; text-decoration: underline; margin-top: 10px; cursor: pointer; width: 100%;">Changer d'email</button>
-      </form>
+              <!-- 4. Planification & Colis -->
+              <h5 class="text-secondary fs-6 mb-3 mt-4">4. Détails du colis & Horaire</h5>
+              
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="packageType" class="form-label">Type de colis / Service *</label>
+                  <select class="form-select" id="packageType" required>
+                    <option value="Repas / Plat préparé">Repas / Plat préparé</option>
+                    <option value="Courses de supermarché">Courses de supermarché</option>
+                    <option value="Boissons / Packs / Bières">Boissons / Packs / Bières</option>
+                    <option value="Documents / Papiers officiels">Documents / Papiers officiels</option>
+                    <option value="Clés / Portefeuille / Chargeur">Clés / Portefeuille / Chargeur</option>
+                    <option value="Pharmacie / Médicaments">Pharmacie / Médicaments</option>
+                    <option value="Autre type de colis">Autre type de colis</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="packageWeight" class="form-label">Poids estimé *</label>
+                  <select class="form-select" id="packageWeight" required>
+                    <option value="0">Léger (< 5 kg)</option>
+                    <option value="150">Moyen (5 kg - 15 kg) [+150 HTG]</option>
+                    <option value="350">Lourd (15 kg - 30 kg) [+350 HTG]</option>
+                    <option value="700">Très lourd (> 30 kg) [+700 HTG]</option>
+                  </select>
+                </div>
+              </div>
 
-      <!-- FORMULAIRE INSCRIPTION -->
-      <form id="formSignup" style="display: none;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div><label>Prénom</label><input type="text" id="signupPrenom" required placeholder="Jean"></div>
-          <div><label>Nom</label><input type="text" id="signupNom" required placeholder="Dupont"></div>
-        </div>
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="transportMode" class="form-label">Moyen de Transport</label>
+                  <select class="form-select" id="transportMode">
+                    <option value="Moto">Moto</option>
+                    <option value="Tricycle">Tricycle</option>
+                    <option value="Voiture">Voiture</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="paymentMethod" class="form-label">Mode de paiement *</label>
+                  <select class="form-select" id="paymentMethod" required>
+                    <option value="Cash à la livraison">Cash à la livraison</option>
+                    <option value="MonCash">MonCash</option>
+                    <option value="NatCash">NatCash</option>
+                  </select>
+                </div>
+              </div>
 
-        <label>Adresse Email</label>
-        <input type="email" id="signupEmail" required placeholder="livreur@exemple.com">
+              <!-- Moment de livraison -->
+              <div class="mb-3">
+                <label class="form-label fw-bold">Moment de la livraison</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="deliveryTiming" id="asap" value="asap" checked onclick="toggleSchedule(false)">
+                  <label class="form-check-label" for="asap">Livraison immédiate (Dès que possible)</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="deliveryTiming" id="scheduled" value="scheduled" onclick="toggleSchedule(true)">
+                  <label class="form-check-label" for="scheduled">Planifier pour plus tard</label>
+                </div>
+              </div>
 
-        <label>Téléphone WhatsApp</label>
-        <input type="tel" id="signupTel" required placeholder="+509 3400 0000">
+              <!-- Inputs Date/Heure cachés par défaut -->
+              <div id="scheduleInputs" class="row g-3 mb-3 d-none">
+                <div class="col-md-6">
+                  <label for="deliveryDate" class="form-label">Date de livraison</label>
+                  <input type="date" class="form-control" id="deliveryDate">
+                </div>
+                <div class="col-md-6">
+                  <label for="deliveryTime" class="form-label">Heure souhaitée</label>
+                  <input type="time" class="form-control" id="deliveryTime">
+                </div>
+              </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label>Mot de passe</label>
-            <input type="password" id="signupPassword" required placeholder="••••••••" minlength="6">
+              <button type="submit" class="btn btn-success btn-lg w-100 mt-4">
+                ✅ Valider et rechercher un livreur (WhatsApp)
+              </button>
+            </form>
           </div>
-          <div>
-            <label>Confirmation</label>
-            <input type="password" id="signupConfirmPassword" required placeholder="••••••••" minlength="6">
-          </div>
-        </div>
-
-        <label>Zone d'intervention</label>
-        <select id="signupZone" required>
-          <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
-          <option value="Port-au-Prince - Turgeau">Port-au-Prince - Turgeau</option>
-          <option value="Port-au-Prince - Pacot">Port-au-Prince - Pacot</option>
-          <option value="Pétion-Ville">Pétion-Ville</option>
-          <option value="Delmas">Delmas</option>
-          <option value="Route de Frères">Route de Frères</option>
-        </select>
-
-        <button type="submit" class="btn-submit">Créer mon compte livreur</button>
-      </form>
-    </div>
-
-    <!-- LISTE DES LIVREURS -->
-    <div class="carte">
-      <h2>📋 Registre des Chauffeurs</h2>
-      <div id="listeLivreurs" class="grid-layout"></div>
-    </div>
-  </div>
-
-  <!-- 4. COURSES EN COURS -->
-  <div id="section-commandes" class="section-app">
-    <div class="carte">
-      <h2>📦 Commandes en cours & Marketplace</h2>
-      <div id="listeCommandes" class="grid-layout"></div>
-    </div>
-  </div>
-
-  <!-- 5. AVIS ET COMMENTAIRES -->
-  <div id="section-avis" class="section-app">
-    <div class="carte carte-centree">
-      <h2>💬 Donner votre avis</h2>
-      <form id="formAvis">
-        <label>Votre Nom</label>
-        <input type="text" id="avisNom" required placeholder="Ex: Jean-Marc">
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label>Vous êtes :</label>
-            <select id="avisRole" required>
-              <option value="Client">Client 📦</option>
-              <option value="Chauffeur / Livreur">Chauffeur / Livreur 🛵</option>
-            </select>
-          </div>
-          <div>
-            <label>Note (Étoiles)</label>
-            <select id="avisNote" required>
-              <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
-              <option value="4">⭐⭐⭐⭐ (4/5)</option>
-              <option value="3">⭐⭐⭐ (3/5)</option>
-              <option value="2">⭐⭐ (2/5)</option>
-              <option value="1">⭐ (1/5)</option>
-            </select>
-          </div>
-        </div>
-
-        <label>Votre commentaire</label>
-        <textarea id="avisMessage" rows="4" required placeholder="Partagez votre expérience sur le service ou l'application..."></textarea>
-
-        <button type="submit" class="btn-submit">Publier mon avis</button>
-      </form>
-    </div>
-
-    <div class="carte">
-      <h2>⭐ Avis & Rétroactions de la communauté</h2>
-      <div id="listeAvis">
-        <!-- Les avis récents apparaîtront ici -->
-      </div>
-    </div>
-  </div>
-
-  <!-- 6. ADMIN -->
-  <div id="section-admin" class="section-app">
-    <div class="carte">
-      <h2>📊 Tableau de bord Administrateur</h2>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <h4>Chiffre d'Affaires</h4>
-          <div class="number" id="statCA">0 HTG</div>
-        </div>
-        <div class="stat-card">
-          <h4>Commandes Totales</h4>
-          <div class="number" id="statCommandes">0</div>
-        </div>
-        <div class="stat-card">
-          <h4>Livreurs Inscrits</h4>
-          <div class="number" id="statLivreurs">0</div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- SCRIPTS EXTERNES -->
+      <!-- Colonne Droite : Carte Leaflet & Estimation -->
+      <div class="col-lg-5">
+        <div class="card shadow-sm border-0 sticky-card">
+          <div class="card-body p-4">
+            <h5 class="card-title mb-3">📍 Trajet & Estimation</h5>
+            
+            <!-- Carte Leaflet -->
+            <div id="map"></div>
+
+            <hr class="my-4">
+
+            <!-- Résumé des tarifs -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-muted">Distance estimée :</span>
+              <strong id="distVal" class="fs-5">0.0 km</strong>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="text-muted">Tarif estimé :</span>
+              <strong id="priceVal" class="fs-3 text-success">250 HTG</strong>
+            </div>
+
+            <p class="small text-muted mt-3 mb-0">
+              ℹ️ Le tarif s'ajuste automatiquement selon le poids du colis et la distance de la course.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Pied de page (Footer) -->
+  <footer class="bg-dark text-light pt-5 pb-3 mt-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h5 class="text-white">🚚 LivraisonRapid</h5>
+          <p class="small text-muted">Service de livraison rapide, fiable et sécurisé adapté aux zones de Port-au-Prince et ses environs.</p>
+        </div>
+        <div class="col-md-4">
+          <h5 class="text-white">Besoin d'aide ?</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <a href="https://wa.me/50934000000" target="_blank" class="btn btn-outline-success btn-sm text-white">
+                💬 Support WhatsApp direct
+              </a>
+            </li>
+            <li class="text-muted small">📞 +509 3400-0000</li>
+            <li class="text-muted small">✉️ support@livraisonrapid.ht</li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5 class="text-white">Informations légales</h5>
+          <ul class="list-unstyled small">
+            <li><a href="#" class="text-secondary text-decoration-none">Conditions Générales d'Utilisation</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Politique de Confidentialité</a></li>
+            <li><a href="#" class="text-secondary text-decoration-none">Zones de Couverture & Sécurité</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="bg-secondary mt-4 mb-3">
+      <div class="text-center small text-muted">
+        &copy; 2026 LivraisonRapid. Tous droits réservés.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+  
   <script>
-    // CONFIGURATION SUPABASE
-    const SUPABASE_URL = 'https://hstgwiyztzfplxncuzxc.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_2HWJPXVoD-A66Cdy3gJS3Q_9BM1_tgq';
+    // Initialisation de la carte Leaflet (Centrée sur Port-au-Prince)
+    const map = L.map('map').setView([18.5392, -72.3364], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-
-    let map, markerDepart, markerArrivee;
-    let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
-    let currentOtpEmail = '';
-    let tarifActuel = 0;
-
-    const coordsZones = {
-      "Port-au-Prince - Canapé-Vert": [18.5250, -72.3100],
-      "Port-au-Prince - Turgeau": [18.5333, -72.3167],
-      "Port-au-Prince - Pacot": [18.5310, -72.3250],
-      "Port-au-Prince - Haut-Peu-de-Chose": [18.5280, -72.3200],
-      "Port-au-Prince - Bois Verna / Lalue": [18.5390, -72.3260],
-      "Port-au-Prince - Nazon": [18.5480, -72.3180],
-      "Pétion-Ville": [18.5125, -72.2853],
-      "Delmas": [18.5442, -72.3028],
-      "Route de Frères": [18.5200, -72.2600],
-      "Juvénat": [18.5180, -72.2950],
-      "Thomassin": [18.4800, -72.2800]
-    };
-
-    window.onload = async function () {
-      map = L.map('mapClient').setView([18.525, -72.310], 12);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-      verifierSession();
-      chargerLivreurs();
-      chargerCommandes();
-      chargerAvis();
-
-      if (supabaseClient) {
-        supabaseClient.channel('custom-all-channel')
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'commandes' }, () => { chargerCommandes(); })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'livreurs' }, () => { chargerLivreurs(); })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'avis' }, () => { chargerAvis(); })
-          .subscribe();
-      }
-    };
-
-    // --- GESTION DE L'AUTHENTIFICATION PRO ---
-
-    function switchAuthTab(type) {
-      const formLogin = document.getElementById('formLogin');
-      const formSignup = document.getElementById('formSignup');
-      const tabConnexion = document.getElementById('tabConnexion');
-      const tabInscription = document.getElementById('tabInscription');
-
-      if (type === 'login') {
-        formLogin.style.display = 'block';
-        formSignup.style.display = 'none';
-        tabConnexion.classList.add('active');
-        tabInscription.classList.remove('active');
+    // Afficher / Masquer les champs date et heure
+    function toggleSchedule(show) {
+      const scheduleInputs = document.getElementById('scheduleInputs');
+      if (show) {
+        scheduleInputs.classList.remove('d-none');
       } else {
-        formLogin.style.display = 'none';
-        formSignup.style.display = 'block';
-        tabInscription.classList.add('active');
-        tabConnexion.classList.remove('active');
+        scheduleInputs.classList.add('d-none');
       }
     }
 
-    function toggleLoginMode() {
-      const mode = document.getElementById('modeConnexion').value;
-      const boxPassword = document.getElementById('boxLoginPassword');
-      const btnSubmit = document.getElementById('btnLoginSubmit');
-
-      if (mode === 'password') {
-        boxPassword.style.display = 'block';
-        btnSubmit.textContent = 'Se connecter';
-      } else {
-        boxPassword.style.display = 'none';
-        btnSubmit.textContent = 'Recevoir le code / lien OTP';
-      }
-    }
-
-    // 1. INSCRIPTION SÉCURISÉE PAR EMAIL + SUPABASE AUTH
-    document.getElementById('formSignup').addEventListener('submit', async function(e) {
+    // Soumission du formulaire et génération du lien WhatsApp
+    function handleFormSubmit(e) {
       e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée.");
 
-      const prenom = document.getElementById('signupPrenom').value.trim();
-      const nom = document.getElementById('signupNom').value.trim();
-      const email = document.getElementById('signupEmail').value.trim().toLowerCase();
-      const telephone = document.getElementById('signupTel').value.trim();
-      const password = document.getElementById('signupPassword').value;
-      const confirmPassword = document.getElementById('signupConfirmPassword').value;
-      const zone = document.getElementById('signupZone').value;
-
-      if (password !== confirmPassword) {
-        return alert("Les mots de passe ne correspondent pas.");
+      const senderName = document.getElementById('senderName').value;
+      const senderPhone = document.getElementById('senderPhone').value;
+      const recipientName = document.getElementById('recipientName').value;
+      const recipientPhone = document.getElementById('recipientPhone').value;
+      const fromZone = document.getElementById('fromZone').value;
+      const toZone = document.getElementById('toZone').value;
+      const fromAddress = document.getElementById('fromAddress').value;
+      const toAddress = document.getElementById('toAddress').value;
+      const packageType = document.getElementById('packageType').value;
+      const paymentMethod = document.getElementById('paymentMethod').value;
+      
+      const isScheduled = document.getElementById('scheduled').checked;
+      let timingStr = 'Immédiat (Dès que possible)';
+      
+      if (isScheduled) {
+        const date = document.getElementById('deliveryDate').value;
+        const time = document.getElementById('deliveryTime').value;
+        timingStr = `Planifié pour le ${date} à ${time}`;
       }
 
-      const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-        email: email,
-        password: password
-      });
-
-      if (authError) return alert("Erreur d'inscription : " + authError.message);
-
-      const { error: dbError } = await supabaseClient.from('livreurs').insert([{
-        nom: nom,
-        prenom: prenom,
-        email: email,
-        telephone: telephone,
-        zone: zone,
-        dispo: 'Disponible'
-      }]);
-
-      if (dbError) {
-        alert("Compte Auth créé, mais erreur table livreurs : " + dbError.message);
-      } else {
-        alert("Compte créé avec succès ! Un e-mail de confirmation peut vous être envoyé.");
-        await chargerEtSauvegarderProfilLivreur(email);
-      }
-    });
-
-    // 2. CONNEXION LIVREUR (OTP OU MOT DE PASSE)
-    document.getElementById('formLogin').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée.");
-
-      const mode = document.getElementById('modeConnexion').value;
-      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-
-      if (mode === 'otp') {
-        const { error } = await supabaseClient.auth.signInWithOtp({ email: email });
-
-        if (error) {
-          alert("Erreur lors de l'envoi OTP : " + error.message);
-        } else {
-          currentOtpEmail = email;
-          document.getElementById('emailSentTo').textContent = email;
-          document.getElementById('formLogin').style.display = 'none';
-          document.getElementById('formVerifyOtp').style.display = 'block';
-        }
-      } else {
-        const password = document.getElementById('loginPassword').value;
-
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
-
-        if (error) {
-          alert("Identifiants incorrects : " + error.message);
-        } else {
-          await chargerEtSauvegarderProfilLivreur(email);
-        }
-      }
-    });
-
-    // VÉRICATION DU CODE OTP
-    document.getElementById('formVerifyOtp').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée.");
-
-      const token = document.getElementById('otpCode').value.trim();
-
-      const { data, error } = await supabaseClient.auth.verifyOtp({
-        email: currentOtpEmail,
-        token: token,
-        type: 'email'
-      });
-
-      if (error) {
-        alert("Code OTP invalide ou expiré : " + error.message);
-      } else {
-        await chargerEtSauvegarderProfilLivreur(currentOtpEmail);
-      }
-    });
-
-    function resetOtpForm() {
-      document.getElementById('formLogin').style.display = 'block';
-      document.getElementById('formVerifyOtp').style.display = 'none';
-      document.getElementById('otpCode').value = '';
-    }
-
-    async function chargerEtSauvegarderProfilLivreur(email) {
-      if (!supabaseClient) return;
-
-      let { data: profil } = await supabaseClient
-        .from('livreurs')
-        .select('*')
-        .eq('email', email)
-        .maybeSingle();
-
-      if (!profil) {
-        const { data: newProfil, error } = await supabaseClient
-          .from('livreurs')
-          .insert([{
-            email: email,
-            nom: 'Livreur',
-            prenom: 'Nouveau',
-            telephone: 'Non renseigné',
-            zone: 'Port-au-Prince - Canapé-Vert',
-            dispo: 'Disponible'
-          }])
-          .select()
-          .single();
-
-        if (!error) profil = newProfil;
-      }
-
-      if (profil) {
-        currentUser = profil;
-        localStorage.setItem('user_livreur', JSON.stringify(profil));
-      }
-
-      verifierSession();
-    }
-
-    function verifierSession() {
-      if (currentUser) {
-        document.getElementById('userBar').style.display = 'flex';
-        document.getElementById('userInfo').textContent = `Connecté : ${currentUser.prenom} ${currentUser.nom}`;
-        document.getElementById('authBox').style.display = 'none';
-        
-        document.getElementById('espaceMonCompte').style.display = 'block';
-        document.getElementById('profileNom').textContent = `${currentUser.prenom} ${currentUser.nom}`;
-        document.getElementById('profileEmail').textContent = currentUser.email || 'Non renseigné';
-        document.getElementById('profileTel').textContent = currentUser.telephone || 'Non renseigné';
-        document.getElementById('profileZone').textContent = currentUser.zone || 'Non renseignée';
-
-        // Préremplir le champ nom des avis si connecté
-        document.getElementById('avisNom').value = `${currentUser.prenom} ${currentUser.nom}`;
-        document.getElementById('avisRole').value = 'Chauffeur / Livreur';
-      } else {
-        document.getElementById('userBar').style.display = 'none';
-        document.getElementById('authBox').style.display = 'block';
-        document.getElementById('espaceMonCompte').style.display = 'none';
-      }
-    }
-
-    function deconnexion() {
-      if (supabaseClient) supabaseClient.auth.signOut();
-      localStorage.removeItem('user_livreur');
-      currentUser = null;
-      verifierSession();
-    }
-
-    function changerOnglet(nom, event) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.section-app').forEach(s => s.classList.remove('active'));
-
-      if (event && event.target) {
-        event.target.classList.add('active');
-      }
-
-      const el = document.getElementById('section-' + nom);
-      if (el) {
-        el.classList.add('active');
-      }
-
-      if (nom === 'client' && map) {
-        setTimeout(() => map.invalidateSize(), 300);
-      }
-    }
-
-    // --- LOGIQUE DE COMMANDE ET CALCUL DES PRIX ---
-
-    function calculerPrix() {
-      const zDepart = document.getElementById("zoneDepart").value;
-      const zArrivee = document.getElementById("zoneArrivee").value;
-      const transportSelect = document.getElementById("moyenTransport");
-      const poids = document.getElementById("poidsColis").value;
-
-      let transport = transportSelect.value;
-
-      if (!zDepart || !zArrivee) return;
-
-      if ((poids === 'lourd' || poids === 'tres_lourd') && transport === 'Moto') {
-        alert("Attention : Pour un colis lourd (>15 kg), le véhicule a été ajusté en Tricycle / Voiture.");
-        transportSelect.value = poids === 'tres_lourd' ? 'Voiture' : 'Tricycle';
-        transport = transportSelect.value;
-      }
-
-      let tarifBase = 0;
-      if (zDepart === zArrivee) {
-        tarifBase = 250; 
-      } else if (zDepart.includes("Thomassin") || zArrivee.includes("Thomassin")) {
-        tarifBase = 750; 
-      } else {
-        tarifBase = 500; 
-      }
-
-      let distanceKm = 0;
-      if (coordsZones[zDepart] && coordsZones[zArrivee]) {
-        const p1 = L.latLng(coordsZones[zDepart]);
-        const p2 = L.latLng(coordsZones[zArrivee]);
-
-        distanceKm = (p1.distanceTo(p2) / 1000).toFixed(1);
-
-        if (markerDepart) map.removeLayer(markerDepart);
-        if (markerArrivee) map.removeLayer(markerArrivee);
-        markerDepart = L.marker(coordsZones[zDepart]).addTo(map);
-        markerArrivee = L.marker(coordsZones[zArrivee]).addTo(map);
-        const group = new L.featureGroup([markerDepart, markerArrivee]);
-        map.fitBounds(group.getBounds().pad(0.2));
-      }
-
-      let supplementDistance = distanceKm > 3 ? (distanceKm - 3) * 30 : 0;
-
-      let supplementPoids = 0;
-      if (poids === 'moyen') supplementPoids = 150;
-      if (poids === 'lourd') supplementPoids = 350;
-      if (poids === 'tres_lourd') supplementPoids = 700;
-
-      let totalCalculated = tarifBase + supplementDistance + supplementPoids;
-
-      if (transport === 'Voiture') totalCalculated *= 1.5;
-      if (transport === 'Tricycle') totalCalculated *= 1.2;
-
-      tarifActuel = Math.round(totalCalculated);
-
-      document.getElementById("distanceAffichee").textContent = distanceKm + " km";
-      document.getElementById("prixAffiche").textContent = tarifActuel + " HTG";
-    }
-
-    document.getElementById("formCommande").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée");
-
-      const typeColisTexte = `${document.getElementById("typeColis").value} (${document.getElementById("poidsColis").options[document.getElementById("poidsColis").selectedIndex].text})`;
-
-      const { error } = await supabaseClient.from('commandes').insert([{
-        client_nom: document.getElementById("clientNom").value,
-        client_tel: document.getElementById("clientTel").value,
-        zone_depart: document.getElementById("zoneDepart").value,
-        zone_arrivee: document.getElementById("zoneArrivee").value,
-        adresse_depart: document.getElementById("adresseDepart").value,
-        adresse_arrivee: document.getElementById("adresseArrivee").value,
-        type_colis: typeColisTexte,
-        paiement: document.getElementById("methodePaiement").value,
-        prix: tarifActuel
-      }]);
-
-      if (error) alert("Erreur : " + error.message);
-      else { alert("Commande envoyée avec succès !"); this.reset(); }
-    });
-
-    async function chercherSuivi() {
-      const query = document.getElementById('numSuivi').value.trim();
-      if (!query || !supabaseClient) return;
-
-      const { data, error } = await supabaseClient
-        .from('commandes')
-        .select('*, livreurs(nom, prenom, telephone)')
-        .or(`client_tel.eq.${query},id.eq.${query}`)
-        .order('id', { ascending: false })
-        .limit(1);
-
-      const conteneur = document.getElementById('suiviResultat');
-      const details = document.getElementById('suiviDetails');
-
-      if (error || !data || data.length === 0) {
-        alert("Aucune commande trouvée avec cette référence.");
-        conteneur.style.display = 'none';
-        return;
-      }
-
-      const c = data[0];
-      conteneur.style.display = 'block';
-
-      let chauffeur = c.livreurs 
-        ? `${c.livreurs.prenom} ${c.livreurs.nom} (${c.livreurs.telephone})` 
-        : 'Attribution en cours...';
-
-      details.innerHTML = `
-        <p><strong>Statut :</strong> <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span></p>
-        <p><strong>Colis :</strong> ${c.type_colis}</p>
-        <p><strong>Trajet :</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
-        <p><strong>Livreur :</strong> ${chauffeur}</p>
-        <p><strong>Prix :</strong> ${c.prix} HTG</p>
-      `;
-    }
-
-    async function chargerLivreurs() {
-      if (!supabaseClient) return;
-      const { data } = await supabaseClient.from('livreurs').select('*');
-      const conteneur = document.getElementById("listeLivreurs");
-      conteneur.innerHTML = "";
-      document.getElementById("statLivreurs").textContent = data ? data.length : 0;
-
-      if (data) {
-        data.forEach(l => {
-          const carte = document.createElement("div");
-          carte.className = "item-card";
-          carte.innerHTML = `
-            <span class="badge ${l.dispo === 'Disponible' ? 'badge-dispo' : 'badge-occupe'}">${l.dispo || 'Disponible'}</span>
-            <h3>${l.prenom} ${l.nom}</h3>
-            <p><strong>Email :</strong> ${l.email || 'N/A'}</p>
-            <p><strong>Zone :</strong> ${l.zone}</p>
-            <p><strong>Tél :</strong> ${l.telephone}</p>
-            <div style="margin-top:10px;">
-              <a class="btn-action btn-whatsapp" href="https://wa.me/${l.telephone}" target="_blank">WhatsApp</a>
-              ${currentUser && currentUser.id === l.id ? `<button class="btn-action btn-status" onclick="changerStatutLivreur('${l.id}', '${l.dispo}')">Changer Statut</button>` : ''}
-            </div>
-          `;
-          conteneur.appendChild(carte);
-        });
-      }
-    }
-
-    async function chargerCommandes() {
-      if (!supabaseClient) return;
-      const { data } = await supabaseClient.from('commandes').select('*, livreurs(nom, prenom)');
-      const conteneur = document.getElementById("listeCommandes");
-      conteneur.innerHTML = "";
-      let totalCA = 0;
-
-      document.getElementById("statCommandes").textContent = data ? data.length : 0;
-
-      if (data) {
-        data.forEach(c => {
-          totalCA += Number(c.prix || 0);
-          const carte = document.createElement("div");
-          carte.className = "item-card";
-          carte.innerHTML = `
-            <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span>
-            <h3>Colis: ${c.type_colis} (${c.prix} HTG)</h3>
-            <p><strong>Client :</strong> ${c.client_nom} (${c.client_tel})</p>
-            <p><strong>Trajet :</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
-            <p><strong>Paiement :</strong> ${c.paiement}</p>
-            <p><strong>Chauffeur :</strong> ${c.livreurs ? c.livreurs.prenom + ' ' + c.livreurs.nom : 'Non assigné'}</p>
-            <div style="margin-top:8px;">
-              ${c.statut === 'En attente' && currentUser ? `<button class="btn-action btn-accept" onclick="changerStatutCommande('${c.id}', 'En cours')">Accepter Course</button>` : ''}
-              ${c.statut === 'En cours' && currentUser ? `<button class="btn-action btn-accept" onclick="changerStatutCommande('${c.id}', 'Livré')">Terminer Course</button>` : ''}
-            </div>
-          `;
-          conteneur.appendChild(carte);
-        });
-      }
-      document.getElementById("statCA").textContent = totalCA + " HTG";
-    }
-
-    // --- GESTION DES AVIS ---
-
-    document.getElementById("formAvis").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      if (!supabaseClient) return alert("Base de données non initialisée");
-
-      const nom = document.getElementById("avisNom").value.trim();
-      const role = document.getElementById("avisRole").value;
-      const note = Number(document.getElementById("avisNote").value);
-      const message = document.getElementById("avisMessage").value.trim();
-
-      const { error } = await supabaseClient.from('avis').insert([{
-        nom: nom,
-        role: role,
-        note: note,
-        message: message
-      }]);
-
-      if (error) {
-        alert("Erreur lors de l'envoi de l'avis : " + error.message);
-      } else {
-        alert("Merci ! Votre avis a été publié.");
-        document.getElementById("avisMessage").value = "";
-        chargerAvis();
-      }
-    });
-
-    async function chargerAvis() {
-      if (!supabaseClient) return;
-      const { data, error } = await supabaseClient
-        .from('avis')
-        .select('*')
-        .order('id', { ascending: false });
-
-      const conteneur = document.getElementById("listeAvis");
-      conteneur.innerHTML = "";
-
-      if (error || !data || data.length === 0) {
-        conteneur.innerHTML = "<p style='color: #777;'>Aucun avis pour le moment. Soyez le premier à commenter !</p>";
-        return;
-      }
-
-      data.forEach(a => {
-        const etoiles = '⭐'.repeat(a.note || 5);
-        const badgeClass = a.role === 'Chauffeur / Livreur' ? 'badge-chauffeur' : 'badge-client';
-        
-        const carte = document.createElement("div");
-        carte.className = "comment-card";
-        carte.innerHTML = `
-          <div class="comment-header">
-            <div>
-              <strong>${a.nom}</strong> 
-              <span class="badge ${badgeClass}">${a.role || 'Client'}</span>
-            </div>
-            <div class="stars">${etoiles}</div>
-          </div>
-          <p style="margin: 5px 0 0 0; font-size: 14px; color: #333;">${a.message}</p>
-        `;
-        conteneur.appendChild(carte);
-      });
-    }
-
-    async function changerStatutLivreur(id, statutActuel) {
-      if (!supabaseClient) return;
-      const nouveau = statutActuel === 'Disponible' ? 'Occupé' : 'Disponible';
-      await supabaseClient.from('livreurs').update({ dispo: nouveau }).eq('id', id);
-    }
-
-    async function changerStatutCommande(id, nouveauStatut) {
-      if (!supabaseClient) return;
-      const maj = { statut: nouveauStatut };
-      if (nouveauStatut === 'En cours' && currentUser) maj.livreur_id = currentUser.id;
-      await supabaseClient.from('commandes').update(maj).eq('id', id);
+      const price = document.getElementById('priceVal').innerText;
+
+      // Construction du message WhatsApp
+      const message = `*NOUVELLE COMMANDE LIVRAISONRAPID* 🚚%0A%0A` +
+        `*Expéditeur:* ${senderName} (${senderPhone})%0A` +
+        `*Destinataire:* ${recipientName} (${recipientPhone})%0A` +
+        `*Trajet:* ${fromZone} ➔ ${toZone}%0A` +
+        `*Adresse départ:* ${fromAddress}%0A` +
+        `*Adresse arrivée:* ${toAddress}%0A` +
+        `*Type de colis:* ${packageType}%0A` +
+        `*Paiement:* ${paymentMethod}%0A` +
+        `*Horaire:* ${timingStr}%0A` +
+        `*Tarif estimé:* ${price}`;
+
+      // Redirection vers le numéro WhatsApp de l'entreprise
+      window.open(`https://wa.me/50934000000?text=${message}`, '_blank');
     }
   </script>
 </body>
-
 </html>
