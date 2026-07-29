@@ -130,6 +130,18 @@
       background-color: #163a5c;
     }
 
+    .btn-logout {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+    }
+
     .btn-action {
       padding: 6px 12px;
       border: none;
@@ -314,7 +326,6 @@
           </div>
         </div>
 
-        <!-- NOTE DE SÉCURITÉ -->
         <div class="note-securite">
           🛡️ <strong>Note de sécurité :</strong> Afin d'assurer la sécurité de nos chauffeurs et la livraison rapide de vos colis, seules les zones actuellement sécurisées 🟢 ou moyennement sûres 🟡 sont ouvertes à la commande.
         </div>
@@ -332,7 +343,7 @@
               <optgroup label="🍔 Alimentation & Restauration">
                 <option value="Repas / Restauration">Repas / Plat préparé</option>
                 <option value="Courses Alimentaires">Courses de supermarché</option>
-                <option value="Boissons / Casier">Boissons / Packs / Bierres</option>
+                <option value="Boissons / Casier">Boissons / Packs / Bières</option>
               </optgroup>
               <optgroup label="📄 Documents & Urgences">
                 <option value="Documents / Papiers">Documents / Papiers officiels</option>
@@ -418,23 +429,54 @@
 
   <!-- 3. LIVREUR / INSCRIPTION & CONNEXION -->
   <div id="section-livreur" class="section-app">
+    
+    <!-- ESPACE COMPTE CONNECTÉ -->
+    <div class="carte carte-centree" id="espaceMonCompte" style="display:none;">
+      <h2>👤 Mon Espace Livreur</h2>
+      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <p style="margin: 5px 0;"><strong>Nom :</strong> <span id="profileNom"></span></p>
+        <p style="margin: 5px 0;"><strong>Email :</strong> <span id="profileEmail"></span></p>
+        <p style="margin: 5px 0;"><strong>Téléphone :</strong> <span id="profileTel"></span></p>
+      </div>
+      <button onclick="deconnexion()" class="btn-logout">🔴 Se déconnecter</button>
+    </div>
+
+    <!-- FORMULAIRE DE CONNEXION DOUBLE (EMAIL OU TÉLÉPHONE) -->
     <div class="carte carte-centree" id="authBox">
       <h2>🔑 Connexion Livreur</h2>
       <form id="formLogin">
-        <label>Téléphone</label>
-        <input type="tel" id="loginTel" required>
+        <label>Se connecter avec :</label>
+        <select id="modeConnexion" onchange="basculerModeConnexion()">
+          <option value="tel">Numéro de téléphone</option>
+          <option value="email">Adresse Email</option>
+        </select>
+
+        <div id="champTel">
+          <label>Numéro de téléphone</label>
+          <input type="tel" id="loginTel" placeholder="Ex: +509 3400 0000">
+        </div>
+
+        <div id="champEmail" style="display:none;">
+          <label>Adresse Email</label>
+          <input type="email" id="loginEmail" placeholder="Ex: livreur@gmail.com">
+        </div>
+
         <button type="submit" class="btn-submit">Se connecter</button>
       </form>
     </div>
 
-    <div class="carte">
+    <!-- FORMULAIRE D'INSCRIPTION LIVREUR -->
+    <div class="carte" id="inscriptionBox">
       <h2>🛵 Inscription d'un Livreur</h2>
       <form id="formLivreur">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div><label>Nom</label><input type="text" id="nomLivreur" required></div>
           <div><label>Prénom</label><input type="text" id="prenomLivreur" required></div>
         </div>
-        <div><label>Téléphone</label><input type="tel" id="teleLivreur" required></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div><label>Adresse Email</label><input type="email" id="emailLivreur" required placeholder="livreur@gmail.com"></div>
+          <div><label>Téléphone</label><input type="tel" id="teleLivreur" required placeholder="+509 ..."></div>
+        </div>
         <label>Zone principale d'intervention</label>
         <select id="zoneLivreur" required>
           <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
@@ -488,28 +530,23 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // CONFIGURATION SUPABASE INTEGRÉE
+    // CONFIGURATION SUPABASE
     const SUPABASE_URL = 'https://hstgwiyztzfplxncuzxc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_2HWJPXVoD-A66Cdy3gJS3Q_9BM1_tgq';
 
-    // Initialisation Supabase
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
     let map, markerDepart, markerArrivee;
     let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
     let tarifActuel = 0;
 
-    // COORDONNÉES GPS DES ZONES ACCESSIBLES
     const coordsZones = {
-      // --- Port-au-Prince ---
       "Port-au-Prince - Canapé-Vert": [18.5250, -72.3100],
       "Port-au-Prince - Turgeau": [18.5333, -72.3167],
       "Port-au-Prince - Pacot": [18.5310, -72.3250],
       "Port-au-Prince - Haut-Peu-de-Chose": [18.5280, -72.3200],
       "Port-au-Prince - Bois Verna / Lalue": [18.5390, -72.3260],
       "Port-au-Prince - Nazon": [18.5480, -72.3180],
-
-      // --- Communes Voisines ---
       "Pétion-Ville": [18.5125, -72.2853],
       "Delmas": [18.5442, -72.3028],
       "Route de Frères": [18.5200, -72.2600],
@@ -525,27 +562,41 @@
       chargerLivreurs();
       chargerCommandes();
 
-      // TEMPS RÉEL SUPABASE
       if (supabaseClient) {
         supabaseClient.channel('custom-all-channel')
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'commandes' }, () => {
-            chargerCommandes();
-          })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'livreurs' }, () => {
-            chargerLivreurs();
-          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'commandes' }, () => { chargerCommandes(); })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'livreurs' }, () => { chargerLivreurs(); })
           .subscribe();
       }
     };
+
+    function basculerModeConnexion() {
+      const mode = document.getElementById("modeConnexion").value;
+      if (mode === "tel") {
+        document.getElementById("champTel").style.display = "block";
+        document.getElementById("champEmail").style.display = "none";
+      } else {
+        document.getElementById("champTel").style.display = "none";
+        document.getElementById("champEmail").style.display = "block";
+      }
+    }
 
     function verifierSession() {
       if (currentUser) {
         document.getElementById('userBar').style.display = 'flex';
         document.getElementById('userInfo').textContent = `Connecté : ${currentUser.prenom} ${currentUser.nom}`;
         document.getElementById('authBox').style.display = 'none';
+        document.getElementById('inscriptionBox').style.display = 'none';
+        
+        document.getElementById('espaceMonCompte').style.display = 'block';
+        document.getElementById('profileNom').textContent = `${currentUser.prenom} ${currentUser.nom}`;
+        document.getElementById('profileEmail').textContent = currentUser.email || 'Non renseigné';
+        document.getElementById('profileTel').textContent = currentUser.telephone || 'Non renseigné';
       } else {
         document.getElementById('userBar').style.display = 'none';
         document.getElementById('authBox').style.display = 'block';
+        document.getElementById('inscriptionBox').style.display = 'block';
+        document.getElementById('espaceMonCompte').style.display = 'none';
       }
     }
 
@@ -554,7 +605,6 @@
       location.reload();
     }
 
-    // GESTION DES ONGLETS
     function changerOnglet(nom, event) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.section-app').forEach(s => s.classList.remove('active'));
@@ -573,7 +623,6 @@
       }
     }
 
-    // CALCUL DU PRIX (ZONES + DISTANCE LEAFLET + POIDS DU COLIS)
     function calculerPrix() {
       const zDepart = document.getElementById("zoneDepart").value;
       const zArrivee = document.getElementById("zoneArrivee").value;
@@ -584,14 +633,12 @@
 
       if (!zDepart || !zArrivee) return;
 
-      // --- CONTRAINTE SÉCURITÉ POIDS / VÉHICULE ---
       if ((poids === 'lourd' || poids === 'tres_lourd') && transport === 'Moto') {
         alert("Attention : Pour un colis lourd (>15 kg), la livraison par Moto n'est pas adaptée. Le véhicule a été ajusté en Tricycle / Voiture.");
         transportSelect.value = poids === 'tres_lourd' ? 'Voiture' : 'Tricycle';
         transport = transportSelect.value;
       }
 
-      // 1. Définition du tarif de base par zone
       let tarifBase = 0;
       if (zDepart === zArrivee) {
         tarifBase = 250; 
@@ -601,7 +648,6 @@
         tarifBase = 500; 
       }
 
-      // 2. Calcul de la distance réelle avec Leaflet
       let distanceKm = 0;
       if (coordsZones[zDepart] && coordsZones[zArrivee]) {
         const p1 = L.latLng(coordsZones[zDepart]);
@@ -617,19 +663,15 @@
         map.fitBounds(group.getBounds().pad(0.2));
       }
 
-      // 3. Majoration distance (+30 HTG / km après 3km)
       let supplementDistance = distanceKm > 3 ? (distanceKm - 3) * 30 : 0;
 
-      // 4. Majoration Poids du colis
       let supplementPoids = 0;
       if (poids === 'moyen') supplementPoids = 150;
       if (poids === 'lourd') supplementPoids = 350;
       if (poids === 'tres_lourd') supplementPoids = 700;
 
-      // 5. Total intermédiaire
       let totalCalculated = tarifBase + supplementDistance + supplementPoids;
 
-      // 6. Multiplicateur par type de véhicule
       if (transport === 'Voiture') totalCalculated *= 1.5;
       if (transport === 'Tricycle') totalCalculated *= 1.2;
 
@@ -639,7 +681,6 @@
       document.getElementById("prixAffiche").textContent = tarifActuel + " HTG";
     }
 
-    // SUIVI EN TEMPS RÉEL
     async function chercherSuivi() {
       const query = document.getElementById('numSuivi').value.trim();
       if (!query || !supabaseClient) return;
@@ -684,31 +725,46 @@
       const { data, error } = await supabaseClient.from('livreurs').insert([{
         nom: document.getElementById("nomLivreur").value,
         prenom: document.getElementById("prenomLivreur").value,
+        email: document.getElementById("emailLivreur").value,
         telephone: document.getElementById("teleLivreur").value,
         zone: document.getElementById("zoneLivreur").value
       }]).select();
 
       if (error) alert("Erreur : " + error.message);
-      else { alert("Compte créé !"); this.reset(); }
+      else { 
+        alert("Compte créé avec succès ! Vous pouvez vous connecter par téléphone ou par email."); 
+        this.reset(); 
+      }
     });
 
-    // CONNEXION LIVREUR
+    // CONNEXION LIVREUR (TÉLÉPHONE OU EMAIL)
     document.getElementById("formLogin").addEventListener("submit", async function (e) {
       e.preventDefault();
       if (!supabaseClient) return alert("Base de données non initialisée");
 
-      const tel = document.getElementById("loginTel").value;
-      const { data, error } = await supabaseClient.from('livreurs').select('*').eq('telephone', tel).single();
+      const mode = document.getElementById("modeConnexion").value;
+      let query = supabaseClient.from('livreurs').select('*');
+
+      if (mode === 'tel') {
+        const tel = document.getElementById("loginTel").value.trim();
+        if (!tel) return alert("Veuillez entrer un numéro de téléphone.");
+        query = query.eq('telephone', tel);
+      } else {
+        const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+        if (!email) return alert("Veuillez entrer une adresse email.");
+        query = query.eq('email', email);
+      }
+
+      const { data, error } = await query.single();
 
       if (data) {
         localStorage.setItem('user_livreur', JSON.stringify(data));
         location.reload();
       } else {
-        alert("Chauffeur non trouvé avec ce numéro.");
+        alert("Identifiant non reconnu. Vérifiez vos informations.");
       }
     });
 
-    // CRÉER COMMANDE
     document.getElementById("formCommande").addEventListener("submit", async function (e) {
       e.preventDefault();
       if (!supabaseClient) return alert("Base de données non initialisée");
@@ -731,7 +787,6 @@
       else { alert("Commande envoyée avec succès !"); this.reset(); }
     });
 
-    // CHARGER LIVREURS
     async function chargerLivreurs() {
       if (!supabaseClient) return;
       const { data } = await supabaseClient.from('livreurs').select('*');
@@ -746,6 +801,7 @@
           carte.innerHTML = `
             <span class="badge ${l.dispo === 'Disponible' ? 'badge-dispo' : 'badge-occupe'}">${l.dispo || 'Disponible'}</span>
             <h3>${l.prenom} ${l.nom}</h3>
+            <p><strong>Email :</strong> ${l.email || 'N/A'}</p>
             <p><strong>Zone :</strong> ${l.zone}</p>
             <p><strong>Tél :</strong> ${l.telephone}</p>
             <div style="margin-top:10px;">
@@ -758,7 +814,6 @@
       }
     }
 
-    // CHARGER COMMANDES
     async function chargerCommandes() {
       if (!supabaseClient) return;
       const { data } = await supabaseClient.from('commandes').select('*, livreurs(nom, prenom)');
