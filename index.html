@@ -327,15 +327,36 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div>
-            <label>Type de colis</label>
-            <select id="typeColis">
-              <option>Document</option>
-              <option>Nourriture</option>
-              <option>Objet fragile</option>
-              <option>Électronique / Matériel</option>
-              <option>Autre</option>
+            <label>Type de colis / Service</label>
+            <select id="typeColis" required>
+              <optgroup label="🍔 Alimentation & Restauration">
+                <option value="Repas / Restauration">Repas / Plat préparé</option>
+                <option value="Courses Alimentaires">Courses de supermarché</option>
+                <option value="Boissons / Casier">Boissons / Packs / Bierres</option>
+              </optgroup>
+              <optgroup label="📄 Documents & Urgences">
+                <option value="Documents / Papiers">Documents / Papiers officiels</option>
+                <option value="Clés / Objet Oublié">Clés / Portefeuille / Chargeur</option>
+                <option value="Fournitures de bureau">Fournitures / Livres</option>
+              </optgroup>
+              <optgroup label="💊 Santé & Beauté">
+                <option value="Pharmacie / Médicaments">Pharmacie / Médicaments</option>
+                <option value="Cosmétiques / Beauté">Cosmétiques / Produits de beauté</option>
+              </optgroup>
+              <optgroup label="📱 High-Tech & Mode">
+                <option value="Électronique / Téléphone">Téléphone / High-Tech / Matériel</option>
+                <option value="Vêtements / Pressing">Vêtements / Chaussures / Pressing</option>
+                <option value="Cadeaux / Fleurs">Cadeaux / Fleurs / Chocolats</option>
+              </optgroup>
+              <optgroup label="📦 Charges Lourdes & Encombrants">
+                <option value="Électroménager">Électroménager (Micro-ondes, TV, etc.)</option>
+                <option value="Sac de Riz / Charbon / Eau">Sac de Riz / Bonbonne / Charbon</option>
+                <option value="Mobilier / Matériaux">Mobilier léger / Outillage</option>
+              </optgroup>
+              <option value="Autre">Autre type de colis</option>
             </select>
           </div>
+
           <div>
             <label>Poids estimé du colis</label>
             <select id="poidsColis" onchange="calculerPrix()" required>
