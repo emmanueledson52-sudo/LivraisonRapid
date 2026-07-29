@@ -28,7 +28,7 @@
     }
 
     #map {
-      height: 300px;
+      height: 320px;
       border-radius: 8px;
       z-index: 1;
     }
@@ -36,6 +36,25 @@
     .sticky-card {
       position: sticky;
       top: 20px;
+    }
+
+    .badge-dispo { background-color: #28a745; }
+    .badge-occupe { background-color: #dc3545; }
+    .badge-attente { background-color: #ffc107; color: #333; }
+    .badge-cours { background-color: #17a2b8; }
+    .badge-livre { background-color: #6c757d; }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 15px;
+    }
+
+    .item-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 15px;
+      background: #ffffff;
     }
 
     /* Pulse animation pour la géolocalisation GPS active */
@@ -48,17 +67,24 @@
       50% { opacity: 0.5; transform: scale(1.05); }
       100% { opacity: 1; transform: scale(1); }
     }
+
+    /* Status de sécurité des zones */
+    .sec-green { border-left: 5px solid #28a745; }
+    .sec-yellow { border-left: 5px solid #ffc107; }
+    .sec-red { border-left: 5px solid #dc3545; opacity: 0.6; }
   </style>
 </head>
 
 <body>
 
-  <!-- Toast Notification -->
+  <!-- Conteneur Toast pour Notifications -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
     <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
-        <div class="toast-body" id="toastMessage">Action effectuée !</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        <div class="toast-body" id="toastMessage">
+          Action effectuée avec succès !
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
     </div>
   </div>
@@ -68,6 +94,7 @@
     <div class="container">
       <a class="navbar-brand fw-bold text-primary" href="#">🚚 LivraisonRapid</a>
       
+      <!-- Option 3: Bouton PWA d'installation de l'App -->
       <button id="btnPwaInstall" class="btn btn-warning btn-sm me-2 d-none fw-bold" onclick="installerPWA()">
         📲 Installer l'App
       </button>
@@ -89,13 +116,15 @@
   <!-- Contenu Principal -->
   <main class="container mb-5">
 
-    <!-- Barre Livreur -->
+    <!-- Barre Livreur / Activation GPS Live -->
     <div id="userBar" class="alert alert-info d-flex justify-content-between align-items-center mb-4">
       <div>
         <strong id="userInfo">Espace Chauffeur</strong>
+        <!-- Option 1: Indicateur de statut GPS Live -->
         <span id="gpsBadge" class="badge bg-secondary ms-2">GPS Inactif</span>
       </div>
       <div>
+        <!-- Option 1: Bouton de géolocalisation GPS en direct -->
         <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm me-2 fw-bold">📍 Activer Partage GPS Live</button>
       </div>
     </div>
@@ -132,12 +161,13 @@
                     <input type="text" class="form-control" id="destinataireNom" required placeholder="Ex: Marie Joseph">
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">WhatsApp Destinataire *</label>
+                    <!-- Option 4: Téléphone pour notifications WhatsApp directes -->
+                    <label class="form-label">WhatsApp Destinataire (pour alerte SMS/WA) *</label>
                     <input type="tel" class="form-control" id="destinataireTel" required placeholder="+509 3700 0000">
                   </div>
                 </div>
 
-                <!-- Trajet -->
+                <!-- Option 5: Trajet avec Indicateur de Sécurité par Zone -->
                 <h5 class="text-secondary fs-6 mb-3 mt-4">3. Zones & Sécurité du Trajet</h5>
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
@@ -148,6 +178,7 @@
                       <option value="Canapé-Vert">🟢 Canapé-Vert (Zone Sûre)</option>
                       <option value="Delmas">🟡 Delmas (Vigilance)</option>
                       <option value="Nazon">🟡 Nazon (Vigilance)</option>
+                      <option value="Martissant" disabled>🔴 Martissant (Fermée - Risque élevé)</option>
                     </select>
                   </div>
                   <div class="col-md-6">
@@ -162,22 +193,24 @@
                   </div>
                 </div>
 
+                <!-- Option 5: Panneau visuel d'état de sécurité -->
                 <div id="securityAlert" class="alert alert-success d-flex align-items-center gap-2 mb-3" role="alert">
                   <span id="secIcon" class="fs-4">🚦</span>
                   <div id="secText" class="small">Sélectionnez vos zones pour vérifier l'état de sécurité du réseau.</div>
                 </div>
 
-                <!-- Code Promo & Paiement -->
+                <!-- Option 2: Code Promo / Remises -->
                 <h5 class="text-secondary fs-6 mb-3 mt-4">4. Code Promo & Paiement</h5>
                 <div class="mb-3">
                   <label class="form-label">Code Promo</label>
                   <div class="input-group">
-                    <input type="text" id="codePromo" class="form-control" placeholder="Entrez RAPID10">
+                    <input type="text" id="codePromo" class="form-control" placeholder="Entrez RAPID10 ou LIVRAISON20">
                     <button type="button" class="btn btn-outline-secondary" onclick="appliquerPromo()">Appliquer</button>
                   </div>
                   <div id="promoStatus" class="small mt-1"></div>
                 </div>
 
+                <!-- Option 6: Simulation de Paiement Sécurisé -->
                 <div class="mb-3">
                   <label class="form-label">Mode de Règlement *</label>
                   <select class="form-select" id="methodePaiement" required onchange="toggleFormPaiement()">
@@ -187,6 +220,7 @@
                   </select>
                 </div>
 
+                <!-- Modale/Formulaire de simulation de paiement en ligne -->
                 <div id="boxPaiementEnLigne" class="p-3 bg-light border rounded mb-3" style="display:none;">
                   <h6 class="text-primary mb-2">💳 Transaction Sécurisée <span id="nomPasserelle">MonCash</span></h6>
                   <p class="small text-muted mb-2">Saisissez votre numéro pour valider le prélèvement :</p>
@@ -206,43 +240,27 @@
           </div>
         </div>
 
-        <!-- Détails de la Tarification (Sous-total + Taxe + Réduction = Total) -->
+        <!-- Option 1: Carte Leaflet GPS Live & Détails Tarifaires -->
         <div class="col-lg-5">
           <div class="card shadow-sm border-0 sticky-card">
             <div class="card-body p-4">
-              <h5 class="card-title mb-3">📍 Tracking & Calcul Tarif</h5>
+              <h5 class="card-title mb-3">📍 Tracking Carte Leaflet</h5>
               
               <div id="map"></div>
 
               <hr class="my-4">
 
-              <!-- Détails Financiers -->
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="text-muted">Distance estimée :</span>
-                <strong id="distVal" class="fs-6">0.0 km</strong>
+                <span class="text-muted">Distance :</span>
+                <strong id="distVal" class="fs-5">0.0 km</strong>
               </div>
-
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="text-muted">Sous-total (Course) :</span>
-                <strong id="subtotalVal" class="fs-6">250 HTG</strong>
-              </div>
-
-              <!-- CHAMP TAXE / FRAIS DE SERVICE -->
-              <div class="d-flex justify-content-between align-items-center mb-2 text-primary">
-                <span>Taxe & Frais de Service (<span id="tauxTaxeLabel">10%</span>) :</span>
-                <strong id="taxeVal">+25 HTG</strong>
-              </div>
-
               <div class="d-flex justify-content-between align-items-center mb-2 text-danger" id="boxReduction" style="display:none;">
                 <span>Réduction Promo :</span>
                 <strong id="reductionVal">-0 HTG</strong>
               </div>
-
-              <hr>
-
               <div class="d-flex justify-content-between align-items-center">
-                <span class="fw-bold fs-5">Total à payer :</span>
-                <strong id="priceVal" class="fs-3 text-success">275 HTG</strong>
+                <span class="text-muted">Total à payer :</span>
+                <strong id="priceVal" class="fs-3 text-success">250 HTG</strong>
               </div>
             </div>
           </div>
@@ -255,6 +273,7 @@
     <div id="section-suivi" class="section-app d-none">
       <div class="card shadow-sm border-0 p-4">
         <h3>🔎 Suivi en direct du livreur</h3>
+        <p class="text-muted small">Surveillez le déplacement du chauffeur attribué sur la carte ci-dessous :</p>
         <div id="liveSuiviStatus" class="alert alert-info">En attente d'une course active...</div>
       </div>
     </div>
@@ -269,6 +288,7 @@
 
   </main>
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -277,12 +297,11 @@
     let gpsWatchId = null;
     let deferredPrompt = null;
     
-    // VARIABLES TARIF / TAXE
-    let tarifBase = 250;           // Course de base
-    let tauxTaxe = 0.10;           // 10% de taxe (Vous pouvez changer par ex: 0.15 pour 15%, ou une taxe fixe)
+    let tarifBase = 250;
     let reductionMontant = 0;
     let paiementEstValide = false;
 
+    // Coordonnées GPS des Zones
     const coordsZones = {
       "Pétion-Ville": [18.5125, -72.2853],
       "Canapé-Vert": [18.5250, -72.3100],
@@ -290,6 +309,7 @@
       "Nazon": [18.5480, -72.3180]
     };
 
+    // Statuts de Sécurité des zones (Option 5)
     const securiteZones = {
       "Pétion-Ville": "green",
       "Canapé-Vert": "green",
@@ -298,9 +318,9 @@
     };
 
     window.onload = function () {
+      // Initialisation Carte Leaflet
       map = L.map('map').setView([18.5392, -72.3364], 12);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-      actualiserAffichagePrix();
     };
 
     function afficherToast(msg, type = 'success') {
@@ -310,31 +330,73 @@
       new bootstrap.Toast(toastEl).show();
     }
 
-    // CALCUL ET ACTUALISATION DYNAMIQUE DU PRIX ET DE LA TAXE
-    function actualiserAffichagePrix() {
-      // 1. Calcul du montant de la taxe
-      let montantTaxe = Math.round(tarifBase * tauxTaxe);
+    // ==========================================
+    // OPTION 1: GÉOLOCALISATION GPS EN DIRECT
+    // ==========================================
+    function toggleGpsTracking() {
+      const btn = document.getElementById('btnGpsToggle');
+      const badge = document.getElementById('gpsBadge');
 
-      // 2. Calcul du Total Final
-      let totalFinal = (tarifBase + montantTaxe) - reductionMontant;
-      if (totalFinal < 100) totalFinal = 100; // Tarif minimum acceptable
+      if (gpsWatchId) {
+        navigator.geolocation.clearWatch(gpsWatchId);
+        gpsWatchId = null;
+        btn.textContent = "📍 Activer Partage GPS Live";
+        btn.className = "btn btn-warning btn-sm me-2 fw-bold";
+        badge.textContent = "GPS Inactif";
+        badge.className = "badge bg-secondary ms-2";
+        afficherToast("Géolocalisation désactivée", "info");
+      } else {
+        if (!navigator.geolocation) {
+          afficherToast("GPS non supporté par ce navigateur", "danger");
+          return;
+        }
 
-      // 3. Mise à jour dans le DOM
-      document.getElementById('subtotalVal').textContent = `${tarifBase} HTG`;
-      document.getElementById('taxeVal').textContent = `+${montantTaxe} HTG`;
-      document.getElementById('priceVal').textContent = `${totalFinal} HTG`;
+        gpsWatchId = navigator.geolocation.watchPosition((pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+
+          badge.textContent = "GPS Actif (En direct)";
+          badge.className = "badge bg-success ms-2 gps-active";
+          btn.textContent = "🛑 Arrêter Partage GPS";
+          btn.className = "btn btn-danger btn-sm me-2 fw-bold";
+
+          // Mise à jour de l'icône du livreur sur la carte Leaflet
+          if (markerLivreurGps) map.removeLayer(markerLivreurGps);
+          
+          const iconLivreur = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png',
+            iconSize: [38, 38]
+          });
+
+          markerLivreurGps = L.marker([lat, lng], { icon: iconLivreur }).addTo(map)
+            .bindPopup("<b>Livreur en position live !</b>").openPopup();
+
+          map.setView([lat, lng], 14);
+
+        }, (err) => {
+          afficherToast("Erreur d'accès GPS : " + err.message, "danger");
+        }, { enableHighAccuracy: true });
+      }
     }
 
+    // ==========================================
+    // OPTION 2: CODE PROMO / REMISES
+    // ==========================================
     function appliquerPromo() {
       const code = document.getElementById('codePromo').value.trim().toUpperCase();
       const status = document.getElementById('promoStatus');
       const boxReduc = document.getElementById('boxReduction');
 
       if (code === 'RAPID10') {
-        reductionMontant = 50;
+        reductionMontant = 50; // 50 HTG de réduction
         status.innerHTML = `<span class="text-success fw-bold">✅ Code RAPID10 appliqué (-50 HTG)</span>`;
         boxReduc.style.display = 'flex';
         document.getElementById('reductionVal').textContent = `-50 HTG`;
+      } else if (code === 'LIVRAISON20') {
+        reductionMontant = 100; // 100 HTG de réduction
+        status.innerHTML = `<span class="text-success fw-bold">✅ Code LIVRAISON20 appliqué (-100 HTG)</span>`;
+        boxReduc.style.display = 'flex';
+        document.getElementById('reductionVal').textContent = `-100 HTG`;
       } else {
         reductionMontant = 0;
         status.innerHTML = `<span class="text-danger">❌ Code invalide</span>`;
@@ -343,6 +405,31 @@
       actualiserAffichagePrix();
     }
 
+    // ==========================================
+    // OPTION 3: PWA (INSTALLATION APPLI)
+    // ==========================================
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('btnPwaInstall').classList.remove('d-none');
+    });
+
+    function installerPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choice) => {
+          if (choice.outcome === 'accepted') {
+            afficherToast("Installation réussie !");
+          }
+          deferredPrompt = null;
+          document.getElementById('btnPwaInstall').classList.add('d-none');
+        });
+      }
+    }
+
+    // ==========================================
+    // OPTION 5: INDICATEUR SÉCURITÉ ZONES
+    // ==========================================
     function calculerPrixEtSecurite() {
       const zDep = document.getElementById('zoneDepart').value;
       const zArr = document.getElementById('zoneArrivee').value;
@@ -365,6 +452,7 @@
         secText.textContent = "Zone sécurisée : Trajet dégagé et praticable.";
       }
 
+      // Trajet Carte Leaflet
       if (coordsZones[zDep] && coordsZones[zArr]) {
         if (markerDepart) map.removeLayer(markerDepart);
         if (markerArrivee) map.removeLayer(markerArrivee);
@@ -377,38 +465,20 @@
 
         const dist = (L.latLng(coordsZones[zDep]).distanceTo(L.latLng(coordsZones[zArr])) / 1000).toFixed(1);
         document.getElementById('distVal').textContent = `${dist} km`;
-        
-        // Calcul du sous-total basé sur la distance
         tarifBase = 250 + Math.round(dist * 20);
         actualiserAffichagePrix();
       }
     }
 
-    function toggleGpsTracking() {
-      const btn = document.getElementById('btnGpsToggle');
-      const badge = document.getElementById('gpsBadge');
-
-      if (gpsWatchId) {
-        navigator.geolocation.clearWatch(gpsWatchId);
-        gpsWatchId = null;
-        btn.textContent = "📍 Activer Partage GPS Live";
-        badge.textContent = "GPS Inactif";
-        badge.className = "badge bg-secondary ms-2";
-      } else {
-        if (!navigator.geolocation) return;
-        gpsWatchId = navigator.geolocation.watchPosition((pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          badge.textContent = "GPS Actif";
-          badge.className = "badge bg-success ms-2 gps-active";
-          btn.textContent = "🛑 Arrêter Partage GPS";
-
-          if (markerLivreurGps) map.removeLayer(markerLivreurGps);
-          markerLivreurGps = L.marker([lat, lng]).addTo(map).bindPopup("Livreur Live").openPopup();
-        });
-      }
+    function actualiserAffichagePrix() {
+      let finalPrice = tarifBase - reductionMontant;
+      if (finalPrice < 100) finalPrice = 100;
+      document.getElementById('priceVal').textContent = `${finalPrice} HTG`;
     }
 
+    // ==========================================
+    // OPTION 6: SIMULATION DE PAIEMENT SÉCURISÉ
+    // ==========================================
     function toggleFormPaiement() {
       const mode = document.getElementById('methodePaiement').value;
       const box = document.getElementById('boxPaiementEnLigne');
@@ -430,13 +500,18 @@
         return;
       }
 
-      status.innerHTML = `<span class="text-info">💬 Demande de confirmation envoyée...</span>`;
+      status.innerHTML = `<span class="text-info">💬 Demande de confirmation envoyée sur le mobile...</span>`;
+      
       setTimeout(() => {
         paiementEstValide = true;
-        status.innerHTML = `<span class="text-success fw-bold">✅ Paiement validé avec succès !</span>`;
-      }, 1500);
+        status.innerHTML = `<span class="text-success fw-bold">✅ Paiement sécurisé validé avec succès !</span>`;
+        afficherToast("Paiement MonCash/NatCash confirmé !");
+      }, 2000);
     }
 
+    // ==========================================
+    // OPTION 4: NOTIFICATION WHATSAPP DESTINATAIRE & SOUMISSION
+    // ==========================================
     document.getElementById('orderForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
@@ -449,11 +524,15 @@
       const senderName = document.getElementById('clientNom').value;
       const destNom = document.getElementById('destinataireNom').value;
       const destPhone = document.getElementById('destinataireTel').value;
+      const zDep = document.getElementById('zoneDepart').value;
+      const zArr = document.getElementById('zoneArrivee').value;
       const prixFinal = document.getElementById('priceVal').textContent;
 
       afficherToast("Commande envoyée au réseau !");
 
-      const messageWA = `Bonjour ${encodeURIComponent(destNom)}, un colis vous a été envoyé par *${encodeURIComponent(senderName)}*. Montant Total (Taxes incl.): ${prixFinal}.`;
+      // Notification WhatsApp Directe au destinataire (Option 4)
+      const messageWA = `Bonjour ${encodeURIComponent(destNom)}, un colis vous a été envoyé par *${encodeURIComponent(senderName)}* (%0ATrajet: ${encodeURIComponent(zDep)} ➔ ${encodeURIComponent(zArr)}.%0AMontant: ${prixFinal}).%0ASuivez la livraison en direct !`;
+      
       const cleanPhone = destPhone.replace(/\s+/g, '').replace('+', '');
       window.open(`https://wa.me/${cleanPhone}?text=${messageWA}`, '_blank');
     });
