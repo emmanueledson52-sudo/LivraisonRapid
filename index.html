@@ -131,7 +131,7 @@
                   </div>
                 </div>
 
-                <!-- 2. Informations Destinataire avec option "Je suis le destinataire" -->
+                <!-- 2. Informations Destinataire avec option masquable -->
                 <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
                   <h5 class="text-secondary fs-6 mb-0">2. Information Destinataire</h5>
                   <div class="form-check form-switch mb-0">
@@ -140,7 +140,7 @@
                   </div>
                 </div>
 
-                <div class="row g-3 mb-3">
+                <div class="row g-3 mb-3" id="blockDestinataire">
                   <div class="col-md-6">
                     <label for="destinataireNom" class="form-label">Nom du destinataire *</label>
                     <input type="text" class="form-control" id="destinataireNom" placeholder="Ex: Jean Baptiste" required>
@@ -551,7 +551,7 @@
       chargerLivreurs();
       chargerCommandes();
 
-      // Synchronisation de la saisie expéditeur vers destinataire si la case est cochée
+      // Synchronisation directe pendant la saisie
       document.getElementById('clientNom').addEventListener('input', function() {
         if (document.getElementById('memeDestinataire').checked) {
           document.getElementById('destinataireNom').value = this.value;
@@ -572,9 +572,10 @@
       }
     };
 
-    // Fonction pour répliquer ou réinitialiser les infos du destinataire
+    // Masque/Affiche la section destinataire et adapte la validation
     function copierInfoExpediteur() {
       const isChecked = document.getElementById('memeDestinataire').checked;
+      const blockDest = document.getElementById('blockDestinataire');
       const nomExp = document.getElementById('clientNom').value;
       const telExp = document.getElementById('clientTel').value;
 
@@ -582,9 +583,15 @@
       const destTelInput = document.getElementById('destinataireTel');
 
       if (isChecked) {
+        blockDest.style.display = 'none';
+        destNomInput.removeAttribute('required');
+        destTelInput.removeAttribute('required');
         destNomInput.value = nomExp;
         destTelInput.value = telExp;
       } else {
+        blockDest.style.display = 'flex';
+        destNomInput.setAttribute('required', '');
+        destTelInput.setAttribute('required', '');
         destNomInput.value = '';
         destTelInput.value = '';
       }
