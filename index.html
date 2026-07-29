@@ -131,8 +131,15 @@
                   </div>
                 </div>
 
-                <!-- 2. Informations Destinataire -->
-                <h5 class="text-secondary fs-6 mb-3 mt-4">2. Information Destinataire</h5>
+                <!-- 2. Informations Destinataire avec option "Je suis le destinataire" -->
+                <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+                  <h5 class="text-secondary fs-6 mb-0">2. Information Destinataire</h5>
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" id="memeDestinataire" onchange="copierInfoExpediteur()">
+                    <label class="form-check-label small text-muted" for="memeDestinataire">Je suis le destinataire</label>
+                  </div>
+                </div>
+
                 <div class="row g-3 mb-3">
                   <div class="col-md-6">
                     <label for="destinataireNom" class="form-label">Nom du destinataire *</label>
@@ -191,7 +198,7 @@
                   </div>
                 </div>
 
-                <!-- Note de sécurité corrigée -->
+                <!-- Note de sécurité -->
                 <div class="alert alert-warning py-2 small mb-3 d-flex align-items-center gap-1">
                   <span class="me-1">🛡️</span>
                   <div>
@@ -544,6 +551,19 @@
       chargerLivreurs();
       chargerCommandes();
 
+      // Synchronisation de la saisie expéditeur vers destinataire si la case est cochée
+      document.getElementById('clientNom').addEventListener('input', function() {
+        if (document.getElementById('memeDestinataire').checked) {
+          document.getElementById('destinataireNom').value = this.value;
+        }
+      });
+
+      document.getElementById('clientTel').addEventListener('input', function() {
+        if (document.getElementById('memeDestinataire').checked) {
+          document.getElementById('destinataireTel').value = this.value;
+        }
+      });
+
       if (supabaseClient) {
         supabaseClient.channel('custom-all-channel')
           .on('postgres_changes', { event: '*', schema: 'public', table: 'commandes' }, () => { chargerCommandes(); })
@@ -551,6 +571,24 @@
           .subscribe();
       }
     };
+
+    // Fonction pour répliquer ou réinitialiser les infos du destinataire
+    function copierInfoExpediteur() {
+      const isChecked = document.getElementById('memeDestinataire').checked;
+      const nomExp = document.getElementById('clientNom').value;
+      const telExp = document.getElementById('clientTel').value;
+
+      const destNomInput = document.getElementById('destinataireNom');
+      const destTelInput = document.getElementById('destinataireTel');
+
+      if (isChecked) {
+        destNomInput.value = nomExp;
+        destTelInput.value = telExp;
+      } else {
+        destNomInput.value = '';
+        destTelInput.value = '';
+      }
+    }
 
     function toggleSchedule(show) {
       const scheduleInputs = document.getElementById('scheduleInputs');
