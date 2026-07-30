@@ -551,7 +551,6 @@
                 </select>
               </div>
 
-              <!-- NOUVEAU Champ de Sélection de Photos depuis Galerie/Fichiers (Issu du Code 2) -->
               <div class="mb-3">
                 <label for="articleImgs" class="form-label fw-bold">📷 Photos de l'article (Galerie/Photos - 3
                   max)</label>
@@ -579,7 +578,7 @@
           </div>
         </div>
 
-        <!-- Vitrine Marketplace (Affiches des articles à vendre) avec Filtre & Recherche (Du Code 2) -->
+        <!-- Vitrine Marketplace -->
         <div class="col-lg-7">
           <div class="card shadow-sm border-0 p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -587,7 +586,6 @@
               <span class="badge bg-secondary" id="badgeTotalArticles">0 article(s)</span>
             </div>
 
-            <!-- NOUVEAU Barre de Recherche & Filtres (Issu du Code 2) -->
             <div class="row g-2 mb-3">
               <div class="col-md-7">
                 <input type="text" id="searchMarket" class="form-control" placeholder="🔍 Rechercher un article..."
@@ -605,9 +603,7 @@
               </div>
             </div>
 
-            <div id="gridMarketplace" class="grid-layout mt-3">
-              <!-- Les articles mis en vente s'affichent ici dynamiquement -->
-            </div>
+            <div id="gridMarketplace" class="grid-layout mt-3"></div>
           </div>
         </div>
       </div>
@@ -1022,6 +1018,13 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
+    // Enregistrement du Service Worker pour PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => console.log('PWA Service Worker : ', err));
+      });
+    }
+
     const SUPABASE_URL = 'https://hstgwiyztzfplxncuzxc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_2HWJPXVoD-A66Cdy3gJS3Q_9BM1_tgq';
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -1029,26 +1032,23 @@
     let map, markerDepart, markerArrivee, markerLivreurGps;
     let gpsWatchId = null;
     let deferredPrompt = null;
-    let imagesStockees = []; // NOUVEAU : Stockage d'images importées depuis la galerie (du Code 2)
+    let imagesStockees = [];
 
     let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
     let currentOtpEmail = '';
 
-    // Base de démonstration pour le suivi de colis hors Supabase (du Code 2)
     const colisBase = {
       "LR-101": { statut: "En cours", livreur: "Jean Baptiste", dest: "Delmas 33", eta: "15 mins", lat: 18.545, lng: -72.298 }
     };
 
-    // Variables Financières & Tarification
-    let tarifBase = 250;           // Course de base
-    let tauxTaxe = 0.135;          // Taxe & Frais de Service (13.5%)
-    let reductionMontant = 0;      // Remise promo
-    let tarifActuel = 284;         // Total calculé par défaut
+    let tarifBase = 250;
+    let tauxTaxe = 0.135;
+    let reductionMontant = 0;
+    let tarifActuel = 284;
     let paiementEstValide = false;
     let selectedRating = 5;
     let currentCommandeId = null;
 
-    // Démo locale d'articles marketplace
     let articlesMarketplace = JSON.parse(localStorage.getItem('articles_marketplace')) || [
       {
         id: 1,
@@ -1134,7 +1134,6 @@
       }
     };
 
-    // Notification Toast Générale
     function afficherToast(msg, type = 'success') {
       const toastEl = document.getElementById('liveToast');
       const toastBody = document.getElementById('toastMessage');
@@ -1143,7 +1142,6 @@
       new bootstrap.Toast(toastEl).show();
     }
 
-    // PWA Installation
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
@@ -1163,7 +1161,6 @@
       }
     }
 
-    // Géolocalisation GPS en direct
     function toggleGpsTracking() {
       const btn = document.getElementById('btnGpsToggle');
       const badge = document.getElementById('gpsBadge');
@@ -1209,6 +1206,7 @@
       }
     }
 
+    // KORIJE: Kopye enfo ak dinamik
     function copierInfoExpediteur() {
       const isChecked = document.getElementById('memeDestinataire').checked;
       const blockDest = document.getElementById('blockDestinataire');
@@ -1228,8 +1226,6 @@
         blockDest.classList.remove('d-none');
         destNomInput.setAttribute('required', '');
         destTelInput.setAttribute('required', '');
-        destNomInput.value = '';
-        destTelInput.value = '';
       }
     }
 
@@ -1238,13 +1234,16 @@
       scheduleInputs.classList.toggle('d-none', !show);
     }
 
+    // KORIJE: Rafrechi kat la san efè gri lè w chanje paj
     function changerOnglet(nom, event) {
       document.querySelectorAll('.section-app').forEach(s => s.classList.add('d-none'));
       const targetSection = document.getElementById('section-' + nom);
       if (targetSection) targetSection.classList.remove('d-none');
 
       if ((nom === 'client' || nom === 'suivi') && map) {
-        setTimeout(() => map.invalidateSize(), 300);
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 250);
       }
     }
 
@@ -1421,7 +1420,6 @@
       actualiserAffichagePrix();
     });
 
-    // NOUVEAU : Prévisualisation des images de la galerie (du Code 2)
     function previsualiserImages(event) {
       const files = Array.from(event.target.files).slice(0, 3);
       const container = document.getElementById('previewContainer');
@@ -1447,7 +1445,6 @@
       });
     }
 
-    // MARKETPLACE : Publier un nouvel article avec support Photos Galerie (Intégration Code 2)
     function publierArticle(e) {
       e.preventDefault();
 
@@ -1460,7 +1457,6 @@
       let urlImg = document.getElementById('articleImg').value.trim();
       const desc = document.getElementById('articleDesc').value;
 
-      // Utilise la première photo téléchargée ou l'URL fournie, sinon image par défaut
       let finalImg = imagesStockees.length > 0
         ? imagesStockees[0]
         : (urlImg || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80");
@@ -1490,7 +1486,6 @@
       chargerMarketplace();
     }
 
-    // AFFICHER TOUS LES ARTICLES DE LA MARKETPLACE
     function chargerMarketplace(liste = articlesMarketplace) {
       const grid = document.getElementById('gridMarketplace');
       const badge = document.getElementById('badgeTotalArticles');
@@ -1534,7 +1529,6 @@
       });
     }
 
-    // NOUVEAU : Fonction de filtrage par recherche et catégorie (du Code 2)
     function filtrerMarketplace() {
       const query = document.getElementById('searchMarket').value.toLowerCase();
       const cat = document.getElementById('catFilter').value;
@@ -1548,7 +1542,6 @@
       chargerMarketplace(resultats);
     }
 
-    // Récupérer un article pour pré-remplir le formulaire de commande de livraison
     function commanderArticleLivraison(titreEnc, zoneEnc, vendeurEnc) {
       const titre = decodeURIComponent(titreEnc);
       const zone = decodeURIComponent(zoneEnc);
@@ -1562,7 +1555,6 @@
       afficherToast(`Détails de "${titre}" transférés dans le formulaire de livraison !`);
     }
 
-    // Traitement du Formulaire Partenariat Business
     function envoyerDemandeBusiness(e) {
       e.preventDefault();
       const nomCom = document.getElementById('bizNom').value;
@@ -1581,7 +1573,6 @@
       document.getElementById('formBusiness').reset();
     }
 
-    // RECHERCHE & SUIVI DE COLIS (Supabase + Fallback Code 2)
     async function chercherSuivi() {
       const query = document.getElementById('numSuivi').value.trim().toUpperCase();
       const conteneur = document.getElementById('suiviResultat');
@@ -1589,7 +1580,6 @@
 
       if (!query) return;
 
-      // 1. Démo de suivi hors-ligne ou par code direct (du Code 2)
       if (colisBase[query]) {
         const data = colisBase[query];
         conteneur.style.display = 'block';
@@ -1609,7 +1599,6 @@
         return;
       }
 
-      // 2. Recherche dans Supabase
       if (supabaseClient) {
         const { data } = await supabaseClient
           .from('commandes')
@@ -1637,8 +1626,12 @@
       conteneur.style.display = 'none';
     }
 
+    // KORIJE: Majo statut avèk Supabase epi rafrechi paj la byen
     async function changerStatutCommande(id, nouveauStatut) {
-      if (!supabaseClient) return;
+      if (!supabaseClient) {
+        afficherToast("Changement local simulation reussi!");
+        return;
+      }
 
       let updateData = { statut: nouveauStatut };
       if (nouveauStatut === 'Livrée') {
@@ -1646,9 +1639,13 @@
         if (urlPreuve) updateData.preuve_url = urlPreuve;
       }
 
-      await supabaseClient.from('commandes').update(updateData).eq('id', id);
-      afficherToast(`Commande #${id} mise à jour : ${nouveauStatut}`);
-      chargerCommandes();
+      const { error } = await supabaseClient.from('commandes').update(updateData).eq('id', id);
+      if(!error){
+        afficherToast(`Commande #${id} mise à jour : ${nouveauStatut}`);
+        chargerCommandes();
+      } else {
+        afficherToast("Erreur lors de la mise à jour", "danger");
+      }
     }
 
     function switchAuthTab(type) {
@@ -1749,16 +1746,13 @@
         data.forEach(c => {
           totalCA += Number(c.prix || 0);
 
-          let actionsLivreur = '';
-          if (currentUser) {
-            actionsLivreur = `
-              <div class="mt-2 pt-2 border-top">
-                <small class="d-block text-muted mb-1">Changer statut :</small>
-                <button class="btn btn-sm btn-outline-info me-1" onclick="changerStatutCommande(${c.id}, 'En cours')">En cours</button>
-                <button class="btn btn-sm btn-outline-success" onclick="changerStatutCommande(${c.id}, 'Livrée')">Livrée</button>
-              </div>
-            `;
-          }
+          let actionsLivreur = `
+            <div class="mt-2 pt-2 border-top">
+              <small class="d-block text-muted mb-1">Changer statut :</small>
+              <button class="btn btn-sm btn-outline-info me-1" onclick="changerStatutCommande(${c.id}, 'En cours')">En cours</button>
+              <button class="btn btn-sm btn-outline-success" onclick="changerStatutCommande(${c.id}, 'Livrée')">Livrée</button>
+            </div>
+          `;
 
           conteneur.innerHTML += `
             <div class="item-card">
