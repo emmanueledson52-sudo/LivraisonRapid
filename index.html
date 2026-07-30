@@ -1206,7 +1206,7 @@
       }
     }
 
-    // KORIJE: Kopye enfo ak dinamik
+    // Dynamic Recipient Information Handling
     function copierInfoExpediteur() {
       const isChecked = document.getElementById('memeDestinataire').checked;
       const blockDest = document.getElementById('blockDestinataire');
@@ -1234,7 +1234,7 @@
       scheduleInputs.classList.toggle('d-none', !show);
     }
 
-    // KORIJE: Rafrechi kat la san efè gri lè w chanje paj
+    // Unified Section Tab Switcher with Leaflet Map Invalidation
     function changerOnglet(nom, event) {
       document.querySelectorAll('.section-app').forEach(s => s.classList.add('d-none'));
       const targetSection = document.getElementById('section-' + nom);
@@ -1626,10 +1626,10 @@
       conteneur.style.display = 'none';
     }
 
-    // KORIJE: Majo statut avèk Supabase epi rafrechi paj la byen
+    // Direct Status Update Handler with Supabase Integration
     async function changerStatutCommande(id, nouveauStatut) {
       if (!supabaseClient) {
-        afficherToast("Changement local simulation reussi!");
+        afficherToast(`Changement de statut en simulation locale: ${nouveauStatut}`);
         return;
       }
 
@@ -1640,7 +1640,7 @@
       }
 
       const { error } = await supabaseClient.from('commandes').update(updateData).eq('id', id);
-      if(!error){
+      if (!error) {
         afficherToast(`Commande #${id} mise à jour : ${nouveauStatut}`);
         chargerCommandes();
       } else {
