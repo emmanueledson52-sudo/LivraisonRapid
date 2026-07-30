@@ -168,14 +168,11 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <div class="navbar-nav ms-auto flex-row flex-wrap gap-2 mt-2 mt-lg-0">
           <button class="btn btn-primary btn-sm" onclick="changerOnglet('client', event)">📦 Commander</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis /
-            GPS</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('livreur', event)">🛵 Espace
-            Livreur</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('commandes', event)">📋 Courses en
-            cours</button>
-          <button class="btn btn-outline-info btn-sm" onclick="changerOnglet('support', event)">💬 Support &
-            FAQ</button>
+          <button class="btn btn-outline-success btn-sm fw-bold" onclick="changerOnglet('business', event)">🏢 Espace Business</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis / GPS</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('livreur', event)">🛵 Espace Livreur</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('commandes', event)">📋 Courses en cours</button>
+          <button class="btn btn-outline-info btn-sm" onclick="changerOnglet('support', event)">💬 Support & FAQ</button>
           <button class="btn btn-outline-dark btn-sm" onclick="changerOnglet('admin', event)">📊 Admin</button>
         </div>
       </div>
@@ -192,8 +189,7 @@
         <span id="gpsBadge" class="badge bg-secondary ms-2">GPS Inactif</span>
       </div>
       <div class="d-flex gap-2">
-        <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm fw-bold">📍 Partage GPS
-          Live</button>
+        <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm fw-bold">📍 Partage GPS Live</button>
         <button onclick="deconnexion()" class="btn btn-danger btn-sm">Déconnexion</button>
       </div>
     </div>
@@ -227,23 +223,19 @@
                 <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
                   <h5 class="text-secondary fs-6 mb-0">2. Information Destinataire</h5>
                   <div class="form-check form-switch mb-0">
-                    <input class="form-check-input" type="checkbox" id="memeDestinataire"
-                      onchange="copierInfoExpediteur()">
-                    <label class="form-check-label small text-muted" for="memeDestinataire">Je suis le
-                      destinataire</label>
+                    <input class="form-check-input" type="checkbox" id="memeDestinataire" onchange="copierInfoExpediteur()">
+                    <label class="form-check-label small text-muted" for="memeDestinataire">Je suis le destinataire</label>
                   </div>
                 </div>
 
                 <div class="row g-3 mb-3" id="blockDestinataire">
                   <div class="col-md-6">
                     <label for="destinataireNom" class="form-label">Nom du destinataire *</label>
-                    <input type="text" class="form-control" id="destinataireNom" placeholder="Ex: Jean Baptiste"
-                      required>
+                    <input type="text" class="form-control" id="destinataireNom" placeholder="Ex: Jean Baptiste" required>
                   </div>
                   <div class="col-md-6">
                     <label for="destinataireTel" class="form-label">WhatsApp Destinataire (Alerte Directe) *</label>
-                    <input type="tel" class="form-control" id="destinataireTel" placeholder="Ex: +509 3700 0000"
-                      required>
+                    <input type="tel" class="form-control" id="destinataireTel" placeholder="Ex: +509 3700 0000" required>
                   </div>
                 </div>
 
@@ -302,14 +294,12 @@
 
                 <div class="mb-3">
                   <label for="adresseDepart" class="form-label">Adresse exacte départ *</label>
-                  <input type="text" class="form-control" id="adresseDepart" placeholder="Ex: Rue Capois, près de..."
-                    required>
+                  <input type="text" class="form-control" id="adresseDepart" placeholder="Ex: Rue Capois, près de..." required>
                 </div>
 
                 <div class="mb-3">
                   <label for="adresseArrivee" class="form-label">Adresse exacte d'arrivée *</label>
-                  <input type="text" class="form-control" id="adresseArrivee" placeholder="Ex: Impasse Lavaud, ..."
-                    required>
+                  <input type="text" class="form-control" id="adresseArrivee" placeholder="Ex: Impasse Lavaud, ..." required>
                 </div>
 
                 <!-- 4. Planification & Colis -->
@@ -374,8 +364,7 @@
                   <div class="input-group input-group-sm">
                     <span class="input-group-text">+509</span>
                     <input type="tel" id="payPhone" class="form-control" placeholder="38XX XXXX">
-                    <button type="button" class="btn btn-success" onclick="simulerPaiementAPI()">Simuler le
-                      Paiement</button>
+                    <button type="button" class="btn btn-success" onclick="simulerPaiementAPI()">Simuler le Paiement</button>
                   </div>
                   <div id="payStatus" class="small mt-2"></div>
                 </div>
@@ -385,8 +374,7 @@
                   <label class="form-label fw-bold">Code Promo</label>
                   <div class="input-group">
                     <input type="text" id="codePromo" class="form-control" placeholder="Entrez RAPID10 ou LIVRAISON20">
-                    <button type="button" class="btn btn-outline-secondary"
-                      onclick="appliquerPromo()">Appliquer</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="appliquerPromo()">Appliquer</button>
                   </div>
                   <div id="promoStatus" class="small mt-1"></div>
                 </div>
@@ -395,13 +383,11 @@
                 <div class="mb-3">
                   <label class="form-label fw-bold">Moment de la livraison</label>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="deliveryTiming" id="asap" value="asap" checked
-                      onclick="toggleSchedule(false)">
+                    <input class="form-check-input" type="radio" name="deliveryTiming" id="asap" value="asap" checked onclick="toggleSchedule(false)">
                     <label class="form-check-label" for="asap">Livraison immédiate (Dès que possible)</label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="deliveryTiming" id="scheduled" value="scheduled"
-                      onclick="toggleSchedule(true)">
+                    <input class="form-check-input" type="radio" name="deliveryTiming" id="scheduled" value="scheduled" onclick="toggleSchedule(true)">
                     <label class="form-check-label" for="scheduled">Planifier pour plus tard</label>
                   </div>
                 </div>
@@ -451,8 +437,7 @@
                 <strong id="taxeVal">+25 HTG</strong>
               </div>
 
-              <div class="d-flex justify-content-between align-items-center mb-2 text-danger" id="boxReduction"
-                style="display: none;">
+              <div class="d-flex justify-content-between align-items-center mb-2 text-danger" id="boxReduction" style="display: none;">
                 <span>Réduction Promo :</span>
                 <strong id="reductionVal">-0 HTG</strong>
               </div>
@@ -471,6 +456,113 @@
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- 1.5. NOUVELLE SECTION ESPACE BUSINESS / ENTREPRISES DE L'OUEST -->
+    <div id="section-business" class="section-app d-none">
+      <div class="row g-4">
+        <!-- Présentation des Avantages Business -->
+        <div class="col-lg-5">
+          <div class="card shadow-sm border-0 p-4 h-100 bg-primary text-white">
+            <h2 class="fw-bold mb-3">🏢 Externalisez vos livraisons dans le Département de l'Ouest</h2>
+            <p class="lead fs-6">Vous êtes un restaurant, un supermarché, une pharmacie ou une boutique en ligne à Pétion-Ville, Delmas ou Port-au-Prince ?</p>
+            <p class="small opacity-75 mb-4">Gagnez du temps et réduisez vos coûts fixes en confiant vos livraisons à notre réseau de chauffeurs professionnels et géolocalisés en temps réel.</p>
+            
+            <div class="mb-3">
+              <h5>✨ Pourquoi devenir Partenaire Business ?</h5>
+              <ul class="list-unstyled mt-3 small">
+                <li class="mb-2">✅ <strong>Tarifs préférentiels</strong> négociés par volume de commandes.</li>
+                <li class="mb-2">📍 <strong>Livreurs dédiés</strong> formés aux spécificités des zones de l'Ouest.</li>
+                <li class="mb-2">📑 <strong>Facturation mensuelle</strong> claire pour simplifier votre comptabilité.</li>
+                <li class="mb-2">📲 <strong>Notifications automatiques WhatsApp</strong> envoyées à vos clients.</li>
+                <li class="mb-2">⚡ <strong>Gestion prioritaire</strong> des courses en période de forte affluence.</li>
+              </ul>
+            </div>
+
+            <div class="mt-auto pt-3 border-top border-white-50">
+              <small class="d-block text-white-50">Une question spécifique ?</small>
+              <strong>📞 Ligne Pro : +509 3821-0256</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulaire de Demande d'Inauguration / Compte Entreprise -->
+        <div class="col-lg-7">
+          <div class="card shadow-sm border-0 p-4">
+            <h3 class="card-title text-primary mb-3">💼 Demander un Compte Entreprise</h3>
+            <p class="text-muted small mb-4">Remplissez ce formulaire pour créer votre compte Partenaire ou être recontacté par un conseiller commercial sous 24h.</p>
+
+            <form id="formBusiness" onsubmit="envoyerDemandeBusiness(event)">
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="bizNom" class="form-label">Nom de l'Entreprise / Commerce *</label>
+                  <input type="text" class="form-control" id="bizNom" placeholder="Ex: Restaurant Le Tropique" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="bizSecteur" class="form-label">Secteur d'Activité *</label>
+                  <select class="form-select" id="bizSecteur" required>
+                    <option value="">-- Choisir --</option>
+                    <option value="Restauration / Bar">Restauration / Alimentation</option>
+                    <option value="Supermarché / Epicerie">Supermarché / Épicerie</option>
+                    <option value="Pharmacie / Santé">Pharmacie / Santé</option>
+                    <option value="E-Commerce / Boutique">E-Commerce / Mode / Produits</option>
+                    <option value="Services / Bureau">Services / Cabinet / Documents</option>
+                    <option value="Autre">Autre activité</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="bizContact" class="form-label">Nom du Responsable *</label>
+                  <input type="text" class="form-control" id="bizContact" placeholder="Ex: Pierre Alexis" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="bizTel" class="form-label">Téléphone / WhatsApp Direct *</label>
+                  <input type="tel" class="form-control" id="bizTel" placeholder="+509 38XX XXXX" required>
+                </div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="bizEmail" class="form-label">Adresse Email Professionnelle *</label>
+                  <input type="email" class="form-control" id="bizEmail" placeholder="contact@entreprise.ht" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="bizCommune" class="form-label">Commune Principale (Ouest) *</label>
+                  <select class="form-select" id="bizCommune" required>
+                    <option value="Pétion-Ville">Pétion-Ville</option>
+                    <option value="Delmas">Delmas</option>
+                    <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
+                    <option value="Port-au-Prince - Turgeau/Pacot">Port-au-Prince - Turgeau / Pacot</option>
+                    <option value="Tabarre / Route de Frères">Tabarre / Route de Frères</option>
+                    <option value="Autre commune de l'Ouest">Autre commune de l'Ouest</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="bizVolume" class="form-label">Volume estimé de livraisons par jour</label>
+                <select class="form-select" id="bizVolume">
+                  <option value="1 à 5 livraisons/jour">1 à 5 livraisons / jour</option>
+                  <option value="5 à 15 livraisons/jour">5 à 15 livraisons / jour</option>
+                  <option value="15 à 30 livraisons/jour">15 à 30 livraisons / jour</option>
+                  <option value="Plus de 30 livraisons/jour">Plus de 30 livraisons / jour</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="bizNotes" class="form-label">Besoins spécifiques ou message</label>
+                <textarea class="form-control" id="bizNotes" rows="3" placeholder="Précisez vos horaires d'ouverture, les types de colis à transporter ou vos attentes particulières..."></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg w-100">
+                🚀 Soumettre la Demande de Partenariat
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -511,10 +603,8 @@
 
           <div class="card shadow-sm border-0 p-4 mb-4" id="authBox">
             <div class="btn-group w-100 mb-3">
-              <button type="button" id="tabConnexion" class="btn btn-outline-primary active"
-                onclick="switchAuthTab('login')">Se connecter</button>
-              <button type="button" id="tabInscription" class="btn btn-outline-primary"
-                onclick="switchAuthTab('signup')">Créer un compte</button>
+              <button type="button" id="tabConnexion" class="btn btn-outline-primary active" onclick="switchAuthTab('login')">Se connecter</button>
+              <button type="button" id="tabInscription" class="btn btn-outline-primary" onclick="switchAuthTab('signup')">Créer un compte</button>
             </div>
 
             <!-- Form Connexion -->
@@ -544,8 +634,7 @@
               </div>
               <div class="mb-3">
                 <label class="form-label">Code de vérification</label>
-                <input type="text" class="form-control text-center fs-4" id="otpCode" placeholder="123456"
-                  maxlength="6">
+                <input type="text" class="form-control text-center fs-4" id="otpCode" placeholder="123456" maxlength="6">
               </div>
               <button type="submit" class="btn btn-success w-100">Vérifier et me connecter</button>
               <button type="button" onclick="resetOtpForm()" class="btn btn-link w-100 text-secondary mt-2">Changer d'email</button>
@@ -554,20 +643,14 @@
             <!-- Form Inscription -->
             <form id="formSignup" style="display: none;">
               <div class="row g-2 mb-3">
-                <div class="col-6"><label class="form-label">Prénom</label><input type="text" class="form-control"
-                    id="signupPrenom" required></div>
-                <div class="col-6"><label class="form-label">Nom</label><input type="text" class="form-control"
-                    id="signupNom" required></div>
+                <div class="col-6"><label class="form-label">Prénom</label><input type="text" class="form-control" id="signupPrenom" required></div>
+                <div class="col-6"><label class="form-label">Nom</label><input type="text" class="form-control" id="signupNom" required></div>
               </div>
-              <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control"
-                  id="signupEmail" required></div>
-              <div class="mb-3"><label class="form-label">Téléphone</label><input type="tel" class="form-control"
-                  id="signupTel" required></div>
+              <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control" id="signupEmail" required></div>
+              <div class="mb-3"><label class="form-label">Téléphone</label><input type="tel" class="form-control" id="signupTel" required></div>
               <div class="row g-2 mb-3">
-                <div class="col-6"><label class="form-label">Mot de passe</label><input type="password"
-                    class="form-control" id="signupPassword" minlength="6" required></div>
-                <div class="col-6"><label class="form-label">Confirmation</label><input type="password"
-                    class="form-control" id="signupConfirmPassword" minlength="6" required></div>
+                <div class="col-6"><label class="form-label">Mot de passe</label><input type="password" class="form-control" id="signupPassword" minlength="6" required></div>
+                <div class="col-6"><label class="form-label">Confirmation</label><input type="password" class="form-control" id="signupConfirmPassword" minlength="6" required></div>
               </div>
               <div class="mb-3">
                 <label class="form-label">Zone d'intervention</label>
@@ -641,29 +724,25 @@
                 </h2>
                 <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
                   <div class="accordion-body">
-                    Les livraisons standard en zone urbaine (Pétion-Ville, Delmas, Canapé-Vert) prennent en moyenne de
-                    30 à 60 minutes selon la circulation et la sécurité.
+                    Les livraisons standard en zone urbaine (Pétion-Ville, Delmas, Canapé-Vert) prennent en moyenne de 30 à 60 minutes selon la circulation et la sécurité.
                   </div>
                 </div>
               </div>
               <div class="accordion-item">
                 <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#faq2">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
                     Comment se calcule le tarif d'une livraison ?
                   </button>
                 </h2>
                 <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                   <div class="accordion-body">
-                    Le tarif dépend de la zone de départ/arrivée, de la distance estimée, du type de véhicule (Moto,
-                    Tricycle, Voiture), du poids du colis et d'une taxe/frais de service de 10%.
+                    Le tarif dépend de la zone de départ/arrivée, de la distance estimée, du type de véhicule (Moto, Tricycle, Voiture), du poids du colis et d'une taxe/frais de service de 10%.
                   </div>
                 </div>
               </div>
               <div class="accordion-item">
                 <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#faq3">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
                     Quels moyens de paiement acceptez-vous ?
                   </button>
                 </h2>
@@ -732,20 +811,19 @@
       <div class="row g-4">
         <div class="col-md-4">
           <h5 class="text-white">🚚 LivraisonRapid</h5>
-          <p class="small text-muted">Service de livraison rapide, fiable et sécurisé adapté aux zones de Port-au-Prince
-            et ses environs.</p>
+          <p class="small text-muted">Service de livraison rapide, fiable et sécurisé adapté aux zones du département de l'Ouest (Port-au-Prince, Pétion-Ville, Delmas...).</p>
         </div>
         <div class="col-md-4">
           <h5 class="text-white">Besoin d'aide ?</h5>
           <ul class="list-unstyled">
             <li class="mb-2">
-              <a href="https://wa.me/50938210256?text=Bonjour,%20j'ai%20une%20question%20concernant%20une%20livraison."
+              <a href="https://wa.me/50938210256?text=Bonjour,%20je%20souhaite%20des%20informations%20sur%20vos%20services%20de%20livraison."
                 target="_blank" class="btn btn-outline-success btn-sm text-white">
                 💬 Support WhatsApp direct
               </a>
             </li>
             <li class="text-muted small">📞 +509 3821-0256</li>
-            <li class="text-muted small">✉️ support@livraisonrapid.ht</li>
+            <li class="text-muted small">✉️ business@livraisonrapid.ht</li>
           </ul>
         </div>
         <div class="col-md-4">
@@ -1133,6 +1211,26 @@
       reductionMontant = 0;
       actualiserAffichagePrix();
     });
+
+    // Traitement du Formulaire Partenariat Business
+    function envoyerDemandeBusiness(e) {
+      e.preventDefault();
+      const nomCom = document.getElementById('bizNom').value;
+      const resp = document.getElementById('bizContact').value;
+      const tel = document.getElementById('bizTel').value;
+      const commune = document.getElementById('bizCommune').value;
+
+      afficherToast(`Demande envoyée pour ${nomCom} (${commune}) ! Nous vous recontacterons.`, "success");
+
+      // Notification WhatsApp automatique vers le support Business
+      const msgWA = `Bonjour, je représente l'entreprise *${encodeURIComponent(nomCom)}* à ${encodeURIComponent(commune)}.%0ANom du contact: ${encodeURIComponent(resp)}%0ATéléphone: ${encodeURIComponent(tel)}.%0AJe souhaite ouvrir un compte Partenaire Business pour mes livraisons dans l'Ouest.`;
+      
+      setTimeout(() => {
+        window.open(`https://wa.me/50938210256?text=${msgWA}`, '_blank');
+      }, 1000);
+
+      document.getElementById('formBusiness').reset();
+    }
 
     async function chercherSuivi() {
       const query = document.getElementById('numSuivi').value.trim();
