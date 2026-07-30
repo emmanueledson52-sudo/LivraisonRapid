@@ -152,7 +152,7 @@
 <body>
 
   <!-- Conteneur Toast pour Notifications Temps Réel -->
-  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 2000;">
     <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert"
       aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
@@ -182,8 +182,8 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <div class="navbar-nav ms-auto flex-row flex-wrap gap-2 mt-2 mt-lg-0">
           <button class="btn btn-primary btn-sm" onclick="changerOnglet('client', event)">📦 Commander</button>
-          <!-- BOUTON VENDRE UN ARTICLE -->
-          <button class="btn btn-warning btn-sm fw-bold text-dark" onclick="changerOnglet('vendre', event)">🛍️ Vendre un article</button>
+          <!-- BOUTON VENDRE UN ARTICLE / MARKETPLACE -->
+          <button class="btn btn-warning btn-sm fw-bold text-dark" onclick="changerOnglet('vendre', event)">🛍️ Vendre / Marketplace</button>
           <button class="btn btn-outline-success btn-sm fw-bold" onclick="changerOnglet('business', event)">🏢 Espace Business</button>
           <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis / GPS</button>
           <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('livreur', event)">🛵 Espace Livreur</button>
@@ -437,7 +437,7 @@
 
               <hr class="my-4">
 
-              <!-- Détails Financiers Complet avec taxe mis à jour (13.5%) -->
+              <!-- Détails Financiers Complet -->
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="text-muted">Distance estimée :</span>
                 <strong id="distVal" class="fs-6">0.0 km</strong>
@@ -482,7 +482,7 @@
         <div class="col-lg-5">
           <div class="card shadow-sm border-0 p-4">
             <h3 class="card-title text-warning text-dark fw-bold mb-3">🛍️ Exposer un produit à vendre</h3>
-            <p class="text-muted small mb-3">Vous avez un objet, un vêtement, de la nourriture ou un produit neuf/occasion à vendre dans l'Ouest ? Publiez-le ici gratuitement !</p>
+            <p class="text-muted small mb-3">Vous avez un objet, un vêtement, de la nourriture ou un produit neuf/occasion à vendre ? Publiez-le gratuitement avec vos photos !</p>
 
             <form id="formVendre" onsubmit="publierArticle(event)">
               <div class="mb-3">
@@ -497,12 +497,12 @@
 
               <div class="mb-3">
                 <label for="articleTitre" class="form-label">Titre de l'article *</label>
-                <input type="text" class="form-control" id="articleTitre" placeholder="Ex: iPhone 12 Pro Max / Baskets Nike / Plat Griot" required>
+                <input type="text" class="form-control" id="articleTitre" placeholder="Ex: iPhone 12 Pro Max / Baskets / Plat Griot" required>
               </div>
 
               <div class="row g-2 mb-3">
                 <div class="col-6">
-                  <label for="articlePrix" class="form-label">Prix (HTG) *</label>
+                  <label for="articlePrix" class="form-label">Prix (HTG / USD) *</label>
                   <input type="number" class="form-control" id="articlePrix" placeholder="Ex: 2500" required>
                 </div>
                 <div class="col-6">
@@ -529,15 +529,22 @@
                 </select>
               </div>
 
+              <!-- NOUVEAU Champ de Sélection de Photos depuis Galerie/Fichiers (Issu du Code 2) -->
               <div class="mb-3">
-                <label for="articleImg" class="form-label">Lien / URL de l'image (Optionnel)</label>
-                <input type="url" class="form-control" id="articleImg" placeholder="https://images.unsplash.com/...">
-                <div class="form-text small">Si vide, une image par défaut sera associée.</div>
+                <label for="articleImgs" class="form-label fw-bold">📷 Photos de l'article (Galerie/Photos - 3 max)</label>
+                <input type="file" class="form-control" id="articleImgs" accept="image/*" multiple onchange="previsualiserImages(event)">
+                <div class="form-text small">Sélectionnez jusqu'à 3 images de votre appareil.</div>
+                <div id="previewContainer" class="d-flex gap-2 mt-2 flex-wrap"></div>
               </div>
 
               <div class="mb-3">
-                <label for="articleDesc" class="form-label">Description de l'article</label>
-                <textarea class="form-control" id="articleDesc" rows="3" placeholder="État du produit, garantie, détails..."></textarea>
+                <label for="articleImg" class="form-label">Ou URL d'image en ligne (Optionnel)</label>
+                <input type="url" class="form-control" id="articleImg" placeholder="https://images.unsplash.com/...">
+              </div>
+
+              <div class="mb-3">
+                <label for="articleDesc" class="form-label">Description de l'article *</label>
+                <textarea class="form-control" id="articleDesc" rows="3" placeholder="État du produit, garantie, détails..." required></textarea>
               </div>
 
               <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">
@@ -547,12 +554,29 @@
           </div>
         </div>
 
-        <!-- Vitrine Marketplace (Affiches des articles à vendre) -->
+        <!-- Vitrine Marketplace (Affiches des articles à vendre) avec Filtre & Recherche (Du Code 2) -->
         <div class="col-lg-7">
           <div class="card shadow-sm border-0 p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h3 class="card-title mb-0">🛒 Articles disponibles à l'achat</h3>
+              <h3 class="card-title mb-0">🛒 Marketplace - Produits disponibles</h3>
               <span class="badge bg-secondary" id="badgeTotalArticles">0 article(s)</span>
+            </div>
+
+            <!-- NOUVEAU Barre de Recherche & Filtres (Issu du Code 2) -->
+            <div class="row g-2 mb-3">
+              <div class="col-md-7">
+                <input type="text" id="searchMarket" class="form-control" placeholder="🔍 Rechercher un article..." oninput="filtrerMarketplace()">
+              </div>
+              <div class="col-md-5">
+                <select id="catFilter" class="form-select" onchange="filtrerMarketplace()">
+                  <option value="">Toutes les catégories</option>
+                  <option value="Électronique">Électronique</option>
+                  <option value="Mode & Vêtements">Mode & Vêtements</option>
+                  <option value="Nourriture / Repas">Nourriture / Repas</option>
+                  <option value="Maison & Déco">Maison & Déco</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
             </div>
 
             <div id="gridMarketplace" class="grid-layout mt-3">
@@ -569,18 +593,18 @@
         <!-- Présentation des Avantages Business -->
         <div class="col-lg-5">
           <div class="card shadow-sm border-0 p-4 h-100 bg-primary text-white">
-            <h2 class="fw-bold mb-3">🏢 Externalisez vos livraisons dans le Département de l'Ouest</h2>
+            <h2 class="fw-bold mb-3">🏢 Externalisez vos livraisons</h2>
             <p class="lead fs-6">Vous êtes un restaurant, un supermarché, une pharmacie ou une boutique en ligne à Pétion-Ville, Delmas ou Port-au-Prince ?</p>
-            <p class="small opacity-75 mb-4">Gagnez du temps et réduisez vos coûts fixes en confiant vos livraisons à notre réseau de chauffeurs professionnels et géolocalisés en temps réel.</p>
-            
+            <p class="small opacity-75 mb-4">Gagnez du temps et réduisez vos coûts fixes en confiant vos livraisons à notre réseau de chauffeurs professionnels géolocalisés.</p>
+
             <div class="mb-3">
               <h5>✨ Pourquoi devenir Partenaire Business ?</h5>
               <ul class="list-unstyled mt-3 small">
-                <li class="mb-2">✅ <strong>Tarifs préférentiels</strong> négociés par volume de commandes.</li>
-                <li class="mb-2">📍 <strong>Livreurs dédiés</strong> formés aux spécificités des zones de l'Ouest.</li>
-                <li class="mb-2">📑 <strong>Facturation mensuelle</strong> claire pour simplifier votre comptabilité.</li>
-                <li class="mb-2">📲 <strong>Notifications automatiques WhatsApp</strong> envoyées à vos clients.</li>
-                <li class="mb-2">⚡ <strong>Gestion prioritaire</strong> des courses en période de forte affluence.</li>
+                <li class="mb-2">✅ <strong>Tarifs préférentiels</strong> négociés par volume.</li>
+                <li class="mb-2">📍 <strong>Livreurs dédiés</strong> et qualifiés.</li>
+                <li class="mb-2">📑 <strong>Facturation mensuelle</strong> simplifiée.</li>
+                <li class="mb-2">📲 <strong>Notifications automatiques WhatsApp</strong> clients.</li>
+                <li class="mb-2">⚡ <strong>Gestion prioritaire</strong> des courses.</li>
               </ul>
             </div>
 
@@ -595,7 +619,7 @@
         <div class="col-lg-7">
           <div class="card shadow-sm border-0 p-4">
             <h3 class="card-title text-primary mb-3">💼 Demander un Compte Entreprise</h3>
-            <p class="text-muted small mb-4">Remplissez ce formulaire pour créer votre compte Partenaire ou être recontacté par un conseiller commercial sous 24h.</p>
+            <p class="text-muted small mb-4">Remplissez ce formulaire pour créer votre compte Partenaire ou être recontacté sous 24h.</p>
 
             <form id="formBusiness" onsubmit="envoyerDemandeBusiness(event)">
               <div class="row g-3 mb-3">
@@ -634,7 +658,7 @@
                   <input type="email" class="form-control" id="bizEmail" placeholder="contact@entreprise.ht" required>
                 </div>
                 <div class="col-md-6">
-                  <label for="bizCommune" class="form-label">Commune Principale (Ouest) *</label>
+                  <label for="bizCommune" class="form-label">Commune Principale *</label>
                   <select class="form-select" id="bizCommune" required>
                     <option value="Pétion-Ville">Pétion-Ville</option>
                     <option value="Delmas">Delmas</option>
@@ -658,7 +682,7 @@
 
               <div class="mb-3">
                 <label for="bizNotes" class="form-label">Besoins spécifiques ou message</label>
-                <textarea class="form-control" id="bizNotes" rows="3" placeholder="Précisez vos horaires d'ouverture, les types de colis à transporter ou vos attentes particulières..."></textarea>
+                <textarea class="form-control" id="bizNotes" rows="3" placeholder="Précisez vos horaires d'ouverture, les types de colis à transporter..."></textarea>
               </div>
 
               <button type="submit" class="btn btn-primary btn-lg w-100">
@@ -676,9 +700,9 @@
         <div class="col-md-8">
           <div class="card shadow-sm border-0 p-4">
             <h2>🔎 Suivre ma commande</h2>
-            <p class="text-muted small">Entrez votre numéro de téléphone ou ID de commande :</p>
+            <p class="text-muted small">Entrez votre numéro de téléphone ou ID/Code de suivi (Ex: LR-101) :</p>
             <div class="input-group mb-3">
-              <input type="text" id="numSuivi" class="form-control" placeholder="Ex: +509 3821 0256">
+              <input type="text" id="numSuivi" class="form-control" placeholder="Ex: LR-101 ou +509 3821 0256">
               <button class="btn btn-primary" onclick="chercherSuivi()">Chercher</button>
             </div>
             <div id="suiviResultat" class="mt-4" style="display: none;">
@@ -959,20 +983,26 @@
     let map, markerDepart, markerArrivee, markerLivreurGps;
     let gpsWatchId = null;
     let deferredPrompt = null;
+    let imagesStockees = []; // NOUVEAU : Stockage d'images importées depuis la galerie (du Code 2)
 
     let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
     let currentOtpEmail = '';
     
+    // Base de démonstration pour le suivi de colis hors Supabase (du Code 2)
+    const colisBase = {
+      "LR-101": { statut: "En cours", livreur: "Jean Baptiste", dest: "Delmas 33", eta: "15 mins", lat: 18.545, lng: -72.298 }
+    };
+
     // Variables Financières & Tarification
     let tarifBase = 250;           // Course de base
-    let tauxTaxe = 0.135;          // Taxe & Frais de Service ajustés à 13.5%
+    let tauxTaxe = 0.135;          // Taxe & Frais de Service (13.5%)
     let reductionMontant = 0;      // Remise promo
-    let tarifActuel = 284;         // Total calculé par défaut (250 + 13.5%)
+    let tarifActuel = 284;         // Total calculé par défaut
     let paiementEstValide = false;
     let selectedRating = 5;
     let currentCommandeId = null;
 
-    // Démo locale d'articles marketplace (sauvegardée en localStorage si Supabase indisponible)
+    // Démo locale d'articles marketplace
     let articlesMarketplace = JSON.parse(localStorage.getItem('articles_marketplace')) || [
       {
         id: 1,
@@ -1028,7 +1058,9 @@
 
     window.onload = function () {
       map = L.map('map').setView([18.5392, -72.3364], 12);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
 
       actualiserAffichagePrix();
       verifierSession();
@@ -1165,7 +1197,7 @@
       const targetSection = document.getElementById('section-' + nom);
       if (targetSection) targetSection.classList.remove('d-none');
 
-      if (nom === 'client' && map) {
+      if ((nom === 'client' || nom === 'suivi') && map) {
         setTimeout(() => map.invalidateSize(), 300);
       }
     }
@@ -1343,7 +1375,33 @@
       actualiserAffichagePrix();
     });
 
-    // MARKETPLACE : Publier un nouvel article
+    // NOUVEAU : Prévisualisation des images de la galerie (du Code 2)
+    function previsualiserImages(event) {
+      const files = Array.from(event.target.files).slice(0, 3);
+      const container = document.getElementById('previewContainer');
+      container.innerHTML = "";
+      imagesStockees = [];
+
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const dataUrl = e.target.result;
+          imagesStockees.push(dataUrl);
+
+          const img = document.createElement('img');
+          img.src = dataUrl;
+          img.style.width = '70px';
+          img.style.height = '70px';
+          img.style.objectFit = 'cover';
+          img.style.borderRadius = '6px';
+          img.style.border = '1px solid #ddd';
+          container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // MARKETPLACE : Publier un nouvel article avec support Photos Galerie (Intégration Code 2)
     function publierArticle(e) {
       e.preventDefault();
 
@@ -1353,12 +1411,13 @@
       const prix = document.getElementById('articlePrix').value;
       const categorie = document.getElementById('articleCategorie').value;
       const zone = document.getElementById('articleZone').value;
-      let img = document.getElementById('articleImg').value.trim();
+      let urlImg = document.getElementById('articleImg').value.trim();
       const desc = document.getElementById('articleDesc').value;
 
-      if (!img) {
-        img = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80";
-      }
+      // Utilise la première photo téléchargée ou l'URL fournie, sinon image par défaut
+      let finalImg = imagesStockees.length > 0 
+        ? imagesStockees[0] 
+        : (urlImg || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80");
 
       const nouvelArticle = {
         id: Date.now(),
@@ -1368,7 +1427,8 @@
         zone,
         vendeur,
         tel,
-        img,
+        img: finalImg,
+        images: imagesStockees,
         desc
       };
 
@@ -1376,25 +1436,29 @@
       localStorage.setItem('articles_marketplace', JSON.stringify(articlesMarketplace));
 
       afficherToast(`L'article "${titre}" a été mis en vente !`, "success");
+      
       document.getElementById('formVendre').reset();
+      document.getElementById('previewContainer').innerHTML = "";
+      imagesStockees = [];
+
       chargerMarketplace();
     }
 
     // AFFICHER TOUS LES ARTICLES DE LA MARKETPLACE
-    function chargerMarketplace() {
+    function chargerMarketplace(liste = articlesMarketplace) {
       const grid = document.getElementById('gridMarketplace');
       const badge = document.getElementById('badgeTotalArticles');
       if (!grid) return;
 
-      badge.textContent = `${articlesMarketplace.length} article(s)`;
+      badge.textContent = `${liste.length} article(s)`;
       grid.innerHTML = "";
 
-      if (articlesMarketplace.length === 0) {
-        grid.innerHTML = `<p class="text-muted text-center py-4">Aucun article mis en vente pour le moment. Soyez le premier à exposer votre produit !</p>`;
+      if (liste.length === 0) {
+        grid.innerHTML = `<p class="text-muted text-center py-4 col-12">Aucun article trouvé. Soyez le premier à exposer votre produit !</p>`;
         return;
       }
 
-      articlesMarketplace.forEach(art => {
+      liste.forEach(art => {
         const cleanTel = art.tel ? art.tel.replace(/\s+/g, '').replace('+', '') : '';
         const msgWA = `Bonjour *${encodeURIComponent(art.vendeur)}*, je suis intéressé par votre article *${encodeURIComponent(art.titre)}* à ${art.prix} HTG vu sur LivraisonRapid (%0AZone: ${encodeURIComponent(art.zone)}). Est-il toujours disponible ?`;
 
@@ -1424,6 +1488,20 @@
       });
     }
 
+    // NOUVEAU : Fonction de filtrage par recherche et catégorie (du Code 2)
+    function filtrerMarketplace() {
+      const query = document.getElementById('searchMarket').value.toLowerCase();
+      const cat = document.getElementById('catFilter').value;
+
+      const resultats = articlesMarketplace.filter(item => {
+        const matchQuery = item.titre.toLowerCase().includes(query) || (item.desc && item.desc.toLowerCase().includes(query));
+        const matchCat = cat === "" || item.categorie === cat;
+        return matchQuery && matchCat;
+      });
+
+      chargerMarketplace(resultats);
+    }
+
     // Récupérer un article pour pré-remplir le formulaire de commande de livraison
     function commanderArticleLivraison(titreEnc, zoneEnc, vendeurEnc) {
       const titre = decodeURIComponent(titreEnc);
@@ -1448,7 +1526,6 @@
 
       afficherToast(`Demande envoyée pour ${nomCom} (${commune}) ! Nous vous recontacterons.`, "success");
 
-      // Notification WhatsApp automatique vers le support Business
       const msgWA = `Bonjour, je représente l'entreprise *${encodeURIComponent(nomCom)}* à ${encodeURIComponent(commune)}.%0ANom du contact: ${encodeURIComponent(resp)}%0ATéléphone: ${encodeURIComponent(tel)}.%0AJe souhaite ouvrir un compte Partenaire Business pour mes livraisons dans l'Ouest.`;
       
       setTimeout(() => {
@@ -1458,35 +1535,60 @@
       document.getElementById('formBusiness').reset();
     }
 
+    // RECHERCHE & SUIVI DE COLIS (Supabase + Fallback Code 2)
     async function chercherSuivi() {
-      const query = document.getElementById('numSuivi').value.trim();
-      if (!query || !supabaseClient) return;
-
-      const { data } = await supabaseClient
-        .from('commandes')
-        .select('*, livreurs(nom, prenom, telephone)')
-        .or(`client_tel.eq.${query},id.eq.${query}`)
-        .order('id', { ascending: false }).limit(1);
-
+      const query = document.getElementById('numSuivi').value.trim().toUpperCase();
       const conteneur = document.getElementById('suiviResultat');
       const details = document.getElementById('suiviDetails');
 
-      if (!data || data.length === 0) {
-        afficherToast("Aucune commande trouvée.", "danger");
-        conteneur.style.display = 'none';
+      if (!query) return;
+
+      // 1. Démo de suivi hors-ligne ou par code direct (du Code 2)
+      if (colisBase[query]) {
+        const data = colisBase[query];
+        conteneur.style.display = 'block';
+        details.innerHTML = `
+          <p><strong>Statut :</strong> <span class="badge badge-cours">${data.statut}</span></p>
+          <p><strong>Livreur :</strong> ${data.livreur}</p>
+          <p><strong>Destination :</strong> ${data.dest}</p>
+          <p><strong>Arrivée estimée :</strong> ${data.eta}</p>
+        `;
+
+        if (markerLivreurGps) map.removeLayer(markerLivreurGps);
+        markerLivreurGps = L.marker([data.lat, data.lng]).addTo(map)
+          .bindPopup(`<b>Livreur:</b> ${data.livreur}`).openPopup();
+        map.setView([data.lat, data.lng], 14);
+
+        afficherToast("Colis trouvé !", "success");
         return;
       }
 
-      const c = data[0];
-      conteneur.style.display = 'block';
-      details.innerHTML = `
-        <p><strong>Statut :</strong> <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span></p>
-        <p><strong>Colis :</strong> ${c.type_colis}</p>
-        <p><strong>Trajet :</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
-        <p><strong>Prix Total :</strong> ${c.prix} HTG</p>
-        ${c.preuve_url ? `<p><strong>Preuve de livraison :</strong> <a href="${c.preuve_url}" target="_blank">Voir la photo/preuve</a></p>` : ''}
-        ${c.statut === 'Livrée' ? `<button class="btn btn-outline-warning btn-sm mt-2" onclick="ouvrirAvisModal(${c.id})">⭐ Évaluer la livraison</button>` : ''}
-      `;
+      // 2. Recherche dans Supabase
+      if (supabaseClient) {
+        const { data } = await supabaseClient
+          .from('commandes')
+          .select('*, livreurs(nom, prenom, telephone)')
+          .or(`client_tel.eq.${query},id.eq.${query}`)
+          .order('id', { ascending: false }).limit(1);
+
+        if (data && data.length > 0) {
+          const c = data[0];
+          conteneur.style.display = 'block';
+          details.innerHTML = `
+            <p><strong>Statut :</strong> <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span></p>
+            <p><strong>Colis :</strong> ${c.type_colis}</p>
+            <p><strong>Trajet :</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
+            <p><strong>Prix Total :</strong> ${c.prix} HTG</p>
+            ${c.preuve_url ? `<p><strong>Preuve de livraison :</strong> <a href="${c.preuve_url}" target="_blank">Voir la photo/preuve</a></p>` : ''}
+            ${c.statut === 'Livrée' ? `<button class="btn btn-outline-warning btn-sm mt-2" onclick="ouvrirAvisModal(${c.id})">⭐ Évaluer la livraison</button>` : ''}
+          `;
+          afficherToast("Commande trouvée !", "success");
+          return;
+        }
+      }
+
+      afficherToast("Aucune commande ou code de suivi trouvé.", "danger");
+      conteneur.style.display = 'none';
     }
 
     async function changerStatutCommande(id, nouveauStatut) {
