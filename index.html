@@ -186,8 +186,7 @@
   <main class="container mb-5">
 
     <!-- Barre Livreur / Activation GPS Live -->
-    <div id="userBar" class="alert alert-info d-flex justify-content-between align-items-center mb-4"
-      style="display:none !important;">
+    <div id="userBar" class="alert alert-info d-none justify-content-between align-items-center mb-4">
       <div>
         <strong id="userInfo">Espace Livreur</strong>
         <span id="gpsBadge" class="badge bg-secondary ms-2">GPS Inactif</span>
@@ -426,7 +425,7 @@
           </div>
         </div>
 
-        <!-- Colonne Droite : Carte Leaflet & Estimation Détaillée (Intégration du Code 2) -->
+        <!-- Colonne Droite : Carte Leaflet & Estimation Détaillée -->
         <div class="col-lg-5">
           <div class="card shadow-sm border-0 sticky-card">
             <div class="card-body p-4">
@@ -436,7 +435,7 @@
 
               <hr class="my-4">
 
-              <!-- Détails Financiers Complet du Code 2 -->
+              <!-- Détails Financiers Complet -->
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="text-muted">Distance estimée :</span>
                 <strong id="distVal" class="fs-6">0.0 km</strong>
@@ -448,7 +447,7 @@
               </div>
 
               <div class="d-flex justify-content-between align-items-center mb-2 text-primary">
-                <span>Taxe & Frais de Service (<span id="tauxTaxeLabel">13.5%</span>) :</span>
+                <span>Taxe & Frais de Service (<span id="tauxTaxeLabel">10%</span>) :</span>
                 <strong id="taxeVal">+25 HTG</strong>
               </div>
 
@@ -519,7 +518,7 @@
             </div>
 
             <!-- Form Connexion -->
-            <form id="formLogin">
+            <form id="formLogin" onsubmit="handleLoginSubmit(event)">
               <div class="mb-3">
                 <label class="form-label">Mode de connexion</label>
                 <select id="modeConnexion" class="form-select" onchange="toggleLoginMode()">
@@ -535,8 +534,7 @@
                 <label class="form-label">Mot de passe</label>
                 <input type="password" class="form-control" id="loginPassword" placeholder="••••••••">
               </div>
-              <button type="submit" id="btnLoginSubmit" class="btn btn-primary w-100">Recevoir le code / lien
-                OTP</button>
+              <button type="submit" id="btnLoginSubmit" class="btn btn-primary w-100">Recevoir le code / lien OTP</button>
             </form>
 
             <!-- Verification OTP -->
@@ -550,8 +548,7 @@
                   maxlength="6">
               </div>
               <button type="submit" class="btn btn-success w-100">Vérifier et me connecter</button>
-              <button type="button" onclick="resetOtpForm()" class="btn btn-link w-100 text-secondary mt-2">Changer
-                d'email</button>
+              <button type="button" onclick="resetOtpForm()" class="btn btn-link w-100 text-secondary mt-2">Changer d'email</button>
             </form>
 
             <!-- Form Inscription -->
@@ -784,7 +781,7 @@
     let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
     let currentOtpEmail = '';
     
-    // Variables Financières & Tarification du Code 2
+    // Variables Financières & Tarification
     let tarifBase = 250;           // Course de base
     let tauxTaxe = 0.10;           // Taxe & Frais de Service (10%)
     let reductionMontant = 0;      // Remise promo
@@ -935,13 +932,13 @@
       const destTelInput = document.getElementById('destinataireTel');
 
       if (isChecked) {
-        blockDest.style.display = 'none';
+        blockDest.classList.add('d-none');
         destNomInput.removeAttribute('required');
         destTelInput.removeAttribute('required');
         destNomInput.value = nomExp;
         destTelInput.value = telExp;
       } else {
-        blockDest.style.display = 'flex';
+        blockDest.classList.remove('d-none');
         destNomInput.setAttribute('required', '');
         destTelInput.setAttribute('required', '');
         destNomInput.value = '';
@@ -1041,7 +1038,6 @@
       actualiserAffichagePrix();
     }
 
-    // Formule mise à jour intégrant la taxe et le sous-total du Code 2
     function actualiserAffichagePrix() {
       let montantTaxe = Math.round(tarifBase * tauxTaxe);
       tarifActuel = (tarifBase + montantTaxe) - reductionMontant;
@@ -1127,7 +1123,6 @@
 
       afficherToast('Commande enregistrée avec succès !');
 
-      // WhatsApp d'alerte direct au destinataire
       const messageWA = `Bonjour ${encodeURIComponent(recipientName)}, un colis vous a été envoyé par *${encodeURIComponent(senderName)}* (%0ATrajet: ${encodeURIComponent(fromZone)} ➔ ${encodeURIComponent(toZone)}.%0AMontant Total (Taxes incl.): ${tarifActuel} HTG).%0ASuivez votre livraison en direct !`;
       const cleanPhone = recipientPhone.replace(/\s+/g, '').replace('+', '');
       window.open(`https://wa.me/${cleanPhone}?text=${messageWA}`, '_blank');
@@ -1204,15 +1199,39 @@
       document.getElementById('btnLoginSubmit').textContent = mode === 'password' ? 'Se connecter' : 'Recevoir le code / lien OTP';
     }
 
+    function resetOtpForm() {
+      document.getElementById('formVerifyOtp').style.display = 'none';
+      document.getElementById('formLogin').style.display = 'block';
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const mode = document.getElementById('modeConnexion').value;
+
+      if (mode === 'otp') {
+        currentOtpEmail = email;
+        document.getElementById('emailSentTo').textContent = email;
+        document.getElementById('formLogin').style.display = 'none';
+        document.getElementById('formVerifyOtp').style.display = 'block';
+        afficherToast("Code / Lien OTP envoyé à votre email");
+      } else {
+        afficherToast("Connexion réussie !");
+      }
+    }
+
     function verifierSession() {
+      const userBar = document.getElementById('userBar');
       if (currentUser) {
-        document.getElementById('userBar').style.setProperty('display', 'flex', 'important');
+        userBar.classList.remove('d-none');
+        userBar.classList.add('d-flex');
         document.getElementById('userInfo').textContent = `Connecté : ${currentUser.prenom} ${currentUser.nom}`;
         document.getElementById('authBox').style.display = 'none';
         document.getElementById('espaceMonCompte').style.display = 'block';
         document.getElementById('profileNom').textContent = `${currentUser.prenom} ${currentUser.nom}`;
       } else {
-        document.getElementById('userBar').style.setProperty('display', 'none', 'important');
+        userBar.classList.add('d-none');
+        userBar.classList.remove('d-flex');
         document.getElementById('authBox').style.display = 'block';
         document.getElementById('espaceMonCompte').style.display = 'none';
       }
