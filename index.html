@@ -146,6 +146,106 @@
       border-left: 5px solid #dc3545;
       opacity: 0.6;
     }
+
+    /* --- STYLES NOUVO BOUTON PANNYE AK PROFIL --- */
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 10px;
+    }
+
+    .cart-btn {
+      background-color: #f8f9fa;
+      border: 1px solid #ced4da;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-weight: bold;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      position: relative;
+      transition: background-color 0.2s;
+    }
+
+    .cart-btn:hover {
+      background-color: #e2e6ea;
+    }
+
+    .cart-badge {
+      background-color: #dc3545;
+      color: white;
+      font-size: 11px;
+      border-radius: 50%;
+      padding: 2px 7px;
+      font-weight: bold;
+    }
+
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-btn {
+      background-color: #e9ecef;
+      border: 1px solid #ced4da;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background-color 0.2s;
+    }
+
+    .profile-btn:hover {
+      background-color: #dee2e6;
+    }
+
+    .dropdown-menu-custom {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background-color: #ffffff;
+      min-width: 200px;
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      overflow: hidden;
+      z-index: 1050;
+      border: 1px solid #e0e0e0;
+    }
+
+    .dropdown-menu-custom.show {
+      display: block;
+    }
+
+    .dropdown-menu-custom a {
+      color: #333333;
+      padding: 10px 16px;
+      text-decoration: none;
+      display: block;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+
+    .dropdown-menu-custom a:hover {
+      background-color: #f1f3f5;
+    }
+
+    .dropdown-menu-custom .logout-item {
+      color: #dc3545;
+      border-top: 1px solid #e0e0e0;
+      font-weight: bold;
+    }
+
+    .dropdown-menu-custom .logout-item:hover {
+      background-color: #ffe6e6;
+    }
   </style>
 </head>
 
@@ -180,7 +280,7 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarNav">
-        <div class="navbar-nav ms-auto flex-row flex-wrap gap-2 mt-2 mt-lg-0">
+        <div class="navbar-nav ms-auto flex-row flex-wrap gap-2 mt-2 mt-lg-0 align-items-center">
           <button class="btn btn-primary btn-sm" onclick="changerOnglet('client', event)">📦 Commander</button>
           <!-- BOUTON VENDRE UN ARTICLE / MARKETPLACE -->
           <button class="btn btn-warning btn-sm fw-bold text-dark" onclick="changerOnglet('vendre', event)">🛍️ Vendre /
@@ -196,6 +296,29 @@
           <button class="btn btn-outline-info btn-sm" onclick="changerOnglet('support', event)">💬 Support &
             FAQ</button>
           <button class="btn btn-outline-dark btn-sm" onclick="changerOnglet('admin', event)">📊 Admin</button>
+
+          <!-- BOUTON PANNYE AK PROFIL KI ENTEGRE LA -->
+          <div class="nav-actions">
+            <!-- 1. Bouton Pannye -->
+            <button class="cart-btn" onclick="changerOnglet('vendre', event)">
+              🛒 Pannye
+              <span class="cart-badge" id="cartBadgeCount">2</span>
+            </button>
+
+            <!-- 2. Bouton Profil ak Meni Dewoulan -->
+            <div class="profile-dropdown">
+              <button class="profile-btn" onclick="toggleProfileMenu(event)">👤</button>
+              <div class="dropdown-menu-custom" id="profileDropdownMenu">
+                <a href="#" onclick="changerOnglet('commandes', event); toggleProfileMenu(event);">📦 Komande Mwen yo</a>
+                <a href="#" onclick="changerOnglet('vendre', event); toggleProfileMenu(event);">🖤 Lis Favori / Marketplace</a>
+                <a href="#" onclick="changerOnglet('client', event); toggleProfileMenu(event);">📍 Adrès Mwen yo</a>
+                <a href="#" onclick="changerOnglet('business', event); toggleProfileMenu(event);">💳 Mwayen Peman & Biznis</a>
+                <a href="#" onclick="changerOnglet('support', event); toggleProfileMenu(event);">⚙️ Paramèt ak Sipò</a>
+                <a href="#" onclick="deconnexion(); toggleProfileMenu(event);" class="logout-item">🚪 Dekonekte</a>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -1133,6 +1256,23 @@
           .subscribe();
       }
     };
+
+    // Fonksyon pou louvri / fèmen Meni Profil
+    function toggleProfileMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('profileDropdownMenu');
+      if (menu) {
+        menu.classList.toggle('show');
+      }
+    }
+
+    // Fèmen meni an lè itilizatè a klike nenpòt lòt kote sou paj la
+    window.addEventListener('click', function(e) {
+      const menu = document.getElementById('profileDropdownMenu');
+      if (menu && menu.classList.contains('show')) {
+        menu.classList.remove('show');
+      }
+    });
 
     function afficherToast(msg, type = 'success') {
       const toastEl = document.getElementById('liveToast');
