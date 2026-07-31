@@ -820,12 +820,12 @@
                 <div class="col-6"><label class="form-label">Prénom</label><input type="text" class="form-control"
                     id="signupPrenom" required></div>
                 <div class="col-6"><label class="form-label">Nom</label><input type="text" class="form-control"
-                    id="signupNom" required></div>
+                    id="signupNomLivreur" required></div>
               </div>
               <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control"
-                  id="signupEmail" required></div>
+                  id="signupEmailLivreur" required></div>
               <div class="mb-3"><label class="form-label">Téléphone</label><input type="tel" class="form-control"
-                  id="signupTel" required></div>
+                  id="signupTelLivreur" required></div>
               <div class="row g-2 mb-3">
                 <div class="col-6"><label class="form-label">Mot de passe</label><input type="password"
                     class="form-control" id="signupPassword" minlength="6" required></div>
@@ -996,7 +996,7 @@
     </div>
   </div>
 
-  <!-- MODAL PROFIL UTILISATEUR CLIENT -->
+  <!-- MODAL UNIFIÉE PROFIL & INSCRIPTION MULTI-RÔLES -->
   <div class="modal fade" id="modalProfilClient" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content border-0">
@@ -1005,42 +1005,83 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
         </div>
         <div class="modal-body p-4">
-          <!-- Vue si NON connecté -->
+          
+          <!-- VUE NON CONNECTÉ : INSCRIPTION / CONNEXION -->
           <div id="profilClientNonConnecte">
-            <h6 class="fw-bold mb-3">Connectez-vous pour voir vos informations et commandes</h6>
-            <form id="formClientLogin" onsubmit="connexionClientProfil(event)">
-              <div class="mb-3">
-                <label class="form-label">Nom complet</label>
-                <input type="text" id="clientAuthNom" class="form-control" placeholder="Marie Joseph" required>
+            <ul class="nav nav-pills nav-justified mb-3" id="pills-tab" role="tablist">
+              <li class="nav-item">
+                <button class="nav-link active fw-bold" id="pills-login-tab" data-bs-toggle="pill" data-bs-target="#pills-login" type="button">Connexion</button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link fw-bold" id="pills-signup-tab" data-bs-toggle="pill" data-bs-target="#pills-signup" type="button">Créer un compte</button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="pills-tabContent">
+              
+              <!-- Formulaire Connexion -->
+              <div class="tab-pane fade show active" id="pills-login">
+                <form id="formClientLogin" onsubmit="connexionUtilisateur(event)">
+                  <div class="mb-3">
+                    <label class="form-label">Téléphone WhatsApp</label>
+                    <input type="tel" id="loginAuthTel" class="form-control" placeholder="+509 3821 0256" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Adresse Email</label>
+                    <input type="email" id="loginAuthEmail" class="form-control" placeholder="utilisateur@exemple.ht" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100 fw-bold">Se connecter</button>
+                </form>
               </div>
-              <div class="mb-3">
-                <label class="form-label">Téléphone WhatsApp</label>
-                <input type="tel" id="clientAuthTel" class="form-control" placeholder="+509 3821 0256" required>
+
+              <!-- Formulaire Inscription avec Rôle -->
+              <div class="tab-pane fade" id="pills-signup">
+                <form id="formClientSignup" onsubmit="inscriptionUtilisateur(event)">
+                  <div class="mb-3">
+                    <label class="form-label fw-bold text-primary">Vous êtes ? (Choisissez votre rôle) *</label>
+                    <select id="signupRole" class="form-select fw-bold border-primary" required>
+                      <option value="Client">🛒 Client (Je souhaite commander / acheter)</option>
+                      <option value="Livreur">🛵 Livreur (Je souhaite effectuer des livraisons)</option>
+                      <option value="Vendeur">🛍️ Vendeur / Boutique (Je souhaite vendre des produits)</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Nom complet *</label>
+                    <input type="text" id="signupNom" class="form-control" placeholder="Marie Joseph" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Téléphone WhatsApp *</label>
+                    <input type="tel" id="signupTel" class="form-control" placeholder="+509 3821 0256" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Adresse Email *</label>
+                    <input type="email" id="signupEmail" class="form-control" placeholder="marie@exemple.ht" required>
+                  </div>
+                  <button type="submit" class="btn btn-success w-100 fw-bold">✨ S'inscrire maintenant</button>
+                </form>
               </div>
-              <div class="mb-3">
-                <label class="form-label">Adresse Email</label>
-                <input type="email" id="clientAuthEmail" class="form-control" placeholder="marie@exemple.ht" required>
-              </div>
-              <button type="submit" class="btn btn-primary w-100 fw-bold">Se connecter à mon compte</button>
-            </form>
+
+            </div>
           </div>
 
-          <!-- Vue si CONNECTÉ -->
+          <!-- VUE CONNECTÉ -->
           <div id="profilClientConnecte" style="display: none;">
             <div class="card bg-light border-0 p-3 mb-3">
-              <h5 class="fw-bold text-primary mb-2" id="clientProfNomDisplay">-</h5>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold text-primary mb-0" id="clientProfNomDisplay">-</h5>
+                <span id="clientProfRoleDisplay" class="badge bg-warning text-dark fs-6">-</span>
+              </div>
               <p class="mb-1 small">📱 <strong>Téléphone:</strong> <span id="clientProfTelDisplay">-</span></p>
               <p class="mb-0 small">✉️ <strong>Email:</strong> <span id="clientProfEmailDisplay">-</span></p>
             </div>
 
-            <h6 class="fw-bold mt-4 mb-2">📋 Vos Dernières Commandes</h6>
-            <div id="historiqueCommandesClient" class="small">
-              <p class="text-muted">Aucune commande enregistrée.</p>
-            </div>
+            <!-- Section dynamique selon le rôle -->
+            <div id="sectionProfilRole" class="mt-3"></div>
 
             <hr class="my-4">
-            <button onclick="deconnexionClientProfil()" class="btn btn-outline-danger w-100">🔴 Se déconnecter</button>
+            <button onclick="deconnexionClientProfil()" class="btn btn-outline-danger w-100 fw-bold">🔴 Se déconnecter</button>
           </div>
+
         </div>
       </div>
     </div>
@@ -1344,11 +1385,12 @@
       afficherToast("Panier prêt pour la livraison ! Remplissez le destinataire.");
     }
 
-    /* GESTION PROFIL UTILISATEUR CLIENT */
+    /* GESTION PROFIL UTILISATEUR CLIENT & MULTI-RÔLES */
     function verifierProfilClient() {
       const btn = document.getElementById('btnProfilClient');
       if (currentClientUser) {
-        btn.textContent = `👤 ${currentClientUser.nom}`;
+        const roleLabel = currentClientUser.role ? ` (${currentClientUser.role})` : '';
+        btn.textContent = `👤 ${currentClientUser.nom}${roleLabel}`;
         btn.className = "btn btn-success btn-sm ms-lg-1";
       } else {
         btn.textContent = "👤 Mon Profil";
@@ -1367,12 +1409,42 @@
         document.getElementById('clientProfNomDisplay').textContent = currentClientUser.nom;
         document.getElementById('clientProfTelDisplay').textContent = currentClientUser.tel;
         document.getElementById('clientProfEmailDisplay').textContent = currentClientUser.email;
+        document.getElementById('clientProfRoleDisplay').textContent = currentClientUser.role || 'Client';
+
+        // Remplir les informations selon le rôle
+        const sectionRole = document.getElementById('sectionProfilRole');
+        const role = currentClientUser.role || 'Client';
+
+        if (role === 'Vendeur') {
+          sectionRole.innerHTML = `
+            <div class="alert alert-warning mb-3">
+              <h6 class="fw-bold mb-1">🛍️ Espace Vendeur</h6>
+              <p class="small mb-2">Vous pouvez publier directement vos articles sur la Marketplace.</p>
+              <button class="btn btn-dark btn-sm w-100 fw-bold" onclick="fermerModalProfilEtAllerVendre()">➕ Publier un produit</button>
+            </div>
+          `;
+        } else if (role === 'Livreur') {
+          sectionRole.innerHTML = `
+            <div class="alert alert-info mb-3">
+              <h6 class="fw-bold mb-1">🛵 Espace Livreur</h6>
+              <p class="small mb-2">Accédez aux courses disponibles et activez votre partage GPS.</p>
+              <button class="btn btn-primary btn-sm w-100 fw-bold" onclick="fermerModalProfilEtAllerLivreur()">🛵 Aller au tableau livreur</button>
+            </div>
+          `;
+        } else {
+          sectionRole.innerHTML = `
+            <h6 class="fw-bold mt-3 mb-2">📋 Vos Dernières Commandes</h6>
+            <div id="historiqueCommandesClient" class="small">
+              <p class="text-muted">Chargement de l'historique...</p>
+            </div>
+          `;
+          chargerHistoriqueClient();
+        }
 
         // Auto-remplir le formulaire de livraison
         document.getElementById('clientNom').value = currentClientUser.nom;
         document.getElementById('clientTel').value = currentClientUser.tel;
 
-        chargerHistoriqueClient();
       } else {
         nonConnecte.style.display = 'block';
         connecte.style.display = 'none';
@@ -1382,18 +1454,56 @@
       modal.show();
     }
 
-    function connexionClientProfil(e) {
-      e.preventDefault();
-      const nom = document.getElementById('clientAuthNom').value;
-      const tel = document.getElementById('clientAuthTel').value;
-      const email = document.getElementById('clientAuthEmail').value;
+    function fermerModalProfilEtAllerVendre() {
+      const modalEl = document.getElementById('modalProfilClient');
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      if (modal) modal.hide();
+      changerOnglet('vendre');
+    }
 
-      currentClientUser = { nom, tel, email };
+    function fermerModalProfilEtAllerLivreur() {
+      const modalEl = document.getElementById('modalProfilClient');
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      if (modal) modal.hide();
+      changerOnglet('livreur');
+    }
+
+    function connexionUtilisateur(e) {
+      e.preventDefault();
+      const tel = document.getElementById('loginAuthTel').value;
+      const email = document.getElementById('loginAuthEmail').value;
+
+      currentClientUser = { 
+        nom: email.split('@')[0], 
+        tel: tel, 
+        email: email, 
+        role: "Client" 
+      };
       localStorage.setItem('user_client', JSON.stringify(currentClientUser));
 
       verifierProfilClient();
       ouvrirProfilClient();
-      afficherToast(`Bienvenue ${nom} !`);
+      afficherToast(`Bienvenue à nouveau !`);
+    }
+
+    function inscriptionUtilisateur(e) {
+      e.preventDefault();
+      const role = document.getElementById('signupRole').value;
+      const nom = document.getElementById('signupNom').value;
+      const tel = document.getElementById('signupTel').value;
+      const email = document.getElementById('signupEmail').value;
+
+      currentClientUser = { nom, tel, email, role };
+      localStorage.setItem('user_client', JSON.stringify(currentClientUser));
+
+      if (role === 'Vendeur') {
+        document.getElementById('vendeurNom').value = nom;
+        document.getElementById('vendeurTel').value = tel;
+      }
+
+      verifierProfilClient();
+      ouvrirProfilClient();
+      afficherToast(`Compte ${role} créé avec succès pour ${nom} !`);
     }
 
     function deconnexionClientProfil() {
@@ -1405,7 +1515,7 @@
       const modal = bootstrap.Modal.getInstance(modalEl);
       if (modal) modal.hide();
 
-      afficherToast("Déconnexion client réussie.", "info");
+      afficherToast("Déconnexion réussie.", "info");
     }
 
     async function chargerHistoriqueClient() {
