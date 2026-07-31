@@ -38,26 +38,11 @@
       top: 20px;
     }
 
-    .badge-dispo {
-      background-color: #28a745;
-    }
-
-    .badge-occupe {
-      background-color: #dc3545;
-    }
-
-    .badge-attente {
-      background-color: #ffc107;
-      color: #333;
-    }
-
-    .badge-cours {
-      background-color: #17a2b8;
-    }
-
-    .badge-livre {
-      background-color: #6c757d;
-    }
+    .badge-dispo { background-color: #28a745; }
+    .badge-occupe { background-color: #dc3545; }
+    .badge-attente { background-color: #ffc107; color: #333; }
+    .badge-cours { background-color: #17a2b8; }
+    .badge-livre { background-color: #6c757d; }
 
     .btn-action {
       padding: 6px 12px;
@@ -104,63 +89,32 @@
       background-color: #e9ecef;
     }
 
-    /* Style Système d'avis / Étoiles */
     .rating-stars {
       color: #ffc107;
       cursor: pointer;
       font-size: 1.25rem;
     }
 
-    /* Pulse animation pour la géolocalisation GPS active */
     .gps-active {
       animation: pulse 1.5s infinite;
     }
 
     @keyframes pulse {
-      0% {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      50% {
-        opacity: 0.5;
-        transform: scale(1.05);
-      }
-
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    /* Status de sécurité des zones */
-    .sec-green {
-      border-left: 5px solid #28a745;
-    }
-
-    .sec-yellow {
-      border-left: 5px solid #ffc107;
-    }
-
-    .sec-red {
-      border-left: 5px solid #dc3545;
-      opacity: 0.6;
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.05); }
+      100% { opacity: 1; transform: scale(1); }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Conteneur Toast pour Notifications Temps Réel -->
+  <!-- Conteneur Toast pour Notifications -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 2000;">
-    <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert"
-      aria-live="assertive" aria-atomic="true">
+    <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
-        <div class="toast-body" id="toastMessage">
-          Action effectuée avec succès !
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-          aria-label="Close"></button>
+        <div class="toast-body" id="toastMessage">Action effectuée avec succès !</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
     </div>
   </div>
@@ -168,10 +122,8 @@
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
     <div class="container">
-      <a class="navbar-brand fw-bold text-primary" href="#" onclick="changerOnglet('vendre', event)">🚚
-        LivraisonRapid</a>
+      <a class="navbar-brand fw-bold text-primary" href="#" onclick="changerOnglet('vendre', event)">🚚 LivraisonRapid</a>
 
-      <!-- Bouton PWA d'installation de l'App -->
       <button id="btnPwaInstall" class="btn btn-warning btn-sm me-2 d-none fw-bold" onclick="installerPWA()">
         📲 Installer l'App
       </button>
@@ -182,32 +134,20 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <div class="navbar-nav ms-auto flex-row flex-wrap gap-2 mt-2 mt-lg-0 align-items-center">
-          <!-- BOUTON MARKETPLACE EN ACCUEIL -->
-          <button class="btn btn-warning btn-sm fw-bold text-dark" onclick="changerOnglet('vendre', event)">🛍️ Accueil
-            Marketplace</button>
-          <button class="btn btn-primary btn-sm" onclick="changerOnglet('client', event)">📦 Commander
-            Livraison</button>
-          <button class="btn btn-outline-success btn-sm fw-bold" onclick="changerOnglet('business', event)">🏢 Espace
-            Business</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis /
-            GPS</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('livreur', event)">🛵 Espace
-            Livreur</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('commandes', event)">📋 Courses en
-            cours</button>
-          <button class="btn btn-outline-info btn-sm" onclick="changerOnglet('support', event)">💬 Support &
-            FAQ</button>
+          <button class="btn btn-warning btn-sm fw-bold text-dark" onclick="changerOnglet('vendre', event)">🛍️ Accueil Marketplace</button>
+          <button class="btn btn-primary btn-sm" onclick="changerOnglet('client', event)">📦 Commander Livraison</button>
+          <button class="btn btn-outline-success btn-sm fw-bold" onclick="changerOnglet('business', event)">🏢 Espace Business</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis / GPS</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('livreur', event)">🛵 Espace Livreur</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('commandes', event)">📋 Courses en cours</button>
+          <button class="btn btn-outline-info btn-sm" onclick="changerOnglet('support', event)">💬 Support & FAQ</button>
           <button class="btn btn-outline-dark btn-sm" onclick="changerOnglet('admin', event)">📊 Admin</button>
 
-          <!-- BOUTON PANIER -->
           <button class="btn btn-outline-primary btn-sm position-relative ms-lg-2" data-bs-toggle="modal" data-bs-target="#modalPanier">
             🛒 Panier
-            <span id="badgePanierCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              0
-            </span>
+            <span id="badgePanierCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
           </button>
 
-          <!-- BOUTON PROFIL CLIENT / CONNEXION -->
           <button id="btnProfilClient" class="btn btn-dark btn-sm ms-lg-1" onclick="ouvrirProfilClient()">
             👤 Mon Profil
           </button>
@@ -219,23 +159,20 @@
   <!-- Contenu Principal -->
   <main class="container mb-5">
 
-    <!-- Barre Livreur / Activation GPS Live -->
     <div id="userBar" class="alert alert-info d-none justify-content-between align-items-center mb-4">
       <div>
         <strong id="userInfo">Espace Livreur</strong>
         <span id="gpsBadge" class="badge bg-secondary ms-2">GPS Inactif</span>
       </div>
       <div class="d-flex gap-2">
-        <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm fw-bold">📍 Partage GPS
-          Live</button>
+        <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm fw-bold">📍 Partage GPS Live</button>
         <button onclick="deconnexion()" class="btn btn-danger btn-sm">Déconnexion</button>
       </div>
     </div>
 
-    <!-- 1. ACCUEIL : SECTION MARKETPLACE / VENDRE (AFFICHEE PAR DEFAUT) -->
+    <!-- 1. MARKETPLACE -->
     <div id="section-vendre" class="section-app">
       <div class="row g-4">
-        <!-- Vitrine Marketplace (Placée à gauche et élargie pour la vue Accueil) -->
         <div class="col-lg-7">
           <div class="card shadow-sm border-0 p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -245,8 +182,7 @@
 
             <div class="row g-2 mb-3">
               <div class="col-md-7">
-                <input type="text" id="searchMarket" class="form-control" placeholder="🔍 Rechercher un article..."
-                  oninput="filtrerMarketplace()">
+                <input type="text" id="searchMarket" class="form-control" placeholder="🔍 Rechercher un article..." oninput="filtrerMarketplace()">
               </div>
               <div class="col-md-5">
                 <select id="catFilter" class="form-select" onchange="filtrerMarketplace()">
@@ -264,18 +200,15 @@
           </div>
         </div>
 
-        <!-- Formulaire de Publication d'Article -->
         <div class="col-lg-5">
           <div class="card shadow-sm border-0 p-4">
             <h3 class="card-title text-warning text-dark fw-bold mb-3">🛍️ Exposer un produit à vendre</h3>
-            <p class="text-muted small mb-3">Vous avez un objet, un vêtement, de la nourriture ou un produit
-              neuf/occasion à vendre ? Publiez-le gratuitement avec vos photos !</p>
+            <p class="text-muted small mb-3">Publiez gratuitement vos articles !</p>
 
             <form id="formVendre" onsubmit="publierArticle(event)">
               <div class="mb-3">
                 <label for="vendeurNom" class="form-label">Votre nom / Nom de boutique *</label>
-                <input type="text" class="form-control" id="vendeurNom" placeholder="Ex: Jean Boutique ou Sarah"
-                  required>
+                <input type="text" class="form-control" id="vendeurNom" placeholder="Ex: Jean Boutique" required>
               </div>
 
               <div class="mb-3">
@@ -285,13 +218,12 @@
 
               <div class="mb-3">
                 <label for="articleTitre" class="form-label">Titre de l'article *</label>
-                <input type="text" class="form-control" id="articleTitre"
-                  placeholder="Ex: iPhone 12 Pro Max / Baskets / Plat Griot" required>
+                <input type="text" class="form-control" id="articleTitre" placeholder="Ex: iPhone 12 Pro Max" required>
               </div>
 
               <div class="row g-2 mb-3">
                 <div class="col-6">
-                  <label for="articlePrix" class="form-label">Prix (HTG / USD) *</label>
+                  <label for="articlePrix" class="form-label">Prix (HTG) *</label>
                   <input type="number" class="form-control" id="articlePrix" placeholder="Ex: 2500" required>
                 </div>
                 <div class="col-6">
@@ -307,940 +239,412 @@
               </div>
 
               <div class="mb-3">
-                <label for="articleZone" class="form-label">Localisation de l'article *</label>
+                <label for="articleZone" class="form-label">Localisation *</label>
                 <select class="form-select" id="articleZone" required>
                   <option value="Pétion-Ville">Pétion-Ville</option>
                   <option value="Delmas">Delmas</option>
                   <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
                   <option value="Port-au-Prince - Turgeau">Port-au-Prince - Turgeau</option>
                   <option value="Route de Frères">Route de Frères</option>
-                  <option value="Autre commune de l'Ouest">Autre commune de l'Ouest</option>
                 </select>
               </div>
 
               <div class="mb-3">
-                <label for="articleImgs" class="form-label fw-bold">📷 Photos de l'article (Galerie/Photos - 3
-                  max)</label>
-                <input type="file" class="form-control" id="articleImgs" accept="image/*" multiple
-                  onchange="previsualiserImages(event)">
-                <div class="form-text small">Sélectionnez jusqu'à 3 images de votre appareil.</div>
+                <label for="articleImgs" class="form-label fw-bold">📷 Photos (3 max)</label>
+                <input type="file" class="form-control" id="articleImgs" accept="image/*" multiple onchange="previsualiserImages(event)">
                 <div id="previewContainer" class="d-flex gap-2 mt-2 flex-wrap"></div>
               </div>
 
               <div class="mb-3">
-                <label for="articleImg" class="form-label">Ou URL d'image en ligne (Optionnel)</label>
-                <input type="url" class="form-control" id="articleImg" placeholder="https://images.unsplash.com/...">
+                <label for="articleImg" class="form-label">Ou URL d'image (Optionnel)</label>
+                <input type="url" class="form-control" id="articleImg" placeholder="https://...">
               </div>
 
               <div class="mb-3">
-                <label for="articleDesc" class="form-label">Description de l'article *</label>
-                <textarea class="form-control" id="articleDesc" rows="3"
-                  placeholder="État du produit, garantie, détails..." required></textarea>
+                <label for="articleDesc" class="form-label">Description *</label>
+                <textarea class="form-control" id="articleDesc" rows="3" required></textarea>
               </div>
 
-              <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">
-                ✨ Mettre en vente maintenant
-              </button>
+              <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">✨ Mettre en vente</button>
             </form>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 2. SECTION COMMANDE CLIENT (MASQUÉE PAR DÉFAUT EN PASSANT D-NONE) -->
+    <!-- 2. CLIENT / COMMANDE -->
     <div id="section-client" class="section-app d-none">
       <div class="row g-4">
-
-        <!-- Colonne Gauche : Formulaire de Commande -->
-        <div class="col-lg-7">
-          <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-              <h3 class="card-title mb-4">🚚 Commander une livraison</h3>
-
-              <form id="orderForm">
-
-                <!-- 1. Informations Expéditeur -->
-                <h5 class="text-secondary fs-6 mb-3">1. Information Expéditeur (Vous)</h5>
-                <div class="row g-3 mb-3">
-                  <div class="col-md-6">
-                    <label for="clientNom" class="form-label">Nom complet *</label>
-                    <input type="text" class="form-control" id="clientNom" placeholder="Ex: Marie Joseph" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="clientTel" class="form-label">Téléphone WhatsApp *</label>
-                    <input type="tel" class="form-control" id="clientTel" placeholder="Ex: +509 3821 0256" required>
-                  </div>
-                </div>
-
-                <!-- 2. Informations Destinataire -->
-                <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-                  <h5 class="text-secondary fs-6 mb-0">2. Information Destinataire</h5>
-                  <div class="form-check form-switch mb-0">
-                    <input class="form-check-input" type="checkbox" id="memeDestinataire"
-                      onchange="copierInfoExpediteur()">
-                    <label class="form-check-label small text-muted" for="memeDestinataire">Je suis le
-                      destinataire</label>
-                  </div>
-                </div>
-
-                <div class="row g-3 mb-3" id="blockDestinataire">
-                  <div class="col-md-6">
-                    <label for="destinataireNom" class="form-label">Nom du destinataire *</label>
-                    <input type="text" class="form-control" id="destinataireNom" placeholder="Ex: Jean Baptiste"
-                      required>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="destinataireTel" class="form-label">WhatsApp Destinataire (Alerte Directe) *</label>
-                    <input type="tel" class="form-control" id="destinataireTel" placeholder="Ex: +509 3700 0000"
-                      required>
-                  </div>
-                </div>
-
-                <!-- 3. Trajet, Zones & Sécurité -->
-                <h5 class="text-secondary fs-6 mb-3 mt-4">3. Trajet, Zones & Sécurité</h5>
-                <div class="row g-3 mb-3">
-                  <div class="col-md-6">
-                    <label for="zoneDepart" class="form-label">Zone départ *</label>
-                    <select class="form-select" id="zoneDepart" onchange="calculerPrixEtSecurite()" required>
-                      <option value="">-- Choisir --</option>
-                      <optgroup label="Port-au-Prince (Zones Accessibles)">
-                        <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
-                        <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
-                        <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
-                        <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
-                        <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
-                        <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
-                      </optgroup>
-                      <optgroup label="Autres Communes Praticables">
-                        <option value="Pétion-Ville">Pétion-Ville 🟢</option>
-                        <option value="Delmas">Delmas 🟢</option>
-                        <option value="Route de Frères">Route de Frères 🟢</option>
-                        <option value="Juvénat">Juvénat 🟢</option>
-                        <option value="Thomassin">Thomassin 🟢</option>
-                      </optgroup>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="zoneArrivee" class="form-label">Zone arrivée *</label>
-                    <select class="form-select" id="zoneArrivee" onchange="calculerPrixEtSecurite()" required>
-                      <option value="">-- Choisir --</option>
-                      <optgroup label="Port-au-Prince (Zones Accessibles)">
-                        <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
-                        <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
-                        <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
-                        <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
-                        <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
-                        <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
-                      </optgroup>
-                      <optgroup label="Autres Communes Praticables">
-                        <option value="Pétion-Ville">Pétion-Ville 🟢</option>
-                        <option value="Delmas">Delmas 🟢</option>
-                        <option value="Route de Frères">Route de Frères 🟢</option>
-                        <option value="Juvénat">Juvénat 🟢</option>
-                        <option value="Thomassin">Thomassin 🟢</option>
-                      </optgroup>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Panneau visuel d'état de sécurité -->
-                <div id="securityAlert" class="alert alert-info d-flex align-items-center gap-2 mb-3" role="alert">
-                  <span id="secIcon" class="fs-4">🛡️</span>
-                  <div id="secText" class="small">Sélectionnez vos zones pour évaluer la sécurité du trajet.</div>
-                </div>
-
-                <div class="mb-3">
-                  <label for="adresseDepart" class="form-label">Adresse exacte départ *</label>
-                  <input type="text" class="form-control" id="adresseDepart" placeholder="Ex: Rue Capois, près de..."
-                    required>
-                </div>
-
-                <div class="mb-3">
-                  <label for="adresseArrivee" class="form-label">Adresse exacte d'arrivée *</label>
-                  <input type="text" class="form-control" id="adresseArrivee" placeholder="Ex: Impasse Lavaud, ..."
-                    required>
-                </div>
-
-                <!-- 4. Planification & Colis -->
-                <h5 class="text-secondary fs-6 mb-3 mt-4">4. Détails du colis & Horaire</h5>
-
-                <div class="row g-3 mb-3">
-                  <div class="col-md-6">
-                    <label for="typeColis" class="form-label">Type de colis / Service *</label>
-                    <select class="form-select" id="typeColis" required>
-                      <optgroup label="🍔 Alimentation & Restauration">
-                        <option value="Repas / Plat préparé">Repas / Plat préparé</option>
-                        <option value="Courses de supermarché">Courses de supermarché</option>
-                        <option value="Boissons / Packs / Bières">Boissons / Packs / Bières</option>
-                      </optgroup>
-                      <optgroup label="📄 Documents & Urgences">
-                        <option value="Documents / Papiers officiels">Documents / Papiers officiels</option>
-                        <option value="Clés / Portefeuille / Chargeur">Clés / Portefeuille / Chargeur</option>
-                      </optgroup>
-                      <optgroup label="💊 Santé & Beauté">
-                        <option value="Pharmacie / Médicaments">Pharmacie / Médicaments</option>
-                      </optgroup>
-                      <optgroup label="📦 Charges Lourdes & Encombrants">
-                        <option value="Électroménager">Électroménager</option>
-                        <option value="Autre type de colis">Autre type de colis</option>
-                      </optgroup>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="poidsColis" class="form-label">Poids estimé *</label>
-                    <select class="form-select" id="poidsColis" onchange="calculerPrixEtSecurite()" required>
-                      <option value="0">Léger (&lt; 5 kg)</option>
-                      <option value="150">Moyen (5 kg - 15 kg) [+150 HTG]</option>
-                      <option value="350">Lourd (15 kg - 30 kg) [+350 HTG]</option>
-                      <option value="700">Très lourd (&gt; 30 kg) [+700 HTG]</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="row g-3 mb-3">
-                  <div class="col-md-6">
-                    <label for="moyenTransport" class="form-label">Moyen de Transport</label>
-                    <select class="form-select" id="moyenTransport" onchange="calculerPrixEtSecurite()">
-                      <option value="Moto">Moto</option>
-                      <option value="Tricycle">Tricycle</option>
-                      <option value="Voiture">Voiture</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="methodePaiement" class="form-label">Mode de paiement *</label>
-                    <select class="form-select" id="methodePaiement" required onchange="toggleFormPaiement()">
-                      <option value="Cash à la livraison">Cash à la livraison</option>
-                      <option value="MonCash">MonCash</option>
-                      <option value="NatCash">NatCash</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Simulation de Paiement Sécurisé MonCash / NatCash -->
-                <div id="boxPaiementEnLigne" class="p-3 bg-light border rounded mb-3" style="display:none;">
-                  <h6 class="text-primary mb-2">💳 Transaction Sécurisée <span id="nomPasserelle">MonCash</span></h6>
-                  <p class="small text-muted mb-2">Saisissez votre numéro pour simuler la validation du paiement :</p>
-                  <div class="input-group input-group-sm">
-                    <span class="input-group-text">+509</span>
-                    <input type="tel" id="payPhone" class="form-control" placeholder="38XX XXXX">
-                    <button type="button" class="btn btn-success" onclick="simulerPaiementAPI()">Simuler le
-                      Paiement</button>
-                  </div>
-                  <div id="payStatus" class="small mt-2"></div>
-                </div>
-
-                <!-- Code Promo & Remises -->
-                <div class="mb-3">
-                  <label class="form-label fw-bold">Code Promo</label>
-                  <div class="input-group">
-                    <input type="text" id="codePromo" class="form-control" placeholder="Entrez RAPID10 ou LIVRAISON20">
-                    <button type="button" class="btn btn-outline-secondary"
-                      onclick="appliquerPromo()">Appliquer</button>
-                  </div>
-                  <div id="promoStatus" class="small mt-1"></div>
-                </div>
-
-                <!-- Planification -->
-                <div class="mb-3">
-                  <label class="form-label fw-bold">Moment de la livraison</label>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="deliveryTiming" id="asap" value="asap" checked
-                      onclick="toggleSchedule(false)">
-                    <label class="form-check-label" for="asap">Livraison immédiate (Dès que possible)</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="deliveryTiming" id="scheduled" value="scheduled"
-                      onclick="toggleSchedule(true)">
-                    <label class="form-check-label" for="scheduled">Planifier pour plus tard</label>
-                  </div>
-                </div>
-
-                <div id="scheduleInputs" class="row g-3 mb-3 d-none">
-                  <div class="col-md-6">
-                    <label for="deliveryDate" class="form-label">Date de livraison</label>
-                    <input type="date" class="form-control" id="deliveryDate">
-                  </div>
-                  <div class="col-md-6">
-                    <label for="deliveryTime" class="form-label">Heure souhaitée</label>
-                    <input type="time" class="form-control" id="deliveryTime">
-                  </div>
-                </div>
-
-                <button type="submit" class="btn btn-success btn-lg w-100 mt-4">
-                  ✅ Valider et lancer la commande
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <!-- Colonne Droite : Carte Leaflet & Estimation Détaillée -->
-        <div class="col-lg-5">
-          <div class="card shadow-sm border-0 sticky-card">
-            <div class="card-body p-4">
-              <h5 class="card-title mb-3">📍 Trajet & Calcul Tarif Live</h5>
-
-              <div id="map"></div>
-
-              <hr class="my-4">
-
-              <!-- Détails Financiers Complet -->
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="text-muted">Distance estimée :</span>
-                <strong id="distVal" class="fs-6">0.0 km</strong>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="text-muted">Sous-total (Course) :</span>
-                <strong id="subtotalVal" class="fs-6">250 HTG</strong>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center mb-2 text-primary">
-                <span>Taxe & Frais de Service (<span id="tauxTaxeLabel">13.5%</span>) :</span>
-                <strong id="taxeVal">+34 HTG</strong>
-              </div>
-
-              <div class="d-flex justify-content-between align-items-center mb-2 text-danger" id="boxReduction"
-                style="display: none;">
-                <span>Réduction Promo :</span>
-                <strong id="reductionVal">-0 HTG</strong>
-              </div>
-
-              <hr>
-
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="fw-bold fs-5">Total à payer :</span>
-                <strong id="priceVal" class="fs-3 text-success">284 HTG</strong>
-              </div>
-
-              <p class="small text-muted mt-3 mb-0">
-                ℹ️ Le tarif s'ajuste automatiquement selon la distance, la zone, le véhicule, le poids du colis et la
-                taxe de service (13,5%).
-              </p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- 3. SECTION ESPACE BUSINESS / ENTREPRISES DE L'OUEST -->
-    <div id="section-business" class="section-app d-none">
-      <div class="row g-4">
-        <!-- Présentation des Avantages Business -->
-        <div class="col-lg-5">
-          <div class="card shadow-sm border-0 p-4 h-100 bg-primary text-white">
-            <h2 class="fw-bold mb-3">🏢 Externalisez vos livraisons</h2>
-            <p class="lead fs-6">Vous êtes un restaurant, un supermarché, une pharmacie ou une boutique en ligne à
-              Pétion-Ville, Delmas ou Port-au-Prince ?</p>
-            <p class="small opacity-75 mb-4">Gagnez du temps et réduisez vos coûts fixes en confiant vos livraisons à
-              notre réseau de chauffeurs professionnels géolocalisés.</p>
-
-            <div class="mb-3">
-              <h5>✨ Pourquoi devenir Partenaire Business ?</h5>
-              <ul class="list-unstyled mt-3 small">
-                <li class="mb-2">✅ <strong>Tarifs préférentiels</strong> négociés par volume.</li>
-                <li class="mb-2">📍 <strong>Livreurs dédiés</strong> et qualifiés.</li>
-                <li class="mb-2">📑 <strong>Facturation mensuelle</strong> simplifiée.</li>
-                <li class="mb-2">📲 <strong>Notifications automatiques WhatsApp</strong> clients.</li>
-                <li class="mb-2">⚡ <strong>Gestion prioritaire</strong> des courses.</li>
-              </ul>
-            </div>
-
-            <div class="mt-auto pt-3 border-top border-white-50">
-              <small class="d-block text-white-50">Une question spécifique ?</small>
-              <strong>📞 Ligne Pro : +509 3821-0256</strong>
-            </div>
-          </div>
-        </div>
-
-        <!-- Formulaire de Demande d'Inauguration / Compte Entreprise -->
         <div class="col-lg-7">
           <div class="card shadow-sm border-0 p-4">
-            <h3 class="card-title text-primary mb-3">💼 Demander un Compte Entreprise</h3>
-            <p class="text-muted small mb-4">Remplissez ce formulaire pour créer votre compte Partenaire ou être
-              recontacté sous 24h.</p>
-
-            <form id="formBusiness" onsubmit="envoyerDemandeBusiness(event)">
+            <h3 class="card-title mb-4">🚚 Commander une livraison</h3>
+            <form id="orderForm">
+              <h5 class="text-secondary fs-6 mb-3">1. Information Expéditeur</h5>
               <div class="row g-3 mb-3">
                 <div class="col-md-6">
-                  <label for="bizNom" class="form-label">Nom de l'Entreprise / Commerce *</label>
-                  <input type="text" class="form-control" id="bizNom" placeholder="Ex: Restaurant Le Tropique" required>
+                  <label for="clientNom" class="form-label">Nom complet *</label>
+                  <input type="text" class="form-control" id="clientNom" required>
                 </div>
                 <div class="col-md-6">
-                  <label for="bizSecteur" class="form-label">Secteur d'Activité *</label>
-                  <select class="form-select" id="bizSecteur" required>
+                  <label for="clientTel" class="form-label">Téléphone WhatsApp *</label>
+                  <input type="tel" class="form-control" id="clientTel" required>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+                <h5 class="text-secondary fs-6 mb-0">2. Information Destinataire</h5>
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" id="memeDestinataire" onchange="copierInfoExpediteur()">
+                  <label class="form-check-label small text-muted" for="memeDestinataire">Je suis le destinataire</label>
+                </div>
+              </div>
+
+              <div class="row g-3 mb-3" id="blockDestinataire">
+                <div class="col-md-6">
+                  <label for="destinataireNom" class="form-label">Nom destinataire *</label>
+                  <input type="text" class="form-control" id="destinataireNom" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="destinataireTel" class="form-label">WhatsApp Destinataire *</label>
+                  <input type="tel" class="form-control" id="destinataireTel" required>
+                </div>
+              </div>
+
+              <h5 class="text-secondary fs-6 mb-3 mt-4">3. Trajet & Zones</h5>
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="zoneDepart" class="form-label">Zone départ *</label>
+                  <select class="form-select" id="zoneDepart" onchange="calculerPrixEtSecurite()" required>
                     <option value="">-- Choisir --</option>
-                    <option value="Restauration / Bar">Restauration / Alimentation</option>
-                    <option value="Supermarché / Epicerie">Supermarché / Épicerie</option>
-                    <option value="Pharmacie / Santé">Pharmacie / Santé</option>
-                    <option value="E-Commerce / Boutique">E-Commerce / Mode / Produits</option>
-                    <option value="Services / Bureau">Services / Cabinet / Documents</option>
-                    <option value="Autre">Autre activité</option>
+                    <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
+                    <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
+                    <option value="Pétion-Ville">Pétion-Ville 🟢</option>
+                    <option value="Delmas">Delmas 🟢</option>
+                    <option value="Route de Frères">Route de Frères 🟢</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="zoneArrivee" class="form-label">Zone arrivée *</label>
+                  <select class="form-select" id="zoneArrivee" onchange="calculerPrixEtSecurite()" required>
+                    <option value="">-- Choisir --</option>
+                    <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
+                    <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
+                    <option value="Pétion-Ville">Pétion-Ville 🟢</option>
+                    <option value="Delmas">Delmas 🟢</option>
+                    <option value="Route de Frères">Route de Frères 🟢</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="securityAlert" class="alert alert-info d-flex align-items-center gap-2 mb-3">
+                <span id="secIcon" class="fs-4">🛡️</span>
+                <div id="secText" class="small">Sélectionnez vos zones pour évaluer la sécurité.</div>
+              </div>
+
+              <div class="mb-3">
+                <label for="adresseDepart" class="form-label">Adresse départ *</label>
+                <input type="text" class="form-control" id="adresseDepart" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="adresseArrivee" class="form-label">Adresse arrivée *</label>
+                <input type="text" class="form-control" id="adresseArrivee" required>
+              </div>
+
+              <h5 class="text-secondary fs-6 mb-3 mt-4">4. Colis & Paiement</h5>
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label for="typeColis" class="form-label">Type de colis *</label>
+                  <select class="form-select" id="typeColis" required>
+                    <option value="Repas / Plat préparé">Repas / Plat préparé</option>
+                    <option value="Documents / Papiers">Documents / Papiers</option>
+                    <option value="Pharmacie">Pharmacie</option>
+                    <option value="Autre type de colis">Autre type de colis</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="poidsColis" class="form-label">Poids estimé *</label>
+                  <select class="form-select" id="poidsColis" onchange="calculerPrixEtSecurite()" required>
+                    <option value="0">Léger (&lt; 5 kg)</option>
+                    <option value="150">Moyen (5-15 kg) [+150 HTG]</option>
+                    <option value="350">Lourd (15-30 kg) [+350 HTG]</option>
                   </select>
                 </div>
               </div>
 
               <div class="row g-3 mb-3">
                 <div class="col-md-6">
-                  <label for="bizContact" class="form-label">Nom du Responsable *</label>
-                  <input type="text" class="form-control" id="bizContact" placeholder="Ex: Pierre Alexis" required>
+                  <label for="moyenTransport" class="form-label">Transport</label>
+                  <select class="form-select" id="moyenTransport" onchange="calculerPrixEtSecurite()">
+                    <option value="Moto">Moto</option>
+                    <option value="Tricycle">Tricycle</option>
+                    <option value="Voiture">Voiture</option>
+                  </select>
                 </div>
                 <div class="col-md-6">
-                  <label for="bizTel" class="form-label">Téléphone / WhatsApp Direct *</label>
-                  <input type="tel" class="form-control" id="bizTel" placeholder="+509 38XX XXXX" required>
-                </div>
-              </div>
-
-              <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                  <label for="bizEmail" class="form-label">Adresse Email Professionnelle *</label>
-                  <input type="email" class="form-control" id="bizEmail" placeholder="contact@entreprise.ht" required>
-                </div>
-                <div class="col-md-6">
-                  <label for="bizCommune" class="form-label">Commune Principale *</label>
-                  <select class="form-select" id="bizCommune" required>
-                    <option value="Pétion-Ville">Pétion-Ville</option>
-                    <option value="Delmas">Delmas</option>
-                    <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
-                    <option value="Port-au-Prince - Turgeau/Pacot">Port-au-Prince - Turgeau / Pacot</option>
-                    <option value="Tabarre / Route de Frères">Tabarre / Route de Frères</option>
-                    <option value="Autre commune de l'Ouest">Autre commune de l'Ouest</option>
+                  <label for="methodePaiement" class="form-label">Mode de paiement *</label>
+                  <select class="form-select" id="methodePaiement" required onchange="toggleFormPaiement()">
+                    <option value="Cash à la livraison">Cash à la livraison</option>
+                    <option value="MonCash">MonCash</option>
+                    <option value="NatCash">NatCash</option>
                   </select>
                 </div>
               </div>
 
-              <div class="mb-3">
-                <label for="bizVolume" class="form-label">Volume estimé de livraisons par jour</label>
-                <select class="form-select" id="bizVolume">
-                  <option value="1 à 5 livraisons/jour">1 à 5 livraisons / jour</option>
-                  <option value="5 à 15 livraisons/jour">5 à 15 livraisons / jour</option>
-                  <option value="15 à 30 livraisons/jour">15 à 30 livraisons / jour</option>
-                  <option value="Plus de 30 livraisons/jour">Plus de 30 livraisons / jour</option>
-                </select>
+              <div id="boxPaiementEnLigne" class="p-3 bg-light border rounded mb-3" style="display:none;">
+                <h6 class="text-primary mb-2">💳 Transaction Sécurisée <span id="nomPasserelle">MonCash</span></h6>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text">+509</span>
+                  <input type="tel" id="payPhone" class="form-control" placeholder="38XX XXXX">
+                  <button type="button" class="btn btn-success" onclick="simulerPaiementAPI()">Simuler le Paiement</button>
+                </div>
+                <div id="payStatus" class="small mt-2"></div>
               </div>
 
               <div class="mb-3">
-                <label for="bizNotes" class="form-label">Besoins spécifiques ou message</label>
-                <textarea class="form-control" id="bizNotes" rows="3"
-                  placeholder="Précisez vos horaires d'ouverture, les types de colis à transporter..."></textarea>
+                <label class="form-label fw-bold">Code Promo</label>
+                <div class="input-group">
+                  <input type="text" id="codePromo" class="form-control" placeholder="RAPID10 ou LIVRAISON20">
+                  <button type="button" class="btn btn-outline-secondary" onclick="appliquerPromo()">Appliquer</button>
+                </div>
+                <div id="promoStatus" class="small mt-1"></div>
               </div>
 
-              <button type="submit" class="btn btn-primary btn-lg w-100">
-                🚀 Soumettre la Demande de Partenariat
-              </button>
+              <button type="submit" class="btn btn-success btn-lg w-100 mt-4">✅ Lancer la commande</button>
             </form>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card shadow-sm border-0 sticky-card p-4">
+            <h5 class="card-title mb-3">📍 Trajet & Tarif</h5>
+            <div id="map"></div>
+            <hr class="my-4">
+            <div class="d-flex justify-content-between mb-2"><span>Distance :</span><strong id="distVal">0.0 km</strong></div>
+            <div class="d-flex justify-content-between mb-2"><span>Sous-total :</span><strong id="subtotalVal">250 HTG</strong></div>
+            <div class="d-flex justify-content-between mb-2 text-primary"><span>Taxes (13.5%) :</span><strong id="taxeVal">+34 HTG</strong></div>
+            <div class="d-flex justify-content-between mb-2 text-danger" id="boxReduction" style="display: none;"><span>Promo :</span><strong id="reductionVal">-0 HTG</strong></div>
+            <hr>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-bold fs-5">Total :</span>
+              <strong id="priceVal" class="fs-3 text-success">284 HTG</strong>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 4. SECTION SUIVI DE COLIS -->
+    <!-- 3. BUSINESS -->
+    <div id="section-business" class="section-app d-none">
+      <div class="card shadow-sm border-0 p-4">
+        <h3>💼 Demande Partenaire Business</h3>
+        <form id="formBusiness" onsubmit="envoyerDemandeBusiness(event)">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6"><input type="text" id="bizNom" class="form-control" placeholder="Entreprise *" required></div>
+            <div class="col-md-6"><input type="text" id="bizContact" class="form-control" placeholder="Responsable *" required></div>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6"><input type="tel" id="bizTel" class="form-control" placeholder="Téléphone WhatsApp *" required></div>
+            <div class="col-md-6"><input type="text" id="bizCommune" class="form-control" placeholder="Commune *" required></div>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Soumettre la demande</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 4. SUIVI DE COLIS -->
     <div id="section-suivi" class="section-app d-none">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="card shadow-sm border-0 p-4">
-            <h2>🔎 Suivre ma commande</h2>
-            <p class="text-muted small">Entrez votre numéro de téléphone ou ID/Code de suivi (Ex: LR-101) :</p>
-            <div class="input-group mb-3">
-              <input type="text" id="numSuivi" class="form-control" placeholder="Ex: LR-101 ou +509 3821 0256">
-              <button class="btn btn-primary" onclick="chercherSuivi()">Chercher</button>
-            </div>
-            <div id="suiviResultat" class="mt-4" style="display: none;">
-              <hr>
-              <div id="suiviDetails" class="bg-light p-3 rounded"></div>
-            </div>
-          </div>
+      <div class="card shadow-sm border-0 p-4">
+        <h2>🔎 Suivre une commande</h2>
+        <div class="input-group mb-3">
+          <input type="text" id="numSuivi" class="form-control" placeholder="Ex: LR-101 ou Numéro WhatsApp">
+          <button class="btn btn-primary" onclick="chercherSuivi()">Chercher</button>
+        </div>
+        <div id="suiviResultat" class="mt-4" style="display: none;">
+          <div id="suiviDetails" class="bg-light p-3 rounded"></div>
         </div>
       </div>
     </div>
 
-    <!-- 5. SECTION LIVREUR / AUTHENTIFICATION -->
+    <!-- 5. LIVREUR -->
     <div id="section-livreur" class="section-app d-none">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="card shadow-sm border-0 p-4 mb-4" id="espaceMonCompte" style="display:none;">
-            <h2>👤 Mon Espace Livreur</h2>
-            <div class="bg-light p-3 rounded mb-3">
-              <p class="mb-1"><strong>Nom :</strong> <span id="profileNom"></span></p>
-              <p class="mb-1"><strong>Email :</strong> <span id="profileEmail"></span></p>
-              <p class="mb-1"><strong>Téléphone :</strong> <span id="profileTel"></span></p>
-              <p class="mb-1"><strong>Zone :</strong> <span id="profileZone"></span></p>
-            </div>
-            <button onclick="deconnexion()" class="btn btn-danger">🔴 Se déconnecter</button>
-          </div>
+      <div class="card shadow-sm border-0 p-4 mb-4" id="espaceMonCompte" style="display:none;">
+        <h2>👤 Mon Espace Livreur</h2>
+        <p>Connecté sous : <strong id="profileNom"></strong></p>
+        <button onclick="deconnexion()" class="btn btn-danger">🔴 Se déconnecter</button>
+      </div>
 
-          <div class="card shadow-sm border-0 p-4 mb-4" id="authBox">
-            <div class="btn-group w-100 mb-3">
-              <button type="button" id="tabConnexion" class="btn btn-outline-primary active"
-                onclick="switchAuthTab('login')">Se connecter</button>
-              <button type="button" id="tabInscription" class="btn btn-outline-primary"
-                onclick="switchAuthTab('signup')">Créer un compte</button>
-            </div>
-
-            <!-- Form Connexion -->
-            <form id="formLogin" onsubmit="handleLoginSubmit(event)">
-              <div class="mb-3">
-                <label class="form-label">Mode de connexion</label>
-                <select id="modeConnexion" class="form-select" onchange="toggleLoginMode()">
-                  <option value="otp">Code OTP / Lien Magique (Email)</option>
-                  <option value="password">Email + Mot de passe</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Adresse Email</label>
-                <input type="email" class="form-control" id="loginEmail" required placeholder="livreur@exemple.com">
-              </div>
-              <div class="mb-3" id="boxLoginPassword" style="display:none;">
-                <label class="form-label">Mot de passe</label>
-                <input type="password" class="form-control" id="loginPassword" placeholder="••••••••">
-              </div>
-              <button type="submit" id="btnLoginSubmit" class="btn btn-primary w-100">Recevoir le code / lien
-                OTP</button>
-            </form>
-
-            <!-- Verification OTP -->
-            <form id="formVerifyOtp" style="display: none;" class="mt-3">
-              <div class="alert alert-info">
-                📩 Un code OTP a été envoyé à <strong id="emailSentTo"></strong>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Code de vérification</label>
-                <input type="text" class="form-control text-center fs-4" id="otpCode" placeholder="123456"
-                  maxlength="6">
-              </div>
-              <button type="submit" class="btn btn-success w-100">Vérifier et me connecter</button>
-              <button type="button" onclick="resetOtpForm()" class="btn btn-link w-100 text-secondary mt-2">Changer
-                d'email</button>
-            </form>
-
-            <!-- Form Inscription -->
-            <form id="formSignup" style="display: none;">
-              <div class="row g-2 mb-3">
-                <div class="col-6"><label class="form-label">Prénom</label><input type="text" class="form-control"
-                    id="signupPrenom" required></div>
-                <div class="col-6"><label class="form-label">Nom</label><input type="text" class="form-control"
-                    id="signupNomLivreur" required></div>
-              </div>
-              <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control"
-                  id="signupEmailLivreur" required></div>
-              <div class="mb-3"><label class="form-label">Téléphone</label><input type="tel" class="form-control"
-                  id="signupTelLivreur" required></div>
-              <div class="row g-2 mb-3">
-                <div class="col-6"><label class="form-label">Mot de passe</label><input type="password"
-                    class="form-control" id="signupPassword" minlength="6" required></div>
-                <div class="col-6"><label class="form-label">Confirmation</label><input type="password"
-                    class="form-control" id="signupConfirmPassword" minlength="6" required></div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Zone d'intervention</label>
-                <select class="form-select" id="signupZone" required>
-                  <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
-                  <option value="Pétion-Ville">Pétion-Ville</option>
-                  <option value="Delmas">Delmas</option>
-                </select>
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Créer mon compte livreur</button>
-            </form>
-          </div>
-
-          <!-- Liste Livreurs -->
-          <div class="card shadow-sm border-0 p-4">
-            <h4>📋 Registre des Chauffeurs</h4>
-            <div id="listeLivreurs" class="grid-layout mt-3"></div>
-          </div>
+      <div class="card shadow-sm border-0 p-4 mb-4" id="authBox">
+        <div class="btn-group w-100 mb-3">
+          <button type="button" id="tabConnexion" class="btn btn-outline-primary active" onclick="switchAuthTab('login')">Se connecter</button>
+          <button type="button" id="tabInscription" class="btn btn-outline-primary" onclick="switchAuthTab('signup')">Créer un compte</button>
         </div>
+
+        <form id="formLogin" onsubmit="handleLoginSubmit(event)">
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" id="loginEmail" required placeholder="livreur@exemple.com">
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+        </form>
+
+        <form id="formVerifyOtp" style="display: none;" class="mt-3" onsubmit="validerOtp(event)">
+          <div class="alert alert-info">Code envoyé à <strong id="emailSentTo"></strong></div>
+          <input type="text" class="form-control text-center fs-4 mb-3" id="otpCode" placeholder="123456" required>
+          <button type="submit" class="btn btn-success w-100">Valider</button>
+        </form>
+
+        <form id="formSignup" style="display: none;" onsubmit="handleSignupSubmit(event)">
+          <div class="row g-2 mb-3">
+            <div class="col-6"><input type="text" class="form-control" id="signupPrenom" placeholder="Prénom" required></div>
+            <div class="col-6"><input type="text" class="form-control" id="signupNomLivreur" placeholder="Nom" required></div>
+          </div>
+          <input type="email" class="form-control mb-3" id="signupEmailLivreur" placeholder="Email" required>
+          <input type="tel" class="form-control mb-3" id="signupTelLivreur" placeholder="Téléphone" required>
+          <button type="submit" class="btn btn-primary w-100">Créer mon compte livreur</button>
+        </form>
+      </div>
+
+      <div class="card shadow-sm border-0 p-4">
+        <h4>📋 Registre des Livreurs</h4>
+        <div id="listeLivreurs" class="grid-layout mt-3"></div>
       </div>
     </div>
 
-    <!-- 6. SECTION COURSES EN COURS -->
+    <!-- 6. COURSES EN COURS -->
     <div id="section-commandes" class="section-app d-none">
       <div class="card shadow-sm border-0 p-4">
-        <h2>📦 Commandes en cours & Marketplace</h2>
+        <h2>📦 Commandes en cours</h2>
         <div id="listeCommandes" class="grid-layout mt-3"></div>
       </div>
     </div>
 
-    <!-- 7. SECTION SUPPORT & FAQ -->
+    <!-- 7. SUPPORT -->
     <div id="section-support" class="section-app d-none">
-      <div class="row g-4">
-        <div class="col-md-6">
-          <div class="card shadow-sm border-0 p-4">
-            <h3>✉️ Formulaire de Contact Direct</h3>
-            <form id="supportForm" onsubmit="envoyerSupport(event)">
-              <div class="mb-3">
-                <label class="form-label">Votre Nom</label>
-                <input type="text" class="form-control" id="supportNom" required placeholder="Ex: Jean Paul">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Téléphone / WhatsApp</label>
-                <input type="tel" class="form-control" id="supportTel" required placeholder="+509 ...">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Objet</label>
-                <select class="form-select" id="supportSujet">
-                  <option value="Renseignements Général">Renseignements Général</option>
-                  <option value="Réclamation / Retard">Réclamation / Retard</option>
-                  <option value="Devenir Partenaire">Devenir Partenaire</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Votre Message</label>
-                <textarea class="form-control" id="supportMsg" rows="4" required></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Envoyer au Support</button>
-            </form>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card shadow-sm border-0 p-4">
-            <h3>❓ Foire Aux Questions (FAQ)</h3>
-            <div class="accordion mt-3" id="faqAccordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                    Quels sont les délais habituels de livraison ?
-                  </button>
-                </h2>
-                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                  <div class="accordion-body">
-                    Les livraisons standard en zone urbaine (Pétion-Ville, Delmas, Canapé-Vert) prennent en moyenne de
-                    30 à 60 minutes selon la circulation et la sécurité.
-                  </div>
-                </div>
-              </div>
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#faq2">
-                    Comment se calcule le tarif d'une livraison ?
-                  </button>
-                </h2>
-                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                  <div class="accordion-body">
-                    Le tarif dépend de la zone de départ/arrivée, de la distance estimée, du type de véhicule (Moto,
-                    Tricycle, Voiture), du poids du colis et d'une taxe/frais de service de 13.5%.
-                  </div>
-                </div>
-              </div>
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#faq3">
-                    Quels moyens de paiement acceptez-vous ?
-                  </button>
-                </h2>
-                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                  <div class="accordion-body">
-                    Nous acceptons le paiement Cash à la livraison, MonCash et NatCash.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="card shadow-sm border-0 p-4">
+        <h3>💬 Support Client</h3>
+        <p>Support direct WhatsApp : <strong>+509 3821-0256</strong></p>
       </div>
     </div>
 
-    <!-- 8. SECTION ADMIN -->
+    <!-- 8. ADMIN -->
     <div id="section-admin" class="section-app d-none">
       <div class="card shadow-sm border-0 p-4">
-        <h2>📊 Tableau de bord Administrateur</h2>
+        <h2>📊 Admin Dashboard</h2>
         <div class="row g-3 mt-2">
-          <div class="col-md-4">
-            <div class="p-3 bg-light rounded text-center border">
-              <h5>Chiffre d'Affaires</h5>
-              <div class="fs-3 text-primary fw-bold" id="statCA">0 HTG</div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="p-3 bg-light rounded text-center border">
-              <h5>Commandes Totales</h5>
-              <div class="fs-3 text-primary fw-bold" id="statCommandes">0</div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="p-3 bg-light rounded text-center border">
-              <h5>Livreurs Inscrits</h5>
-              <div class="fs-3 text-primary fw-bold" id="statLivreurs">0</div>
-            </div>
-          </div>
+          <div class="col-md-4"><div class="p-3 bg-light rounded text-center border"><h5>Chiffre d'Affaires</h5><div class="fs-3 text-primary fw-bold" id="statCA">0 HTG</div></div></div>
+          <div class="col-md-4"><div class="p-3 bg-light rounded text-center border"><h5>Commandes</h5><div class="fs-3 text-primary fw-bold" id="statCommandes">0</div></div></div>
+          <div class="col-md-4"><div class="p-3 bg-light rounded text-center border"><h5>Livreurs Inscrits</h5><div class="fs-3 text-primary fw-bold" id="statLivreurs">0</div></div></div>
         </div>
       </div>
     </div>
 
   </main>
 
-  <!-- MODAL PANIER CLIENT -->
+  <!-- MODAL PANIER -->
   <div class="modal fade" id="modalPanier" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content border-0">
         <div class="modal-header bg-primary text-white">
           <h5 class="modal-title fw-bold">🛒 Votre Panier Marketplace</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body p-4">
-          <div id="contenuPanier"></div>
-        </div>
+        <div class="modal-body p-4"><div id="contenuPanier"></div></div>
         <div class="modal-footer d-flex justify-content-between">
-          <div>
-            <span>Total du panier : </span>
-            <strong id="totalPanier" class="fs-4 text-success">0 HTG</strong>
-          </div>
+          <div>Total : <strong id="totalPanier" class="fs-4 text-success">0 HTG</strong></div>
           <div>
             <button type="button" class="btn btn-outline-danger me-2" onclick="viderPanier()">Vider</button>
-            <button type="button" class="btn btn-success fw-bold" onclick="commanderPanierViaLivraison()">🚚 Commander la livraison du panier</button>
+            <button type="button" class="btn btn-success fw-bold" onclick="commanderPanierViaLivraison()">🚚 Commander le panier</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL UNIFIÉE PROFIL & INSCRIPTION MULTI-RÔLES -->
+  <!-- MODAL PROFIL -->
   <div class="modal fade" id="modalProfilClient" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content border-0">
         <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title fw-bold">👤 Espace Utilisateur</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+          <h5 class="modal-title fw-bold">👤 Mon Profil</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4">
-          
-          <!-- VUE NON CONNECTÉ : INSCRIPTION / CONNEXION -->
           <div id="profilClientNonConnecte">
-            <ul class="nav nav-pills nav-justified mb-3" id="pills-tab" role="tablist">
-              <li class="nav-item">
-                <button class="nav-link active fw-bold" id="pills-login-tab" data-bs-toggle="pill" data-bs-target="#pills-login" type="button">Connexion</button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link fw-bold" id="pills-signup-tab" data-bs-toggle="pill" data-bs-target="#pills-signup" type="button">Créer un compte</button>
-              </li>
-            </ul>
-
-            <div class="tab-content" id="pills-tabContent">
-              
-              <!-- Formulaire Connexion -->
-              <div class="tab-pane fade show active" id="pills-login">
-                <form id="formClientLogin" onsubmit="connexionUtilisateur(event)">
-                  <div class="mb-3">
-                    <label class="form-label">Téléphone WhatsApp</label>
-                    <input type="tel" id="loginAuthTel" class="form-control" placeholder="+509 3821 0256" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Adresse Email</label>
-                    <input type="email" id="loginAuthEmail" class="form-control" placeholder="utilisateur@exemple.ht" required>
-                  </div>
-                  <button type="submit" class="btn btn-primary w-100 fw-bold">Se connecter</button>
-                </form>
+            <form id="formClientSignup" onsubmit="inscriptionUtilisateur(event)">
+              <div class="mb-3">
+                <label class="form-label">Rôle</label>
+                <select id="signupRole" class="form-select" required>
+                  <option value="Client">🛒 Client</option>
+                  <option value="Livreur">🛵 Livreur</option>
+                  <option value="Vendeur">🛍️ Vendeur</option>
+                </select>
               </div>
-
-              <!-- Formulaire Inscription avec Rôle -->
-              <div class="tab-pane fade" id="pills-signup">
-                <form id="formClientSignup" onsubmit="inscriptionUtilisateur(event)">
-                  <div class="mb-3">
-                    <label class="form-label fw-bold text-primary">Vous êtes ? (Choisissez votre rôle) *</label>
-                    <select id="signupRole" class="form-select fw-bold border-primary" required>
-                      <option value="Client">🛒 Client (Je souhaite commander / acheter)</option>
-                      <option value="Livreur">🛵 Livreur (Je souhaite effectuer des livraisons)</option>
-                      <option value="Vendeur">🛍️ Vendeur / Boutique (Je souhaite vendre des produits)</option>
-                    </select>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Nom complet *</label>
-                    <input type="text" id="signupNom" class="form-control" placeholder="Marie Joseph" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Téléphone WhatsApp *</label>
-                    <input type="tel" id="signupTel" class="form-control" placeholder="+509 3821 0256" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Adresse Email *</label>
-                    <input type="email" id="signupEmail" class="form-control" placeholder="marie@exemple.ht" required>
-                  </div>
-                  <button type="submit" class="btn btn-success w-100 fw-bold">✨ S'inscrire maintenant</button>
-                </form>
-              </div>
-
-            </div>
+              <input type="text" id="signupNom" class="form-control mb-2" placeholder="Nom complet" required>
+              <input type="tel" id="signupTel" class="form-control mb-2" placeholder="Téléphone WhatsApp" required>
+              <input type="email" id="signupEmail" class="form-control mb-3" placeholder="Email" required>
+              <button type="submit" class="btn btn-success w-100 fw-bold">S'inscrire / Se connecter</button>
+            </form>
           </div>
 
-          <!-- VUE CONNECTÉ -->
           <div id="profilClientConnecte" style="display: none;">
-            <div class="card bg-light border-0 p-3 mb-3">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="fw-bold text-primary mb-0" id="clientProfNomDisplay">-</h5>
-                <span id="clientProfRoleDisplay" class="badge bg-warning text-dark fs-6">-</span>
-              </div>
-              <p class="mb-1 small">📱 <strong>Téléphone:</strong> <span id="clientProfTelDisplay">-</span></p>
-              <p class="mb-0 small">✉️ <strong>Email:</strong> <span id="clientProfEmailDisplay">-</span></p>
-            </div>
-
-            <!-- Section dynamique selon le rôle -->
-            <div id="sectionProfilRole" class="mt-3"></div>
-
-            <hr class="my-4">
-            <button onclick="deconnexionClientProfil()" class="btn btn-outline-danger w-100 fw-bold">🔴 Se déconnecter</button>
+            <h5 id="clientProfNomDisplay" class="fw-bold text-primary"></h5>
+            <p><strong>Tel:</strong> <span id="clientProfTelDisplay"></span></p>
+            <p><strong>Email:</strong> <span id="clientProfEmailDisplay"></span></p>
+            <p><strong>Rôle:</strong> <span id="clientProfRoleDisplay" class="badge bg-warning text-dark"></span></p>
+            <button onclick="deconnexionClientProfil()" class="btn btn-outline-danger w-100 mt-3">Se déconnecter</button>
           </div>
-
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal Évaluation / Preuve de livraison -->
-  <div class="modal fade" id="modalAvis" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="card modal-content p-4 border-0">
-        <h5 class="modal-title mb-3">⭐ Laisser une évaluation</h5>
-        <div class="mb-3 text-center">
-          <span class="rating-stars" onclick="setRating(1)">★</span>
-          <span class="rating-stars" onclick="setRating(2)">★</span>
-          <span class="rating-stars" onclick="setRating(3)">★</span>
-          <span class="rating-stars" onclick="setRating(4)">★</span>
-          <span class="rating-stars" onclick="setRating(5)">★</span>
-        </div>
-        <textarea id="avisCommentaire" class="form-control mb-3" placeholder="Votre commentaire..." rows="3"></textarea>
-        <button class="btn btn-success" onclick="soumettreAvis()">Envoyer mon avis</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pied de page (Footer) -->
-  <footer class="bg-dark text-light pt-5 pb-3 mt-auto">
-    <div class="container">
-      <div class="row g-4">
-        <div class="col-md-4">
-          <h5 class="text-white">🚚 LivraisonRapid</h5>
-          <p class="small text-muted">Service de livraison rapide, fiable et sécurisé adapté aux zones du département de
-            l'Ouest (Port-au-Prince, Pétion-Ville, Delmas...).</p>
-        </div>
-        <div class="col-md-4">
-          <h5 class="text-white">Besoin d'aide ?</h5>
-          <ul class="list-unstyled">
-            <li class="mb-2">
-              <a href="https://wa.me/50938210256?text=Bonjour,%20je%20souhaite%20des%20informations%20sur%20vos%20services%20de%20livraison."
-                target="_blank" class="btn btn-outline-success btn-sm text-white">
-                💬 Support WhatsApp direct
-              </a>
-            </li>
-            <li class="text-muted small">📞 +509 3821-0256</li>
-            <li class="text-muted small">✉️ business@livraisonrapid.ht</li>
-          </ul>
-        </div>
-        <div class="col-md-4">
-          <h5 class="text-white">Informations légales</h5>
-          <ul class="list-unstyled small">
-            <li><a href="#" class="text-secondary text-decoration-none">Conditions Générales d'Utilisation</a></li>
-            <li><a href="#" class="text-secondary text-decoration-none">Politique de Confidentialité</a></li>
-            <li><a href="#" class="text-secondary text-decoration-none">Zones de Couverture & Sécurité</a></li>
-          </ul>
-        </div>
-      </div>
-      <hr class="bg-secondary mt-4 mb-3">
-      <div class="text-center small text-muted">
-        &copy; 2026 LivraisonRapid. Tous droits réservés.
-      </div>
-    </div>
-  </footer>
-
-  <!-- Scripts JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // Enregistrement du Service Worker pour PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(err => console.log('PWA Service Worker : ', err));
-      });
-    }
-
     const SUPABASE_URL = 'https://hstgwiyztzfplxncuzxc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_2HWJPXVoD-A66Cdy3gJS3Q_9BM1_tgq';
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-    let map, markerDepart, markerArrivee, markerLivreurGps;
+    let map = null, markerDepart = null, markerArrivee = null, markerLivreurGps = null;
     let gpsWatchId = null;
-    let deferredPrompt = null;
     let imagesStockees = [];
 
     let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
     let currentClientUser = JSON.parse(localStorage.getItem('user_client'));
     let panier = JSON.parse(localStorage.getItem('panier_client')) || [];
-    let currentOtpEmail = '';
 
-    const colisBase = {
-      "LR-101": { statut: "En cours", livreur: "Jean Baptiste", dest: "Delmas 33", eta: "15 mins", lat: 18.545, lng: -72.298 }
-    };
+    let commandLocalStore = JSON.parse(localStorage.getItem('local_commandes')) || [
+      { id: 101, client_nom: "Marie Joseph", client_tel: "38210256", type_colis: "Repas", zone_depart: "Pétion-Ville", zone_arrivee: "Delmas", prix: 350, statut: "En cours" }
+    ];
+
+    let livreursLocalStore = JSON.parse(localStorage.getItem('local_livreurs')) || [
+      { prenom: "Jean", nom: "Baptiste", zone: "Delmas", telephone: "+50937000000", dispo: "Disponible" }
+    ];
 
     let tarifBase = 250;
     let tauxTaxe = 0.135;
     let reductionMontant = 0;
     let tarifActuel = 284;
     let paiementEstValide = false;
-    let selectedRating = 5;
-    let currentCommandeId = null;
 
     let articlesMarketplace = JSON.parse(localStorage.getItem('articles_marketplace')) || [
-      {
-        id: 1,
-        titre: "Casque Bluetooth Sans Fil",
-        prix: 1800,
-        categorie: "Électronique",
-        zone: "Pétion-Ville",
-        vendeur: "Alexis Tech",
-        tel: "+50938210256",
-        img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80",
-        desc: "État neuf en boîte scellée. Autonomie de 20h."
-      },
-      {
-        id: 2,
-        titre: "Plat Griot Complet + Banane",
-        prix: 650,
-        categorie: "Nourriture / Repas",
-        zone: "Delmas",
-        vendeur: "Delmas Saveurs",
-        tel: "+50937000000",
-        img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80",
-        desc: "Servi chaud avec pikliz maison et riz collé."
-      }
+      { id: 1, titre: "Casque Bluetooth Sans Fil", prix: 1800, categorie: "Électronique", zone: "Pétion-Ville", vendeur: "Alexis Tech", tel: "+50938210256", img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80", desc: "État neuf en boîte scellée." },
+      { id: 2, titre: "Plat Griot Complet + Banane", prix: 650, categorie: "Nourriture / Repas", zone: "Delmas", vendeur: "Delmas Saveurs", tel: "+50937000000", img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80", desc: "Servi chaud avec pikliz." }
     ];
 
     const coordsZones = {
       "Port-au-Prince - Canapé-Vert": [18.5250, -72.3100],
       "Port-au-Prince - Turgeau": [18.5333, -72.3167],
-      "Port-au-Prince - Pacot": [18.5310, -72.3250],
-      "Port-au-Prince - Haut-Peu-de-Chose": [18.5280, -72.3200],
-      "Port-au-Prince - Bois Verna / Lalue": [18.5390, -72.3260],
-      "Port-au-Prince - Nazon": [18.5480, -72.3180],
       "Pétion-Ville": [18.5125, -72.2853],
       "Delmas": [18.5442, -72.3028],
-      "Route de Frères": [18.5200, -72.2600],
-      "Juvénat": [18.5180, -72.2950],
-      "Thomassin": [18.4800, -72.2800]
-    };
-
-    const securiteZones = {
-      "Port-au-Prince - Canapé-Vert": "green",
-      "Port-au-Prince - Turgeau": "green",
-      "Port-au-Prince - Pacot": "green",
-      "Port-au-Prince - Haut-Peu-de-Chose": "green",
-      "Port-au-Prince - Bois Verna / Lalue": "yellow",
-      "Port-au-Prince - Nazon": "yellow",
-      "Pétion-Ville": "green",
-      "Delmas": "green",
-      "Route de Frères": "green",
-      "Juvénat": "green",
-      "Thomassin": "green"
+      "Route de Frères": [18.5200, -72.2600]
     };
 
     window.onload = function () {
-      map = L.map('map').setView([18.5392, -72.3364], 12);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
-      }).addTo(map);
-
+      initMap();
       actualiserAffichagePrix();
       verifierSession();
       verifierProfilClient();
@@ -1248,47 +652,28 @@
       chargerLivreurs();
       chargerCommandes();
       chargerMarketplace();
-
-      document.getElementById('clientNom').addEventListener('input', function () {
-        if (document.getElementById('memeDestinataire').checked) {
-          document.getElementById('destinataireNom').value = this.value;
-        }
-      });
-
-      document.getElementById('clientTel').addEventListener('input', function () {
-        if (document.getElementById('memeDestinataire').checked) {
-          document.getElementById('destinataireTel').value = this.value;
-        }
-      });
-
-      if (supabaseClient) {
-        supabaseClient.channel('custom-all-channel')
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'commandes' }, () => { chargerCommandes(); })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'livreurs' }, () => { chargerLivreurs(); })
-          .subscribe();
-      }
     };
+
+    function initMap() {
+      if (!map) {
+        map = L.map('map').setView([18.5392, -72.3364], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+      }
+    }
 
     function afficherToast(msg, type = 'success') {
       const toastEl = document.getElementById('liveToast');
-      const toastBody = document.getElementById('toastMessage');
-      toastBody.textContent = msg;
+      document.getElementById('toastMessage').textContent = msg;
       toastEl.className = `toast align-items-center text-white border-0 bg-${type}`;
       new bootstrap.Toast(toastEl).show();
     }
 
-    /* GESTION DU PANIER MARKETPLACE */
+    /* PANIER */
     function ajouterAuPanier(idArticle) {
       const art = articlesMarketplace.find(a => a.id === idArticle);
       if (!art) return;
-
       const x = panier.find(item => item.id === idArticle);
-      if (x) {
-        x.quantite += 1;
-      } else {
-        panier.push({ ...art, quantite: 1 });
-      }
-
+      if (x) { x.quantite += 1; } else { panier.push({ ...art, quantite: 1 }); }
       localStorage.setItem('panier_client', JSON.stringify(panier));
       actualiserPanierUI();
       afficherToast(`"${art.titre}" ajouté au panier !`);
@@ -1298,18 +683,10 @@
       const idx = panier.findIndex(item => item.id === id);
       if (idx !== -1) {
         panier[idx].quantite += delta;
-        if (panier[idx].quantite <= 0) {
-          panier.splice(idx, 1);
-        }
+        if (panier[idx].quantite <= 0) panier.splice(idx, 1);
         localStorage.setItem('panier_client', JSON.stringify(panier));
         actualiserPanierUI();
       }
-    }
-
-    function supprimerDuPanier(id) {
-      panier = panier.filter(item => item.id !== id);
-      localStorage.setItem('panier_client', JSON.stringify(panier));
-      actualiserPanierUI();
     }
 
     function viderPanier() {
@@ -1325,7 +702,6 @@
 
       const totalItems = panier.reduce((sum, item) => sum + item.quantite, 0);
       badge.textContent = totalItems;
-
       if (!conteneur) return;
 
       if (panier.length === 0) {
@@ -1340,57 +716,33 @@
         const sousTotal = item.prix * item.quantite;
         total += sousTotal;
         html += `
-          <div class="list-group-item d-flex justify-content-between align-items-center gap-2">
-            <div class="d-flex align-items-center gap-3">
-              <img src="${item.img}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-              <div>
-                <h6 class="mb-0 fw-bold">${item.titre}</h6>
-                <small class="text-muted">${item.prix} HTG / unité (Vendeur: ${item.vendeur})</small>
-              </div>
-            </div>
-            <div class="d-flex align-items-center gap-2">
+          <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div><strong>${item.titre}</strong><br><small class="text-muted">${item.prix} HTG/u</small></div>
+            <div>
               <button class="btn btn-sm btn-outline-secondary" onclick="modifierQuantitePanier(${item.id}, -1)">-</button>
-              <span class="fw-bold px-2">${item.quantite}</span>
+              <span class="px-2">${item.quantite}</span>
               <button class="btn btn-sm btn-outline-secondary" onclick="modifierQuantitePanier(${item.id}, 1)">+</button>
-              <strong class="ms-2 text-success">${sousTotal} HTG</strong>
-              <button class="btn btn-sm btn-link text-danger ms-2" onclick="supprimerDuPanier(${item.id})">🗑️</button>
+              <strong class="ms-2">${sousTotal} HTG</strong>
             </div>
-          </div>
-        `;
+          </div>`;
       });
-      html += '</div>';
-
-      conteneur.innerHTML = html;
+      conteneur.innerHTML = html + '</div>';
       totalEl.textContent = `${total} HTG`;
     }
 
     function commanderPanierViaLivraison() {
-      if (panier.length === 0) {
-        afficherToast("Votre panier est vide !", "warning");
-        return;
-      }
-
-      const modalEl = document.getElementById('modalPanier');
-      const modal = bootstrap.Modal.getInstance(modalEl);
+      if (panier.length === 0) return afficherToast("Votre panier est vide !", "warning");
+      const modal = bootstrap.Modal.getInstance(document.getElementById('modalPanier'));
       if (modal) modal.hide();
-
-      const résuméArticles = panier.map(i => `${i.quantite}x ${i.titre}`).join(', ');
-      const zones = [...new Set(panier.map(i => i.zone))].join(' / ');
-
       changerOnglet('client');
-      document.getElementById('typeColis').value = "Autre type de colis";
-      document.getElementById('adresseDepart').value = `Articles panier : ${résuméArticles}`;
-      if (zones) document.getElementById('zoneDepart').value = panier[0].zone || "";
-
-      afficherToast("Panier prêt pour la livraison ! Remplissez le destinataire.");
+      document.getElementById('adresseDepart').value = panier.map(i => `${i.quantite}x ${i.titre}`).join(', ');
     }
 
-    /* GESTION PROFIL UTILISATEUR CLIENT & MULTI-RÔLES */
+    /* PROFIL */
     function verifierProfilClient() {
       const btn = document.getElementById('btnProfilClient');
       if (currentClientUser) {
-        const roleLabel = currentClientUser.role ? ` (${currentClientUser.role})` : '';
-        btn.textContent = `👤 ${currentClientUser.nom}${roleLabel}`;
+        btn.textContent = `👤 ${currentClientUser.nom}`;
         btn.className = "btn btn-success btn-sm ms-lg-1";
       } else {
         btn.textContent = "👤 Mon Profil";
@@ -1399,289 +751,64 @@
     }
 
     function ouvrirProfilClient() {
-      const nonConnecte = document.getElementById('profilClientNonConnecte');
-      const connecte = document.getElementById('profilClientConnecte');
-
+      const nonConn = document.getElementById('profilClientNonConnecte');
+      const conn = document.getElementById('profilClientConnecte');
       if (currentClientUser) {
-        nonConnecte.style.display = 'none';
-        connecte.style.display = 'block';
-
+        nonConn.style.display = 'none';
+        conn.style.display = 'block';
         document.getElementById('clientProfNomDisplay').textContent = currentClientUser.nom;
         document.getElementById('clientProfTelDisplay').textContent = currentClientUser.tel;
         document.getElementById('clientProfEmailDisplay').textContent = currentClientUser.email;
         document.getElementById('clientProfRoleDisplay').textContent = currentClientUser.role || 'Client';
-
-        // Remplir les informations selon le rôle
-        const sectionRole = document.getElementById('sectionProfilRole');
-        const role = currentClientUser.role || 'Client';
-
-        if (role === 'Vendeur') {
-          sectionRole.innerHTML = `
-            <div class="alert alert-warning mb-3">
-              <h6 class="fw-bold mb-1">🛍️ Espace Vendeur</h6>
-              <p class="small mb-2">Vous pouvez publier directement vos articles sur la Marketplace.</p>
-              <button class="btn btn-dark btn-sm w-100 fw-bold" onclick="fermerModalProfilEtAllerVendre()">➕ Publier un produit</button>
-            </div>
-          `;
-        } else if (role === 'Livreur') {
-          sectionRole.innerHTML = `
-            <div class="alert alert-info mb-3">
-              <h6 class="fw-bold mb-1">🛵 Espace Livreur</h6>
-              <p class="small mb-2">Accédez aux courses disponibles et activez votre partage GPS.</p>
-              <button class="btn btn-primary btn-sm w-100 fw-bold" onclick="fermerModalProfilEtAllerLivreur()">🛵 Aller au tableau livreur</button>
-            </div>
-          `;
-        } else {
-          sectionRole.innerHTML = `
-            <h6 class="fw-bold mt-3 mb-2">📋 Vos Dernières Commandes</h6>
-            <div id="historiqueCommandesClient" class="small">
-              <p class="text-muted">Chargement de l'historique...</p>
-            </div>
-          `;
-          chargerHistoriqueClient();
-        }
-
-        // Auto-remplir le formulaire de livraison
-        document.getElementById('clientNom').value = currentClientUser.nom;
-        document.getElementById('clientTel').value = currentClientUser.tel;
-
       } else {
-        nonConnecte.style.display = 'block';
-        connecte.style.display = 'none';
+        nonConn.style.display = 'block';
+        conn.style.display = 'none';
       }
-
-      const modal = new bootstrap.Modal(document.getElementById('modalProfilClient'));
-      modal.show();
-    }
-
-    function fermerModalProfilEtAllerVendre() {
-      const modalEl = document.getElementById('modalProfilClient');
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      if (modal) modal.hide();
-      changerOnglet('vendre');
-    }
-
-    function fermerModalProfilEtAllerLivreur() {
-      const modalEl = document.getElementById('modalProfilClient');
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      if (modal) modal.hide();
-      changerOnglet('livreur');
-    }
-
-    function connexionUtilisateur(e) {
-      e.preventDefault();
-      const tel = document.getElementById('loginAuthTel').value;
-      const email = document.getElementById('loginAuthEmail').value;
-
-      currentClientUser = { 
-        nom: email.split('@')[0], 
-        tel: tel, 
-        email: email, 
-        role: "Client" 
-      };
-      localStorage.setItem('user_client', JSON.stringify(currentClientUser));
-
-      verifierProfilClient();
-      ouvrirProfilClient();
-      afficherToast(`Bienvenue à nouveau !`);
+      new bootstrap.Modal(document.getElementById('modalProfilClient')).show();
     }
 
     function inscriptionUtilisateur(e) {
       e.preventDefault();
-      const role = document.getElementById('signupRole').value;
-      const nom = document.getElementById('signupNom').value;
-      const tel = document.getElementById('signupTel').value;
-      const email = document.getElementById('signupEmail').value;
-
-      currentClientUser = { nom, tel, email, role };
+      currentClientUser = {
+        role: document.getElementById('signupRole').value,
+        nom: document.getElementById('signupNom').value,
+        tel: document.getElementById('signupTel').value,
+        email: document.getElementById('signupEmail').value
+      };
       localStorage.setItem('user_client', JSON.stringify(currentClientUser));
-
-      if (role === 'Vendeur') {
-        document.getElementById('vendeurNom').value = nom;
-        document.getElementById('vendeurTel').value = tel;
-      }
-
       verifierProfilClient();
       ouvrirProfilClient();
-      afficherToast(`Compte ${role} créé avec succès pour ${nom} !`);
+      afficherToast("Profil configuré !");
     }
 
     function deconnexionClientProfil() {
       currentClientUser = null;
       localStorage.removeItem('user_client');
       verifierProfilClient();
-
-      const modalEl = document.getElementById('modalProfilClient');
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      if (modal) modal.hide();
-
-      afficherToast("Déconnexion réussie.", "info");
+      bootstrap.Modal.getInstance(document.getElementById('modalProfilClient')).hide();
+      afficherToast("Déconnecté.", "info");
     }
 
-    async function chargerHistoriqueClient() {
-      const container = document.getElementById('historiqueCommandesClient');
-      if (!currentClientUser || !container) return;
-
-      if (supabaseClient) {
-        const { data } = await supabaseClient
-          .from('commandes')
-          .select('*')
-          .eq('client_tel', currentClientUser.tel)
-          .order('id', { ascending: false });
-
-        if (data && data.length > 0) {
-          let html = '<div class="list-group">';
-          data.forEach(c => {
-            html += `
-              <div class="list-group-item">
-                <div class="d-flex justify-content-between">
-                  <strong>#${c.id} - ${c.type_colis}</strong>
-                  <span class="badge ${c.statut === 'Livrée' ? 'bg-success' : 'bg-warning text-dark'}">${c.statut || 'En attente'}</span>
-                </div>
-                <div class="text-muted small">${c.zone_depart} ➔ ${c.zone_arrivee} | <strong>${c.prix} HTG</strong></div>
-              </div>
-            `;
-          });
-          html += '</div>';
-          container.innerHTML = html;
-          return;
-        }
-      }
-
-      container.innerHTML = `<p class="text-muted">Aucune commande trouvée pour ${currentClientUser.tel}.</p>`;
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('btnPwaInstall').classList.remove('d-none');
-    });
-
-    function installerPWA() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choice) => {
-          if (choice.outcome === 'accepted') {
-            afficherToast("Application installée avec succès !");
-          }
-          deferredPrompt = null;
-          document.getElementById('btnPwaInstall').classList.add('d-none');
-        });
-      }
-    }
-
-    function toggleGpsTracking() {
-      const btn = document.getElementById('btnGpsToggle');
-      const badge = document.getElementById('gpsBadge');
-
-      if (gpsWatchId) {
-        navigator.geolocation.clearWatch(gpsWatchId);
-        gpsWatchId = null;
-        btn.textContent = "📍 Partage GPS Live";
-        btn.className = "btn btn-warning btn-sm fw-bold";
-        badge.textContent = "GPS Inactif";
-        badge.className = "badge bg-secondary ms-2";
-        afficherToast("Géolocalisation désactivée", "info");
-      } else {
-        if (!navigator.geolocation) {
-          afficherToast("GPS non supporté par ce navigateur", "danger");
-          return;
-        }
-
-        gpsWatchId = navigator.geolocation.watchPosition((pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-
-          badge.textContent = "GPS Actif (En direct)";
-          badge.className = "badge bg-success ms-2 gps-active";
-          btn.textContent = "🛑 Arrêter Partage GPS";
-          btn.className = "btn btn-danger btn-sm fw-bold";
-
-          if (markerLivreurGps) map.removeLayer(markerLivreurGps);
-
-          const iconLivreur = L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png',
-            iconSize: [38, 38]
-          });
-
-          markerLivreurGps = L.marker([lat, lng], { icon: iconLivreur }).addTo(map)
-            .bindPopup("<b>Livreur en position live !</b>").openPopup();
-
-          map.setView([lat, lng], 14);
-
-        }, (err) => {
-          afficherToast("Erreur d'accès GPS : " + err.message, "danger");
-        }, { enableHighAccuracy: true });
-      }
-    }
-
-    function copierInfoExpediteur() {
-      const isChecked = document.getElementById('memeDestinataire').checked;
-      const blockDest = document.getElementById('blockDestinataire');
-      const nomExp = document.getElementById('clientNom').value;
-      const telExp = document.getElementById('clientTel').value;
-
-      const destNomInput = document.getElementById('destinataireNom');
-      const destTelInput = document.getElementById('destinataireTel');
-
-      if (isChecked) {
-        blockDest.classList.add('d-none');
-        destNomInput.removeAttribute('required');
-        destTelInput.removeAttribute('required');
-        destNomInput.value = nomExp;
-        destTelInput.value = telExp;
-      } else {
-        blockDest.classList.remove('d-none');
-        destNomInput.setAttribute('required', '');
-        destTelInput.setAttribute('required', '');
-      }
-    }
-
-    function toggleSchedule(show) {
-      const scheduleInputs = document.getElementById('scheduleInputs');
-      scheduleInputs.classList.toggle('d-none', !show);
-    }
-
+    /* TRAJET & TARIF */
     function changerOnglet(nom, event) {
       document.querySelectorAll('.section-app').forEach(s => s.classList.add('d-none'));
-      const targetSection = document.getElementById('section-' + nom);
-      if (targetSection) targetSection.classList.remove('d-none');
+      const target = document.getElementById('section-' + nom);
+      if (target) target.classList.remove('d-none');
 
-      if ((nom === 'client' || nom === 'suivi') && map) {
-        setTimeout(() => {
-          map.invalidateSize();
-        }, 250);
+      if (nom === 'client' && map) {
+        setTimeout(() => map.invalidateSize(), 300);
       }
     }
 
     function calculerPrixEtSecurite() {
       const zDepart = document.getElementById("zoneDepart").value;
       const zArrivee = document.getElementById("zoneArrivee").value;
-      const transport = document.getElementById("moyenTransport").value;
       const supplementPoids = parseInt(document.getElementById("poidsColis").value || 0);
-
-      const secAlert = document.getElementById('securityAlert');
-      const secIcon = document.getElementById('secIcon');
-      const secText = document.getElementById('secText');
-
-      if (zDepart && zArrivee) {
-        const secDep = securiteZones[zDepart] || 'green';
-        const secArr = securiteZones[zArrivee] || 'green';
-
-        if (secDep === 'yellow' || secArr === 'yellow') {
-          secAlert.className = "alert alert-warning d-flex align-items-center gap-2 mb-3";
-          secIcon.textContent = "🟡";
-          secText.textContent = "Attention : Trajet traversant une zone de vigilance. Légers retards possibles.";
-        } else {
-          secAlert.className = "alert alert-success d-flex align-items-center gap-2 mb-3";
-          secIcon.textContent = "🟢";
-          secText.textContent = "Zone sécurisée : Trajet fluide et totalement accessible.";
-        }
-      }
+      const transport = document.getElementById("moyenTransport").value;
 
       if (!zDepart || !zArrivee) return;
 
-      let calculTarifBase = zDepart === zArrivee ? 250 : (zDepart.includes("Thomassin") || zArrivee.includes("Thomassin") ? 750 : 500);
+      let calculBase = zDepart === zArrivee ? 250 : 400;
       let distanceKm = 0;
 
       if (coordsZones[zDepart] && coordsZones[zArrivee]) {
@@ -1693,410 +820,171 @@
         if (markerArrivee) map.removeLayer(markerArrivee);
         markerDepart = L.marker(coordsZones[zDepart]).addTo(map).bindPopup("Départ : " + zDepart);
         markerArrivee = L.marker(coordsZones[zArrivee]).addTo(map).bindPopup("Arrivée : " + zArrivee);
-        const group = new L.featureGroup([markerDepart, markerArrivee]);
-        map.fitBounds(group.getBounds().pad(0.2));
+        map.fitBounds(L.featureGroup([markerDepart, markerArrivee]).getBounds().pad(0.2));
       }
 
-      let suppDistance = distanceKm > 3 ? (distanceKm - 3) * 30 : 0;
-      let totalCalculated = calculTarifBase + suppDistance + supplementPoids;
+      let total = calculBase + supplementPoids + (distanceKm * 20);
+      if (transport === 'Voiture') total *= 1.5;
 
-      if (transport === 'Voiture') totalCalculated *= 1.5;
-      if (transport === 'Tricycle') totalCalculated *= 1.2;
-
-      tarifBase = Math.round(totalCalculated);
+      tarifBase = Math.round(total);
       document.getElementById("distVal").textContent = distanceKm + " km";
       actualiserAffichagePrix();
     }
 
     function appliquerPromo() {
       const code = document.getElementById('codePromo').value.trim().toUpperCase();
-      const status = document.getElementById('promoStatus');
-      const boxReduc = document.getElementById('boxReduction');
+      if (code === 'RAPID10') reductionMontant = 50;
+      else if (code === 'LIVRAISON20') reductionMontant = 100;
+      else reductionMontant = 0;
 
-      if (code === 'RAPID10') {
-        reductionMontant = 50;
-        status.innerHTML = `<span class="text-success fw-bold">✅ Code RAPID10 appliqué (-50 HTG)</span>`;
-        boxReduc.style.display = 'flex';
-        document.getElementById('reductionVal').textContent = `-50 HTG`;
-      } else if (code === 'LIVRAISON20') {
-        reductionMontant = 100;
-        status.innerHTML = `<span class="text-success fw-bold">✅ Code LIVRAISON20 appliqué (-100 HTG)</span>`;
-        boxReduc.style.display = 'flex';
-        document.getElementById('reductionVal').textContent = `-100 HTG`;
-      } else {
-        reductionMontant = 0;
-        status.innerHTML = `<span class="text-danger">❌ Code invalide</span>`;
-        boxReduc.style.display = 'none';
-      }
+      document.getElementById('boxReduction').style.display = reductionMontant > 0 ? 'flex' : 'none';
+      document.getElementById('reductionVal').textContent = `-${reductionMontant} HTG`;
       actualiserAffichagePrix();
     }
 
     function actualiserAffichagePrix() {
-      let montantTaxe = Math.round(tarifBase * tauxTaxe);
-      tarifActuel = (tarifBase + montantTaxe) - reductionMontant;
-      if (tarifActuel < 100) tarifActuel = 100;
-
+      let taxe = Math.round(tarifBase * tauxTaxe);
+      tarifActuel = Math.max(100, (tarifBase + taxe) - reductionMontant);
       document.getElementById("subtotalVal").textContent = tarifBase + " HTG";
-      document.getElementById("taxeVal").textContent = "+" + montantTaxe + " HTG";
+      document.getElementById("taxeVal").textContent = "+" + taxe + " HTG";
       document.getElementById("priceVal").textContent = tarifActuel + " HTG";
     }
 
     function toggleFormPaiement() {
       const mode = document.getElementById('methodePaiement').value;
-      const box = document.getElementById('boxPaiementEnLigne');
-      if (mode === 'MonCash' || mode === 'NatCash') {
-        box.style.display = 'block';
-        document.getElementById('nomPasserelle').textContent = mode;
-        paiementEstValide = false;
-      } else {
-        box.style.display = 'none';
-        paiementEstValide = true;
-      }
+      document.getElementById('boxPaiementEnLigne').style.display = (mode === 'MonCash' || mode === 'NatCash') ? 'block' : 'none';
+      paiementEstValide = (mode === 'Cash à la livraison');
     }
 
     function simulerPaiementAPI() {
-      const phone = document.getElementById('payPhone').value;
-      const status = document.getElementById('payStatus');
-
-      if (phone.length < 8) {
-        status.innerHTML = `<span class="text-danger">Numéro invalide.</span>`;
-        return;
-      }
-
-      status.innerHTML = `<span class="text-info">💬 Validation de transaction en cours...</span>`;
-
+      if (document.getElementById('payPhone').value.length < 8) return afficherToast("Numéro invalide", "danger");
       setTimeout(() => {
         paiementEstValide = true;
-        status.innerHTML = `<span class="text-success fw-bold">✅ Paiement sécurisé validé avec succès !</span>`;
-        afficherToast("Paiement MonCash/NatCash confirmé !");
-      }, 1500);
+        document.getElementById('payStatus').innerHTML = `<span class="text-success fw-bold">✅ Paiement validé !</span>`;
+      }, 1000);
     }
 
     document.getElementById("orderForm").addEventListener("submit", async function (e) {
       e.preventDefault();
+      if (!paiementEstValide) return afficherToast("Validez le paiement en ligne !", "warning");
 
-      const paymentMethod = document.getElementById('methodePaiement').value;
-      if ((paymentMethod === 'MonCash' || paymentMethod === 'NatCash') && !paiementEstValide) {
-        afficherToast("Veuillez d'abord simuler et valider le paiement en ligne !", "warning");
-        return;
-      }
-
-      const senderName = document.getElementById('clientNom').value;
-      const senderPhone = document.getElementById('clientTel').value;
-      const recipientName = document.getElementById('destinataireNom').value;
-      const recipientPhone = document.getElementById('destinataireTel').value;
-      const fromZone = document.getElementById('zoneDepart').value;
-      const toZone = document.getElementById('zoneArrivee').value;
-      const fromAddress = document.getElementById('adresseDepart').value;
-      const toAddress = document.getElementById('adresseArrivee').value;
-      const packageType = document.getElementById('typeColis').value;
-
-      const isScheduled = document.getElementById('scheduled').checked;
-      let timingStr = 'Immédiat';
-      if (isScheduled) {
-        timingStr = `Planifié (${document.getElementById('deliveryDate').value} ${document.getElementById('deliveryTime').value})`;
-      }
+      const nouvelleCommande = {
+        id: Date.now(),
+        client_nom: document.getElementById('clientNom').value,
+        client_tel: document.getElementById('clientTel').value,
+        type_colis: document.getElementById('typeColis').value,
+        zone_depart: document.getElementById('zoneDepart').value,
+        zone_arrivee: document.getElementById('zoneArrivee').value,
+        prix: tarifActuel,
+        statut: 'En attente'
+      };
 
       if (supabaseClient) {
-        await supabaseClient.from('commandes').insert([{
-          client_nom: senderName,
-          client_tel: senderPhone,
-          destinataire_nom: recipientName,
-          destinataire_tel: recipientPhone,
-          zone_depart: fromZone,
-          zone_arrivee: toZone,
-          adresse_depart: fromAddress,
-          adresse_arrivee: toAddress,
-          type_colis: `${packageType} - ${timingStr}`,
-          paiement: paymentMethod,
-          prix: tarifActuel,
-          statut: 'En attente'
-        }]);
+        await supabaseClient.from('commandes').insert([nouvelleCommande]);
+      } else {
+        commandLocalStore.unshift(nouvelleCommande);
+        localStorage.setItem('local_commandes', JSON.stringify(commandLocalStore));
       }
 
-      afficherToast('Commande enregistrée avec succès !');
-
-      const messageWA = `Bonjour ${encodeURIComponent(recipientName)}, un colis vous a été envoyé par *${encodeURIComponent(senderName)}* (%0ATrajet: ${encodeURIComponent(fromZone)} ➔ ${encodeURIComponent(toZone)}.%0AMontant Total (Taxes incl.): ${tarifActuel} HTG).%0ASuivez votre livraison en direct !`;
-      const cleanPhone = recipientPhone.replace(/\s+/g, '').replace('+', '');
-      window.open(`https://wa.me/${cleanPhone}?text=${messageWA}`, '_blank');
-
+      afficherToast("Commande enregistrée !");
+      chargerCommandes();
       this.reset();
       viderPanier();
-      document.getElementById('boxPaiementEnLigne').style.display = 'none';
-      document.getElementById('boxReduction').style.display = 'none';
-      reductionMontant = 0;
-      actualiserAffichagePrix();
     });
 
-    function previsualiserImages(event) {
-      const files = Array.from(event.target.files).slice(0, 3);
+    /* MARKETPLACE EXPOSITION */
+    function previsualiserImages(e) {
+      const files = Array.from(e.target.files).slice(0, 3);
       const container = document.getElementById('previewContainer');
       container.innerHTML = "";
       imagesStockees = [];
-
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const dataUrl = e.target.result;
-          imagesStockees.push(dataUrl);
-
-          const img = document.createElement('img');
-          img.src = dataUrl;
-          img.style.width = '70px';
-          img.style.height = '70px';
-          img.style.objectFit = 'cover';
-          img.style.borderRadius = '6px';
-          img.style.border = '1px solid #ddd';
-          container.appendChild(img);
+      files.forEach(f => {
+        const r = new FileReader();
+        r.onload = (evt) => {
+          imagesStockees.push(evt.target.result);
+          container.innerHTML += `<img src="${evt.target.result}" style="width:60px;height:60px;object-fit:cover;border-radius:4px;">`;
         };
-        reader.readAsDataURL(file);
+        r.readAsDataURL(f);
       });
     }
 
     function publierArticle(e) {
       e.preventDefault();
-
-      const vendeur = document.getElementById('vendeurNom').value;
-      const tel = document.getElementById('vendeurTel').value;
-      const titre = document.getElementById('articleTitre').value;
-      const prix = document.getElementById('articlePrix').value;
-      const categorie = document.getElementById('articleCategorie').value;
-      const zone = document.getElementById('articleZone').value;
-      let urlImg = document.getElementById('articleImg').value.trim();
-      const desc = document.getElementById('articleDesc').value;
-
-      let finalImg = imagesStockees.length > 0
-        ? imagesStockees[0]
-        : (urlImg || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80");
-
-      const nouvelArticle = {
+      const art = {
         id: Date.now(),
-        titre,
-        prix: Number(prix),
-        categorie,
-        zone,
-        vendeur,
-        tel,
-        img: finalImg,
-        images: imagesStockees,
-        desc
+        titre: document.getElementById('articleTitre').value,
+        prix: Number(document.getElementById('articlePrix').value),
+        categorie: document.getElementById('articleCategorie').value,
+        zone: document.getElementById('articleZone').value,
+        vendeur: document.getElementById('vendeurNom').value,
+        tel: document.getElementById('vendeurTel').value,
+        img: imagesStockees[0] || document.getElementById('articleImg').value || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
+        desc: document.getElementById('articleDesc').value
       };
 
-      articlesMarketplace.unshift(nouvelArticle);
+      articlesMarketplace.unshift(art);
       localStorage.setItem('articles_marketplace', JSON.stringify(articlesMarketplace));
-
-      afficherToast(`L'article "${titre}" a été mis en vente !`, "success");
-
+      afficherToast("Article mis en vente !");
       document.getElementById('formVendre').reset();
-      document.getElementById('previewContainer').innerHTML = "";
-      imagesStockees = [];
-
       chargerMarketplace();
     }
 
     function chargerMarketplace(liste = articlesMarketplace) {
       const grid = document.getElementById('gridMarketplace');
-      const badge = document.getElementById('badgeTotalArticles');
       if (!grid) return;
-
-      badge.textContent = `${liste.length} article(s)`;
+      document.getElementById('badgeTotalArticles').textContent = `${liste.length} article(s)`;
       grid.innerHTML = "";
 
-      if (liste.length === 0) {
-        grid.innerHTML = `<p class="text-muted text-center py-4 col-12">Aucun article trouvé. Soyez le premier à exposer votre produit !</p>`;
-        return;
-      }
-
       liste.forEach(art => {
-        const cleanTel = art.tel ? art.tel.replace(/\s+/g, '').replace('+', '') : '';
-        const msgWA = `Bonjour *${encodeURIComponent(art.vendeur)}*, je suis intéressé par votre article *${encodeURIComponent(art.titre)}* à ${art.prix} HTG vu sur LivraisonRapid (%0AZone: ${encodeURIComponent(art.zone)}). Est-il toujours disponible ?`;
-
         grid.innerHTML += `
           <div class="item-card d-flex flex-column">
-            <img src="${art.img}" class="product-img mb-2" alt="${art.titre}" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80'">
-            <div class="d-flex justify-content-between align-items-start mb-1">
-              <span class="badge bg-light text-dark border">${art.categorie}</span>
-              <span class="badge bg-success">${art.prix} HTG</span>
+            <img src="${art.img}" class="product-img mb-2">
+            <h5 class="fw-bold fs-6 mb-1">${art.titre}</h5>
+            <span class="text-success fw-bold mb-2">${art.prix} HTG</span>
+            <p class="small text-muted">${art.desc}</p>
+            <div class="mt-auto pt-2 border-top">
+              <button onclick="ajouterAuPanier(${art.id})" class="btn btn-sm btn-primary w-100 fw-bold mb-1">🛒 Ajouter au Panier</button>
             </div>
-            <h5 class="fw-bold mb-1 fs-6">${art.titre}</h5>
-            <p class="small text-muted mb-2">${art.desc || 'Aucune description'}</p>
-            <div class="small mb-2">
-              <span class="text-secondary">📍 ${art.zone}</span><br>
-              <span class="text-secondary">👤 Vendeur: <strong>${art.vendeur}</strong></span>
-            </div>
-            <div class="mt-auto pt-2 border-top d-flex flex-column gap-2">
-              <button onclick="ajouterAuPanier(${art.id})" class="btn btn-sm btn-primary w-100 fw-bold">
-                🛒 Ajouter au Panier
-              </button>
-              <a href="https://wa.me/${cleanTel}?text=${msgWA}" target="_blank" class="btn btn-sm btn-outline-success w-100">
-                💬 Contacter le vendeur
-              </a>
-              <button onclick="commanderArticleLivraison('${encodeURIComponent(art.titre)}', '${encodeURIComponent(art.zone)}', '${encodeURIComponent(art.vendeur)}')" class="btn btn-sm btn-outline-secondary w-100">
-                🚚 Demander la livraison
-              </button>
-            </div>
-          </div>
-        `;
+          </div>`;
       });
     }
 
     function filtrerMarketplace() {
-      const query = document.getElementById('searchMarket').value.toLowerCase();
+      const q = document.getElementById('searchMarket').value.toLowerCase();
       const cat = document.getElementById('catFilter').value;
-
-      const resultats = articlesMarketplace.filter(item => {
-        const matchQuery = item.titre.toLowerCase().includes(query) || (item.desc && item.desc.toLowerCase().includes(query));
-        const matchCat = cat === "" || item.categorie === cat;
-        return matchQuery && matchCat;
-      });
-
-      chargerMarketplace(resultats);
+      chargerMarketplace(articlesMarketplace.filter(a => a.titre.toLowerCase().includes(q) && (cat === "" || a.categorie === cat)));
     }
 
-    function commanderArticleLivraison(titreEnc, zoneEnc, vendeurEnc) {
-      const titre = decodeURIComponent(titreEnc);
-      const zone = decodeURIComponent(zoneEnc);
-      const vendeur = decodeURIComponent(vendeurEnc);
-
-      changerOnglet('client');
-      document.getElementById('typeColis').value = "Autre type de colis";
-      document.getElementById('zoneDepart').value = zone;
-      document.getElementById('adresseDepart').value = `Achat chez : ${vendeur} (Produit: ${titre})`;
-
-      afficherToast(`Détails de "${titre}" transférés dans le formulaire de livraison !`);
-    }
-
-    function envoyerDemandeBusiness(e) {
-      e.preventDefault();
-      const nomCom = document.getElementById('bizNom').value;
-      const resp = document.getElementById('bizContact').value;
-      const tel = document.getElementById('bizTel').value;
-      const commune = document.getElementById('bizCommune').value;
-
-      afficherToast(`Demande envoyée pour ${nomCom} (${commune}) ! Nous vous recontacterons.`, "success");
-
-      const msgWA = `Bonjour, je représente l'entreprise *${encodeURIComponent(nomCom)}* à ${encodeURIComponent(commune)}.%0ANom du contact: ${encodeURIComponent(resp)}%0ATéléphone: ${encodeURIComponent(tel)}.%0AJe souhaite ouvrir un compte Partenaire Business pour mes livraisons dans l'Ouest.`;
-
-      setTimeout(() => {
-        window.open(`https://wa.me/50938210256?text=${msgWA}`, '_blank');
-      }, 1000);
-
-      document.getElementById('formBusiness').reset();
-    }
-
-    async function chercherSuivi() {
-      const query = document.getElementById('numSuivi').value.trim().toUpperCase();
-      const conteneur = document.getElementById('suiviResultat');
-      const details = document.getElementById('suiviDetails');
-
-      if (!query) return;
-
-      if (colisBase[query]) {
-        const data = colisBase[query];
-        conteneur.style.display = 'block';
-        details.innerHTML = `
-          <p><strong>Statut :</strong> <span class="badge badge-cours">${data.statut}</span></p>
-          <p><strong>Livreur :</strong> ${data.livreur}</p>
-          <p><strong>Destination :</strong> ${data.dest}</p>
-          <p><strong>Arrivée estimée :</strong> ${data.eta}</p>
-        `;
-
-        if (markerLivreurGps) map.removeLayer(markerLivreurGps);
-        markerLivreurGps = L.marker([data.lat, data.lng]).addTo(map)
-          .bindPopup(`<b>Livreur:</b> ${data.livreur}`).openPopup();
-        map.setView([data.lat, data.lng], 14);
-
-        afficherToast("Colis trouvé !", "success");
-        return;
-      }
-
-      if (supabaseClient) {
-        const { data } = await supabaseClient
-          .from('commandes')
-          .select('*, livreurs(nom, prenom, telephone)')
-          .or(`client_tel.eq.${query},id.eq.${query}`)
-          .order('id', { ascending: false }).limit(1);
-
-        if (data && data.length > 0) {
-          const c = data[0];
-          conteneur.style.display = 'block';
-          details.innerHTML = `
-            <p><strong>Statut :</strong> <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span></p>
-            <p><strong>Colis :</strong> ${c.type_colis}</p>
-            <p><strong>Trajet :</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
-            <p><strong>Prix Total :</strong> ${c.prix} HTG</p>
-            ${c.preuve_url ? `<p><strong>Preuve de livraison :</strong> <a href="${c.preuve_url}" target="_blank">Voir la photo/preuve</a></p>` : ''}
-            ${c.statut === 'Livrée' ? `<button class="btn btn-outline-warning btn-sm mt-2" onclick="ouvrirAvisModal(${c.id})">⭐ Évaluer la livraison</button>` : ''}
-          `;
-          afficherToast("Commande trouvée !", "success");
-          return;
-        }
-      }
-
-      afficherToast("Aucune commande ou code de suivi trouvé.", "danger");
-      conteneur.style.display = 'none';
-    }
-
-    async function changerStatutCommande(id, nouveauStatut) {
-      if (!supabaseClient) {
-        afficherToast(`Changement de statut en simulation locale: ${nouveauStatut}`);
-        return;
-      }
-
-      let updateData = { statut: nouveauStatut };
-      if (nouveauStatut === 'Livrée') {
-        const urlPreuve = prompt("Optionnel : Collez un lien/URL de photo de preuve de livraison :");
-        if (urlPreuve) updateData.preuve_url = urlPreuve;
-      }
-
-      const { error } = await supabaseClient.from('commandes').update(updateData).eq('id', id);
-      if (!error) {
-        afficherToast(`Commande #${id} mise à jour : ${nouveauStatut}`);
-        chargerCommandes();
-      } else {
-        afficherToast("Erreur lors de la mise à jour", "danger");
-      }
-    }
-
+    /* AUTH LIVREUR & DASHBOARD */
     function switchAuthTab(type) {
-      if (type === 'login') {
-        document.getElementById('formLogin').style.display = 'block';
-        document.getElementById('formSignup').style.display = 'none';
-        document.getElementById('tabConnexion').classList.add('active');
-        document.getElementById('tabInscription').classList.remove('active');
-      } else {
-        document.getElementById('formLogin').style.display = 'none';
-        document.getElementById('formSignup').style.display = 'block';
-        document.getElementById('tabInscription').classList.add('active');
-        document.getElementById('tabConnexion').classList.remove('active');
-      }
-    }
-
-    function toggleLoginMode() {
-      const mode = document.getElementById('modeConnexion').value;
-      document.getElementById('boxLoginPassword').style.display = mode === 'password' ? 'block' : 'none';
-      document.getElementById('btnLoginSubmit').textContent = mode === 'password' ? 'Se connecter' : 'Recevoir le code / lien OTP';
-    }
-
-    function resetOtpForm() {
-      document.getElementById('formVerifyOtp').style.display = 'none';
-      document.getElementById('formLogin').style.display = 'block';
+      document.getElementById('formLogin').style.display = type === 'login' ? 'block' : 'none';
+      document.getElementById('formSignup').style.display = type === 'signup' ? 'block' : 'none';
     }
 
     function handleLoginSubmit(e) {
       e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const mode = document.getElementById('modeConnexion').value;
+      document.getElementById('formLogin').style.display = 'none';
+      document.getElementById('formVerifyOtp').style.display = 'block';
+      document.getElementById('emailSentTo').textContent = document.getElementById('loginEmail').value;
+    }
 
-      if (mode === 'otp') {
-        currentOtpEmail = email;
-        document.getElementById('emailSentTo').textContent = email;
-        document.getElementById('formLogin').style.display = 'none';
-        document.getElementById('formVerifyOtp').style.display = 'block';
-        afficherToast("Code / Lien OTP envoyé à votre email");
-      } else {
-        afficherToast("Connexion réussie !");
-      }
+    function validerOtp(e) {
+      e.preventDefault();
+      currentUser = { prenom: "Livreur", nom: "Pro" };
+      localStorage.setItem('user_livreur', JSON.stringify(currentUser));
+      verifierSession();
+      afficherToast("Connecté !");
+    }
+
+    function handleSignupSubmit(e) {
+      e.preventDefault();
+      currentUser = {
+        prenom: document.getElementById('signupPrenom').value,
+        nom: document.getElementById('signupNomLivreur').value
+      };
+      localStorage.setItem('user_livreur', JSON.stringify(currentUser));
+      verifierSession();
+      afficherToast("Compte livreur créé !");
     }
 
     function verifierSession() {
@@ -2104,106 +992,88 @@
       if (currentUser) {
         userBar.classList.remove('d-none');
         userBar.classList.add('d-flex');
-        document.getElementById('userInfo').textContent = `Connecté : ${currentUser.prenom} ${currentUser.nom}`;
         document.getElementById('authBox').style.display = 'none';
         document.getElementById('espaceMonCompte').style.display = 'block';
         document.getElementById('profileNom').textContent = `${currentUser.prenom} ${currentUser.nom}`;
       } else {
         userBar.classList.add('d-none');
-        userBar.classList.remove('d-flex');
         document.getElementById('authBox').style.display = 'block';
         document.getElementById('espaceMonCompte').style.display = 'none';
       }
     }
 
     function deconnexion() {
-      if (supabaseClient) supabaseClient.auth.signOut();
       localStorage.removeItem('user_livreur');
       currentUser = null;
       verifierSession();
-      afficherToast("Déconnexion réussie.", "info");
     }
 
     async function chargerLivreurs() {
-      if (!supabaseClient) return;
-      const { data } = await supabaseClient.from('livreurs').select('*');
-      const conteneur = document.getElementById("listeLivreurs");
-      conteneur.innerHTML = "";
-      document.getElementById("statLivreurs").textContent = data ? data.length : 0;
-      if (data) {
-        data.forEach(l => {
-          conteneur.innerHTML += `
-            <div class="item-card">
-              <span class="badge ${l.dispo === 'Disponible' ? 'badge-dispo' : 'badge-occupe'}">${l.dispo || 'Disponible'}</span>
-              <h5 class="mt-2">${l.prenom} ${l.nom}</h5>
-              <p class="mb-1 small">Zone: ${l.zone}</p>
-              <a class="btn-action btn-whatsapp mt-2" href="https://wa.me/${l.telephone ? l.telephone.replace(/\s+/g, '') : ''}" target="_blank">WhatsApp</a>
-            </div>
-          `;
-        });
+      let data = livreursLocalStore;
+      if (supabaseClient) {
+        const res = await supabaseClient.from('livreurs').select('*');
+        if (res.data && res.data.length) data = res.data;
       }
-    }
-
-    async function chargerCommandes() {
-      if (!supabaseClient) return;
-      const { data } = await supabaseClient.from('commandes').select('*, livreurs(nom, prenom)');
-      const conteneur = document.getElementById("listeCommandes");
-      conteneur.innerHTML = "";
-      let totalCA = 0;
-      document.getElementById("statCommandes").textContent = data ? data.length : 0;
-
-      if (data) {
-        data.forEach(c => {
-          totalCA += Number(c.prix || 0);
-
-          let actionsLivreur = `
-            <div class="mt-2 pt-2 border-top">
-              <small class="d-block text-muted mb-1">Changer statut :</small>
-              <button class="btn btn-sm btn-outline-info me-1" onclick="changerStatutCommande(${c.id}, 'En cours')">En cours</button>
-              <button class="btn btn-sm btn-outline-success" onclick="changerStatutCommande(${c.id}, 'Livrée')">Livrée</button>
-            </div>
-          `;
-
-          conteneur.innerHTML += `
-            <div class="item-card">
-              <span class="badge ${c.statut === 'En attente' ? 'badge-attente' : (c.statut === 'En cours' ? 'badge-cours' : 'badge-livre')}">${c.statut || 'En attente'}</span>
-              <h5 class="mt-2">${c.type_colis}</h5>
-              <p class="mb-1 small"><strong>Expéditeur:</strong> ${c.client_nom}</p>
-              <p class="mb-1 small"><strong>Prix:</strong> ${c.prix} HTG</p>
-              <p class="mb-1 small"><strong>Trajet:</strong> ${c.zone_depart} ➔ ${c.zone_arrivee}</p>
-              ${actionsLivreur}
-            </div>
-          `;
-        });
-      }
-      document.getElementById("statCA").textContent = totalCA + " HTG";
-    }
-
-    function envoyerSupport(e) {
-      e.preventDefault();
-      afficherToast("Votre message a été envoyé au support !");
-      document.getElementById('supportForm').reset();
-    }
-
-    function ouvrirAvisModal(commandeId) {
-      currentCommandeId = commandeId;
-      const modal = new bootstrap.Modal(document.getElementById('modalAvis'));
-      modal.show();
-    }
-
-    function setRating(val) {
-      selectedRating = val;
-      const stars = document.querySelectorAll('.rating-stars');
-      stars.forEach((s, idx) => {
-        s.style.color = idx < val ? '#ffc107' : '#ccc';
+      const c = document.getElementById("listeLivreurs");
+      c.innerHTML = "";
+      document.getElementById("statLivreurs").textContent = data.length;
+      data.forEach(l => {
+        c.innerHTML += `<div class="item-card"><span class="badge badge-dispo">${l.dispo}</span><h5 class="mt-2">${l.prenom} ${l.nom}</h5><p class="small text-muted">${l.zone}</p></div>`;
       });
     }
 
-    async function soumettreAvis() {
-      if (!currentCommandeId) return;
-      afficherToast(`Avis envoyé : ${selectedRating}/5 étoiles !`);
-      const modal = bootstrap.Modal.getInstance(document.getElementById('modalAvis'));
-      modal.hide();
+    async function chargerCommandes() {
+      let data = commandLocalStore;
+      if (supabaseClient) {
+        const res = await supabaseClient.from('commandes').select('*');
+        if (res.data && res.data.length) data = res.data;
+      }
+      const c = document.getElementById("listeCommandes");
+      c.innerHTML = "";
+      let totalCA = 0;
+      document.getElementById("statCommandes").textContent = data.length;
+
+      data.forEach(cmd => {
+        totalCA += Number(cmd.prix || 0);
+        c.innerHTML += `
+          <div class="item-card">
+            <span class="badge badge-attente">${cmd.statut}</span>
+            <h5 class="mt-2">${cmd.type_colis}</h5>
+            <p class="small mb-1">Prix: <strong>${cmd.prix} HTG</strong></p>
+            <p class="small mb-0">Expéditeur: ${cmd.client_nom}</p>
+          </div>`;
+      });
+      document.getElementById("statCA").textContent = totalCA + " HTG";
+    }
+
+    function chercherSuivi() {
+      const q = document.getElementById('numSuivi').value.trim();
+      const res = document.getElementById('suiviResultat');
+      const det = document.getElementById('suiviDetails');
+      if (!q) return;
+
+      const cmd = commandLocalStore.find(c => c.id == q || c.client_tel == q);
+      if (cmd) {
+        res.style.display = 'block';
+        det.innerHTML = `<h5>Commande #${cmd.id}</h5><p>Statut : ${cmd.statut}</p><p>Prix : ${cmd.prix} HTG</p>`;
+        afficherToast("Commande trouvée !");
+      } else {
+        afficherToast("Introuvable", "danger");
+      }
+    }
+
+    function copierInfoExpediteur() {
+      const chk = document.getElementById('memeDestinataire').checked;
+      if (chk) {
+        document.getElementById('destinataireNom').value = document.getElementById('clientNom').value;
+        document.getElementById('destinataireTel').value = document.getElementById('clientTel').value;
+      }
+    }
+
+    function envoyerDemandeBusiness(e) {
+      e.preventDefault();
+      afficherToast("Demande transmise au support !");
+      document.getElementById('formBusiness').reset();
     }
   </script>
 </body>
