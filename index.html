@@ -38,45 +38,6 @@
       top: 20px;
     }
 
-    .badge-dispo {
-      background-color: #28a745;
-    }
-
-    .badge-occupe {
-      background-color: #dc3545;
-    }
-
-    .badge-attente {
-      background-color: #ffc107;
-      color: #333;
-    }
-
-    .badge-cours {
-      background-color: #17a2b8;
-    }
-
-    .badge-livre {
-      background-color: #6c757d;
-    }
-
-    .btn-action {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      gap: 5px;
-      align-items: center;
-    }
-
-    .btn-whatsapp {
-      background-color: #25D366;
-      color: white;
-    }
-
     .grid-layout {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -104,27 +65,6 @@
       background-color: #e9ecef;
     }
 
-    .rating-stars {
-      color: #ffc107;
-      cursor: pointer;
-      font-size: 1.25rem;
-    }
-
-    .gps-active {
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.05); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    .sec-green { border-left: 5px solid #28a745; }
-    .sec-yellow { border-left: 5px solid #ffc107; }
-    .sec-red { border-left: 5px solid #dc3545; opacity: 0.6; }
-
-    /* Nav Actions */
     .nav-actions {
       display: flex;
       align-items: center;
@@ -143,8 +83,6 @@
       align-items: center;
       gap: 6px;
       cursor: pointer;
-      position: relative;
-      transition: background-color 0.2s;
     }
 
     .cart-btn:hover {
@@ -176,11 +114,6 @@
       justify-content: center;
       cursor: pointer;
       font-size: 18px;
-      transition: background-color 0.2s;
-    }
-
-    .profile-btn:hover {
-      background-color: #dee2e6;
     }
 
     .dropdown-menu-custom {
@@ -207,7 +140,6 @@
       text-decoration: none;
       display: block;
       font-size: 14px;
-      transition: background-color 0.2s;
     }
 
     .dropdown-menu-custom a:hover {
@@ -219,25 +151,17 @@
       border-top: 1px solid #e0e0e0;
       font-weight: bold;
     }
-
-    .dropdown-menu-custom .logout-item:hover {
-      background-color: #ffe6e6;
-    }
   </style>
 </head>
 
 <body>
 
-  <!-- Conteneur Toast pour Notifications -->
+  <!-- Toast Container -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 2000;">
-    <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert"
-      aria-live="assertive" aria-atomic="true">
+    <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
-        <div class="toast-body" id="toastMessage">
-          Action effectuée avec succès !
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-          aria-label="Close"></button>
+        <div class="toast-body" id="toastMessage">Action effectuée avec succès !</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
     </div>
   </div>
@@ -257,7 +181,6 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <div class="navbar-nav ms-auto flex-row flex-wrap gap-2 mt-2 mt-lg-0 align-items-center">
-          <!-- BOUTON ACCUEIL / MARKETPLACE -->
           <button class="btn btn-warning btn-sm fw-bold text-dark" onclick="changerOnglet('vendre', event)">🛍️ Accueil / Marketplace</button>
           <button class="btn btn-primary btn-sm" onclick="changerOnglet('client', event)">📦 Commander une livraison</button>
           <button class="btn btn-outline-success btn-sm fw-bold" onclick="changerOnglet('business', event)">🏢 Espace Business</button>
@@ -267,28 +190,24 @@
           <button class="btn btn-outline-info btn-sm" onclick="changerOnglet('support', event)">💬 Support & FAQ</button>
           <button class="btn btn-outline-dark btn-sm" onclick="changerOnglet('admin', event)">📊 Admin</button>
 
-          <!-- PANIER & PROFIL EN FRANÇAIS -->
           <div class="nav-actions">
-            <!-- 1. Bouton Panier -->
             <button class="cart-btn" onclick="ouvrirPanier()">
               🛒 Panier
               <span class="cart-badge" id="cartBadgeCount">0</span>
             </button>
 
-            <!-- 2. Bouton Profil avec Menu en Français -->
             <div class="profile-dropdown">
               <button class="profile-btn" onclick="toggleProfileMenu(event)">👤</button>
               <div class="dropdown-menu-custom" id="profileDropdownMenu">
                 <a href="#" onclick="changerOnglet('commandes', event); toggleProfileMenu(event);">📦 Mes Commandes</a>
                 <a href="#" onclick="changerOnglet('vendre', event); toggleProfileMenu(event);">🖤 Mes Favoris / Marketplace</a>
                 <a href="#" onclick="changerOnglet('client', event); toggleProfileMenu(event);">📍 Mes Adresses</a>
-                <a href="#" onclick="changerOnglet('business', event); toggleProfileMenu(event);">💳 Moyens de Paiement & Business</a>
+                <a href="#" onclick="changerOnglet('business', event); toggleProfileMenu(event);">💳 Moyens de Paiement</a>
                 <a href="#" onclick="changerOnglet('support', event); toggleProfileMenu(event);">⚙️ Paramètres et Support</a>
                 <a href="#" onclick="deconnexion(); toggleProfileMenu(event);" class="logout-item">🚪 Se Déconnecter</a>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -297,7 +216,6 @@
   <!-- Contenu Principal -->
   <main class="container mb-5">
 
-    <!-- Barre Livreur -->
     <div id="userBar" class="alert alert-info d-none justify-content-between align-items-center mb-4">
       <div>
         <strong id="userInfo">Espace Livreur</strong>
@@ -309,35 +227,29 @@
       </div>
     </div>
 
-    <!-- 1. SECTION PAGE D'ACCUEIL / MARKETPLACE -->
+    <!-- 1. MARKETPLACE -->
     <div id="section-vendre" class="section-app">
       <div class="row g-4">
-        <!-- Formulaire d'Ajout d'Article -->
         <div class="col-lg-5">
           <div class="card shadow-sm border-0 p-4">
-            <h3 class="card-title text-warning text-dark fw-bold mb-3">🛍️ Exposer un produit à vendre</h3>
-            <p class="text-muted small mb-3">Publiez votre article gratuitement pour le rendre visible sur la boutique !</p>
-
+            <h3 class="card-title text-warning text-dark fw-bold mb-3">🛍️ Exposer un produit</h3>
             <form id="formVendre" onsubmit="publierArticle(event)">
               <div class="mb-3">
-                <label for="vendeurNom" class="form-label">Votre nom / Nom de boutique *</label>
-                <input type="text" class="form-control" id="vendeurNom" placeholder="Ex: Jean Boutique ou Sarah" required>
+                <label for="vendeurNom" class="form-label">Nom de la boutique *</label>
+                <input type="text" class="form-control" id="vendeurNom" required>
               </div>
-
               <div class="mb-3">
-                <label for="vendeurTel" class="form-label">Téléphone / WhatsApp du vendeur *</label>
-                <input type="tel" class="form-control" id="vendeurTel" placeholder="Ex: +509 3821 0256" required>
+                <label for="vendeurTel" class="form-label">Téléphone WhatsApp *</label>
+                <input type="tel" class="form-control" id="vendeurTel" required>
               </div>
-
               <div class="mb-3">
                 <label for="articleTitre" class="form-label">Titre de l'article *</label>
-                <input type="text" class="form-control" id="articleTitre" placeholder="Ex: iPhone 12 Pro Max / Baskets / Plat Griot" required>
+                <input type="text" class="form-control" id="articleTitre" required>
               </div>
-
               <div class="row g-2 mb-3">
                 <div class="col-6">
-                  <label for="articlePrix" class="form-label">Prix (HTG / USD) *</label>
-                  <input type="number" class="form-control" id="articlePrix" placeholder="Ex: 2500" required>
+                  <label for="articlePrix" class="form-label">Prix (HTG) *</label>
+                  <input type="number" class="form-control" id="articlePrix" required>
                 </div>
                 <div class="col-6">
                   <label for="articleCategorie" class="form-label">Catégorie *</label>
@@ -350,53 +262,39 @@
                   </select>
                 </div>
               </div>
-
               <div class="mb-3">
-                <label for="articleZone" class="form-label">Localisation de l'article *</label>
+                <label for="articleZone" class="form-label">Zone *</label>
                 <select class="form-select" id="articleZone" required>
                   <option value="Pétion-Ville">Pétion-Ville</option>
                   <option value="Delmas">Delmas</option>
                   <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
                   <option value="Port-au-Prince - Turgeau">Port-au-Prince - Turgeau</option>
                   <option value="Route de Frères">Route de Frères</option>
-                  <option value="Autre commune de l'Ouest">Autre commune de l'Ouest</option>
                 </select>
               </div>
-
               <div class="mb-3">
-                <label for="articleImgs" class="form-label fw-bold">📷 Photos de l'article (3 max)</label>
+                <label for="articleImgs" class="form-label">Photos (max 3)</label>
                 <input type="file" class="form-control" id="articleImgs" accept="image/*" multiple onchange="previsualiserImages(event)">
                 <div id="previewContainer" class="d-flex gap-2 mt-2 flex-wrap"></div>
               </div>
-
               <div class="mb-3">
-                <label for="articleImg" class="form-label">Ou URL d'image en ligne (Optionnel)</label>
-                <input type="url" class="form-control" id="articleImg" placeholder="https://images.unsplash.com/...">
+                <label for="articleDesc" class="form-label">Description *</label>
+                <textarea class="form-control" id="articleDesc" rows="2" required></textarea>
               </div>
-
-              <div class="mb-3">
-                <label for="articleDesc" class="form-label">Description de l'article *</label>
-                <textarea class="form-control" id="articleDesc" rows="3" placeholder="État du produit, détails..." required></textarea>
-              </div>
-
-              <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">
-                ✨ Mettre en vente maintenant
-              </button>
+              <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">Mettre en vente</button>
             </form>
           </div>
         </div>
 
-        <!-- Vitrine Marketplace -->
         <div class="col-lg-7">
           <div class="card shadow-sm border-0 p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h3 class="card-title mb-0">🛒 Articles Disponibles</h3>
               <span class="badge bg-secondary" id="badgeTotalArticles">0 article(s)</span>
             </div>
-
             <div class="row g-2 mb-3">
               <div class="col-md-7">
-                <input type="text" id="searchMarket" class="form-control" placeholder="🔍 Rechercher un article..." oninput="filtrerMarketplace()">
+                <input type="text" id="searchMarket" class="form-control" placeholder="Rechercher..." oninput="filtrerMarketplace()">
               </div>
               <div class="col-md-5">
                 <select id="catFilter" class="form-select" onchange="filtrerMarketplace()">
@@ -405,149 +303,97 @@
                   <option value="Mode & Vêtements">Mode & Vêtements</option>
                   <option value="Nourriture / Repas">Nourriture / Repas</option>
                   <option value="Maison & Déco">Maison & Déco</option>
-                  <option value="Autre">Autre</option>
                 </select>
               </div>
             </div>
-
             <div id="gridMarketplace" class="grid-layout mt-3"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 2. SECTION COMMANDE CLIENT -->
+    <!-- 2. COMMANDE CLIENT -->
     <div id="section-client" class="section-app d-none">
       <div class="row g-4">
         <div class="col-lg-7">
           <div class="card shadow-sm border-0 p-4">
             <h3 class="card-title mb-4">🚚 Commander une livraison</h3>
-            <form id="orderForm">
-              <h5 class="text-secondary fs-6 mb-3">1. Information Expéditeur (Vous)</h5>
+            <form id="orderForm" onsubmit="passerCommande(event)">
               <div class="row g-3 mb-3">
                 <div class="col-md-6">
                   <label for="clientNom" class="form-label">Nom complet *</label>
-                  <input type="text" class="form-control" id="clientNom" placeholder="Ex: Marie Joseph" required>
+                  <input type="text" class="form-control" id="clientNom" required>
                 </div>
                 <div class="col-md-6">
                   <label for="clientTel" class="form-label">Téléphone WhatsApp *</label>
-                  <input type="tel" class="form-control" id="clientTel" placeholder="Ex: +509 3821 0256" required>
+                  <input type="tel" class="form-control" id="clientTel" required>
                 </div>
               </div>
 
-              <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-                <h5 class="text-secondary fs-6 mb-0">2. Information Destinataire</h5>
+              <div class="d-flex justify-content-between align-items-center mt-3 mb-2">
+                <h5 class="text-secondary fs-6 mb-0">Destinataire</h5>
                 <div class="form-check form-switch mb-0">
                   <input class="form-check-input" type="checkbox" id="memeDestinataire" onchange="copierInfoExpediteur()">
-                  <label class="form-check-label small text-muted" for="memeDestinataire">Je suis le destinataire</label>
+                  <label class="form-check-label small text-muted" for="memeDestinataire">Même personne</label>
                 </div>
               </div>
 
               <div class="row g-3 mb-3" id="blockDestinataire">
                 <div class="col-md-6">
-                  <label for="destinataireNom" class="form-label">Nom du destinataire *</label>
-                  <input type="text" class="form-control" id="destinataireNom" placeholder="Ex: Jean Baptiste" required>
+                  <label for="destinataireNom" class="form-label">Nom destinataire *</label>
+                  <input type="text" class="form-control" id="destinataireNom" required>
                 </div>
                 <div class="col-md-6">
-                  <label for="destinataireTel" class="form-label">WhatsApp Destinataire *</label>
-                  <input type="tel" class="form-control" id="destinataireTel" placeholder="Ex: +509 3700 0000" required>
+                  <label for="destinataireTel" class="form-label">Téléphone destinataire *</label>
+                  <input type="tel" class="form-control" id="destinataireTel" required>
                 </div>
               </div>
 
-              <h5 class="text-secondary fs-6 mb-3 mt-4">3. Trajet, Zones & Sécurité</h5>
               <div class="row g-3 mb-3">
                 <div class="col-md-6">
                   <label for="zoneDepart" class="form-label">Zone départ *</label>
                   <select class="form-select" id="zoneDepart" onchange="calculerPrixEtSecurite()" required>
                     <option value="">-- Choisir --</option>
-                    <optgroup label="Port-au-Prince">
-                      <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
-                      <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
-                      <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
-                      <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
-                      <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
-                      <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
-                    </optgroup>
-                    <optgroup label="Autres Communes">
-                      <option value="Pétion-Ville">Pétion-Ville 🟢</option>
-                      <option value="Delmas">Delmas 🟢</option>
-                      <option value="Route de Frères">Route de Frères 🟢</option>
-                      <option value="Juvénat">Juvénat 🟢</option>
-                      <option value="Thomassin">Thomassin 🟢</option>
-                    </optgroup>
+                    <option value="Pétion-Ville">Pétion-Ville</option>
+                    <option value="Delmas">Delmas</option>
+                    <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert</option>
+                    <option value="Port-au-Prince - Turgeau">Turgeau</option>
                   </select>
                 </div>
                 <div class="col-md-6">
                   <label for="zoneArrivee" class="form-label">Zone arrivée *</label>
                   <select class="form-select" id="zoneArrivee" onchange="calculerPrixEtSecurite()" required>
                     <option value="">-- Choisir --</option>
-                    <optgroup label="Port-au-Prince">
-                      <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert 🟢</option>
-                      <option value="Port-au-Prince - Turgeau">Turgeau 🟢</option>
-                      <option value="Port-au-Prince - Pacot">Pacot 🟢</option>
-                      <option value="Port-au-Prince - Haut-Peu-de-Chose">Haut-Peu-de-Chose 🟢</option>
-                      <option value="Port-au-Prince - Bois Verna / Lalue">Bois Verna / Lalue 🟡</option>
-                      <option value="Port-au-Prince - Nazon">Nazon 🟡</option>
-                    </optgroup>
-                    <optgroup label="Autres Communes">
-                      <option value="Pétion-Ville">Pétion-Ville 🟢</option>
-                      <option value="Delmas">Delmas 🟢</option>
-                      <option value="Route de Frères">Route de Frères 🟢</option>
-                      <option value="Juvénat">Juvénat 🟢</option>
-                      <option value="Thomassin">Thomassin 🟢</option>
-                    </optgroup>
+                    <option value="Pétion-Ville">Pétion-Ville</option>
+                    <option value="Delmas">Delmas</option>
+                    <option value="Port-au-Prince - Canapé-Vert">Canapé-Vert</option>
+                    <option value="Port-au-Prince - Turgeau">Turgeau</option>
                   </select>
                 </div>
               </div>
 
               <div id="securityAlert" class="alert alert-info d-flex align-items-center gap-2 mb-3" role="alert">
                 <span id="secIcon" class="fs-4">🛡️</span>
-                <div id="secText" class="small">Sélectionnez vos zones pour évaluer la sécurité du trajet.</div>
+                <div id="secText" class="small">Sélectionnez vos zones pour évaluer la sécurité.</div>
               </div>
 
               <div class="mb-3">
-                <label for="adresseDepart" class="form-label">Adresse exacte départ *</label>
-                <input type="text" class="form-control" id="adresseDepart" placeholder="Ex: Rue Capois, près de..." required>
+                <label for="adresseDepart" class="form-label">Adresse départ *</label>
+                <input type="text" class="form-control" id="adresseDepart" required>
               </div>
 
               <div class="mb-3">
-                <label for="adresseArrivee" class="form-label">Adresse exacte d'arrivée *</label>
-                <input type="text" class="form-control" id="adresseArrivee" placeholder="Ex: Impasse Lavaud, ..." required>
+                <label for="adresseArrivee" class="form-label">Adresse arrivée *</label>
+                <input type="text" class="form-control" id="adresseArrivee" required>
               </div>
 
-              <h5 class="text-secondary fs-6 mb-3 mt-4">4. Détails du colis & Horaire</h5>
               <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                  <label for="typeColis" class="form-label">Type de colis / Service *</label>
-                  <select class="form-select" id="typeColis" required>
-                    <option value="Repas / Plat préparé">Repas / Plat préparé</option>
-                    <option value="Courses de supermarché">Courses de supermarché</option>
-                    <option value="Boissons / Packs / Bières">Boissons / Packs / Bières</option>
-                    <option value="Documents / Papiers officiels">Documents / Papiers officiels</option>
-                    <option value="Clés / Portefeuille / Chargeur">Clés / Portefeuille / Chargeur</option>
-                    <option value="Pharmacie / Médicaments">Pharmacie / Médicaments</option>
-                    <option value="Électroménager">Électroménager</option>
-                    <option value="Autre type de colis">Autre type de colis</option>
-                  </select>
-                </div>
                 <div class="col-md-6">
                   <label for="poidsColis" class="form-label">Poids estimé *</label>
                   <select class="form-select" id="poidsColis" onchange="calculerPrixEtSecurite()" required>
                     <option value="0">Léger (&lt; 5 kg)</option>
-                    <option value="150">Moyen (5 kg - 15 kg) [+150 HTG]</option>
-                    <option value="350">Lourd (15 kg - 30 kg) [+350 HTG]</option>
-                    <option value="700">Très lourd (&gt; 30 kg) [+700 HTG]</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                  <label for="moyenTransport" class="form-label">Moyen de Transport</label>
-                  <select class="form-select" id="moyenTransport" onchange="calculerPrixEtSecurite()">
-                    <option value="Moto">Moto</option>
-                    <option value="Tricycle">Tricycle</option>
-                    <option value="Voiture">Voiture</option>
+                    <option value="150">Moyen (+150 HTG)</option>
+                    <option value="350">Lourd (+350 HTG)</option>
                   </select>
                 </div>
                 <div class="col-md-6">
@@ -561,42 +407,37 @@
               </div>
 
               <div id="boxPaiementEnLigne" class="p-3 bg-light border rounded mb-3" style="display:none;">
-                <h6 class="text-primary mb-2">💳 Transaction Sécurisée <span id="nomPasserelle">MonCash</span></h6>
+                <h6 class="text-primary mb-2">💳 Transaction <span id="nomPasserelle">MonCash</span></h6>
                 <div class="input-group input-group-sm">
                   <span class="input-group-text">+509</span>
                   <input type="tel" id="payPhone" class="form-control" placeholder="38XX XXXX">
-                  <button type="button" class="btn btn-success" onclick="simulerPaiementAPI()">Simuler le Paiement</button>
+                  <button type="button" class="btn btn-success" onclick="simulerPaiementAPI()">Valider</button>
                 </div>
                 <div id="payStatus" class="small mt-2"></div>
               </div>
 
-              <button type="submit" class="btn btn-success btn-lg w-100 mt-4">
-                ✅ Valider et lancer la commande
-              </button>
+              <button type="submit" class="btn btn-success btn-lg w-100 mt-4">✅ Confirmer la commande</button>
             </form>
           </div>
         </div>
 
         <div class="col-lg-5">
           <div class="card shadow-sm border-0 sticky-card p-4">
-            <h5 class="card-title mb-3">📍 Trajet & Calcul Tarif Live</h5>
+            <h5 class="card-title mb-3">📍 Trajet & Estimation</h5>
             <div id="map"></div>
             <hr class="my-4">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <span class="text-muted">Distance estimée :</span>
-              <strong id="distVal" class="fs-6">0.0 km</strong>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Distance :</span><strong id="distVal">0.0 km</strong>
             </div>
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <span class="text-muted">Sous-total :</span>
-              <strong id="subtotalVal" class="fs-6">250 HTG</strong>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Sous-total :</span><strong id="subtotalVal">250 HTG</strong>
             </div>
-            <div class="d-flex justify-content-between align-items-center mb-2 text-primary">
-              <span>Taxe de service (13.5%) :</span>
-              <strong id="taxeVal">+34 HTG</strong>
+            <div class="d-flex justify-content-between mb-2 text-primary">
+              <span>Taxe de service (13.5%) :</span><strong id="taxeVal">+34 HTG</strong>
             </div>
             <hr>
             <div class="d-flex justify-content-between align-items-center">
-              <span class="fw-bold fs-5">Total à payer :</span>
+              <span class="fw-bold fs-5">Total :</span>
               <strong id="priceVal" class="fs-3 text-success">284 HTG</strong>
             </div>
           </div>
@@ -606,104 +447,54 @@
 
     <!-- 3. ESPACE BUSINESS -->
     <div id="section-business" class="section-app d-none">
-      <div class="row g-4">
-        <div class="col-lg-5">
-          <div class="card shadow-sm border-0 p-4 h-100 bg-primary text-white">
-            <h2 class="fw-bold mb-3">🏢 Externalisez vos livraisons</h2>
-            <p class="lead fs-6">Devenez partenaire professionnel et gérez facilement vos expéditions.</p>
-            <strong>📞 Ligne Pro : +509 3821-0256</strong>
-          </div>
-        </div>
-        <div class="col-lg-7">
-          <div class="card shadow-sm border-0 p-4">
-            <h3 class="card-title text-primary mb-3">💼 Demander un Compte Entreprise</h3>
-            <form id="formBusiness" onsubmit="envoyerDemandeBusiness(event)">
-              <div class="mb-3">
-                <label class="form-label">Nom de l'Entreprise *</label>
-                <input type="text" class="form-control" id="bizNom" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Responsable *</label>
-                <input type="text" class="form-control" id="bizContact" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Téléphone / WhatsApp *</label>
-                <input type="tel" class="form-control" id="bizTel" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Commune Principale *</label>
-                <select class="form-select" id="bizCommune" required>
-                  <option value="Pétion-Ville">Pétion-Ville</option>
-                  <option value="Delmas">Delmas</option>
-                  <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
-                </select>
-              </div>
-              <button type="submit" class="btn btn-primary btn-lg w-100">🚀 Soumettre la Demande</button>
-            </form>
-          </div>
-        </div>
+      <div class="card shadow-sm border-0 p-4">
+        <h3>💼 Inscription Business</h3>
+        <form onsubmit="envoyerDemandeBusiness(event)">
+          <div class="mb-3"><label class="form-label">Nom Entreprise</label><input type="text" class="form-control" required></div>
+          <button type="submit" class="btn btn-primary">Envoyer</button>
+        </form>
       </div>
     </div>
 
     <!-- 4. SUIVI -->
     <div id="section-suivi" class="section-app d-none">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="card shadow-sm border-0 p-4">
-            <h2>🔎 Suivre ma commande</h2>
-            <div class="input-group mb-3 mt-3">
-              <input type="text" id="numSuivi" class="form-control" placeholder="Ex: LR-101 ou +509 3821 0256">
-              <button class="btn btn-primary" onclick="chercherSuivi()">Chercher</button>
-            </div>
-            <div id="suiviResultat" class="mt-4" style="display: none;">
-              <hr>
-              <div id="suiviDetails" class="bg-light p-3 rounded"></div>
-            </div>
-          </div>
+      <div class="card shadow-sm border-0 p-4">
+        <h3>🔎 Suivre une commande</h3>
+        <div class="input-group mb-3">
+          <input type="text" id="numSuivi" class="form-control" placeholder="Ex: LR-101">
+          <button class="btn btn-primary" onclick="chercherSuivi()">Chercher</button>
         </div>
+        <div id="suiviResultat" class="mt-3"></div>
       </div>
     </div>
 
     <!-- 5. ESPACE LIVREUR -->
     <div id="section-livreur" class="section-app d-none">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="card shadow-sm border-0 p-4 mb-4" id="authBox">
-            <h3>🔑 Connexion Livreur</h3>
-            <form id="formLogin" onsubmit="handleLoginSubmit(event)">
-              <div class="mb-3">
-                <label class="form-label">Adresse Email</label>
-                <input type="email" class="form-control" id="loginEmail" required>
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Se connecter</button>
-            </form>
-          </div>
-        </div>
+      <div class="card shadow-sm border-0 p-4">
+        <h3>🔑 Espace Livreur</h3>
+        <form onsubmit="handleLoginSubmit(event)">
+          <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control" required></div>
+          <button type="submit" class="btn btn-primary">Se connecter</button>
+        </form>
       </div>
     </div>
 
     <!-- 6. COURSES EN COURS -->
     <div id="section-commandes" class="section-app d-none">
       <div class="card shadow-sm border-0 p-4">
-        <h2>📦 Commandes en cours</h2>
-        <div id="listeCommandes" class="grid-layout mt-3"></div>
+        <h2>📋 Commandes en cours</h2>
+        <div id="listeCommandes"></div>
       </div>
     </div>
 
     <!-- 7. SUPPORT -->
     <div id="section-support" class="section-app d-none">
-      <div class="card shadow-sm border-0 p-4">
-        <h3>✉️ Support & Assistance</h3>
-        <p>Contactez notre support pour toute question.</p>
-      </div>
+      <div class="card shadow-sm border-0 p-4"><h3>💬 Support</h3><p>Contactez-nous sur WhatsApp au +509 3821-0256.</p></div>
     </div>
 
     <!-- 8. ADMIN -->
     <div id="section-admin" class="section-app d-none">
-      <div class="card shadow-sm border-0 p-4">
-        <h2>📊 Tableau de Bord Administrateur</h2>
-        <div class="fs-3 text-primary fw-bold" id="statCA">0 HTG</div>
-      </div>
+      <div class="card shadow-sm border-0 p-4"><h3>📊 Administration</h3><div class="fs-4 text-primary" id="statCA">Chiffre d'affaires : 0 HTG</div></div>
     </div>
 
   </main>
@@ -713,20 +504,11 @@
     <div class="modal-dialog">
       <div class="modal-content p-4 border-0">
         <h5 class="modal-title mb-3">🛒 Mon Panier</h5>
-        <div id="contenuPanier" class="mb-3">
-          <p class="text-muted">Votre panier est actuellement vide.</p>
-        </div>
+        <div id="contenuPanier" class="mb-3"></div>
         <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Fermer</button>
       </div>
     </div>
   </div>
-
-  <!-- Footer -->
-  <footer class="bg-dark text-light pt-5 pb-3 mt-auto">
-    <div class="container text-center small text-muted">
-      &copy; 2026 LivraisonRapid. Tous droits réservés.
-    </div>
-  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -735,43 +517,55 @@
     let map;
     let deferredPrompt = null;
     let imagesStockees = [];
-
-    // Le panier démarre vide (0 article)
-    let panierItems = [];
-    
-    // Le marketplace démarre vide au lancement
+    let panierItems = JSON.parse(localStorage.getItem('panier_items')) || [];
     let articlesMarketplace = JSON.parse(localStorage.getItem('articles_marketplace')) || [];
+    let gpsActif = false;
+
+    // Coordonnées approximatives pour le calcul de distance
+    const zonesGPS = {
+      "Pétion-Ville": [18.5125, -72.2853],
+      "Delmas": [18.5442, -72.3028],
+      "Port-au-Prince - Canapé-Vert": [18.5321, -72.3182],
+      "Port-au-Prince - Turgeau": [18.5375, -72.3250]
+    };
 
     window.onload = function () {
       map = L.map('map').setView([18.5392, -72.3364], 12);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
-      }).addTo(map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
 
-      // Met à jour l'affichage du badge du panier (0)
       mettreAJourBadgePanier();
       chargerMarketplace();
+
+      // Gestion PWA
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const btn = document.getElementById('btnPwaInstall');
+        if (btn) btn.classList.remove('d-none');
+      });
     };
+
+    function installerPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+      }
+    }
 
     function toggleProfileMenu(e) {
       if (e) e.stopPropagation();
       const menu = document.getElementById('profileDropdownMenu');
-      if (menu) {
-        menu.classList.toggle('show');
-      }
+      if (menu) menu.classList.toggle('show');
     }
 
-    window.addEventListener('click', function(e) {
+    window.addEventListener('click', function() {
       const menu = document.getElementById('profileDropdownMenu');
-      if (menu && menu.classList.contains('show')) {
-        menu.classList.remove('show');
-      }
+      if (menu && menu.classList.contains('show')) menu.classList.remove('show');
     });
 
     function afficherToast(msg, type = 'success') {
       const toastEl = document.getElementById('liveToast');
-      const toastBody = document.getElementById('toastMessage');
-      toastBody.textContent = msg;
+      document.getElementById('toastMessage').textContent = msg;
       toastEl.className = `toast align-items-center text-white border-0 bg-${type}`;
       new bootstrap.Toast(toastEl).show();
     }
@@ -780,44 +574,86 @@
       document.querySelectorAll('.section-app').forEach(s => s.classList.add('d-none'));
       const targetSection = document.getElementById('section-' + nom);
       if (targetSection) targetSection.classList.remove('d-none');
-
       if ((nom === 'client' || nom === 'suivi') && map) {
         setTimeout(() => { map.invalidateSize(); }, 250);
       }
     }
 
-    function mettreAJourBadgePanier() {
-      const badge = document.getElementById('cartBadgeCount');
-      if (badge) {
-        badge.textContent = panierItems.length;
+    function copierInfoExpediteur() {
+      const meme = document.getElementById('memeDestinataire').checked;
+      if (meme) {
+        document.getElementById('destinataireNom').value = document.getElementById('clientNom').value;
+        document.getElementById('destinataireTel').value = document.getElementById('clientTel').value;
       }
+    }
+
+    function calculerPrixEtSecurite() {
+      const zDep = document.getElementById('zoneDepart').value;
+      const zArr = document.getElementById('zoneArrivee').value;
+      const pLourd = parseInt(document.getElementById('poidsColis').value) || 0;
+
+      let subtotal = 250 + pLourd;
+      let distance = 3.5;
+
+      if (zonesGPS[zDep] && zonesGPS[zArr]) {
+        const p1 = L.latLng(zonesGPS[zDep]);
+        const p2 = L.latLng(zonesGPS[zArr]);
+        distance = (p1.distanceTo(p2) / 1000).toFixed(1);
+        subtotal += Math.round(distance * 25);
+      }
+
+      const taxe = Math.round(subtotal * 0.135);
+      const total = subtotal + taxe;
+
+      document.getElementById('distVal').textContent = `${distance} km`;
+      document.getElementById('subtotalVal').textContent = `${subtotal} HTG`;
+      document.getElementById('taxeVal').textContent = `+${taxe} HTG`;
+      document.getElementById('priceVal').textContent = `${total} HTG`;
+    }
+
+    function toggleFormPaiement() {
+      const mode = document.getElementById('methodePaiement').value;
+      const box = document.getElementById('boxPaiementEnLigne');
+      if (mode === 'MonCash' || mode === 'NatCash') {
+        box.style.display = 'block';
+        document.getElementById('nomPasserelle').textContent = mode;
+      } else {
+        box.style.display = 'none';
+      }
+    }
+
+    function simulerPaiementAPI() {
+      const tel = document.getElementById('payPhone').value;
+      if (!tel) { afficherToast("Veuillez entrer un numéro de téléphone.", "warning"); return; }
+      document.getElementById('payStatus').innerHTML = "<span class='text-success'>Paiement validé avec succès !</span>";
+    }
+
+    function mettreAJourBadgePanier() {
+      document.getElementById('cartBadgeCount').textContent = panierItems.length;
+      localStorage.setItem('panier_items', JSON.stringify(panierItems));
     }
 
     function ajouterAuPanier(titre, prix) {
       panierItems.push({ titre, prix });
       mettreAJourBadgePanier();
-      afficherToast(`"${titre}" a été ajouté à votre panier !`);
+      afficherToast(`"${titre}" a été ajouté au panier !`);
     }
 
     function ouvrirPanier() {
       const conteneur = document.getElementById('contenuPanier');
       if (panierItems.length === 0) {
-        conteneur.innerHTML = `<p class="text-muted">Votre panier est actuellement vide.</p>`;
+        conteneur.innerHTML = `<p class="text-muted">Votre panier est vide.</p>`;
       } else {
         let html = '<ul class="list-group mb-3">';
         let total = 0;
-        panierItems.forEach((item, index) => {
+        panierItems.forEach(item => {
           total += item.prix;
-          html += `<li class="list-group-item d-flex justify-content-between align-items-center">
-            ${item.titre}
-            <span class="badge bg-primary rounded-pill">${item.prix} HTG</span>
-          </li>`;
+          html += `<li class="list-group-item d-flex justify-content-between align-items-center">${item.titre}<span class="badge bg-primary">${item.prix} HTG</span></li>`;
         });
         html += `</ul><div class="d-flex justify-content-between fw-bold"><span>Total :</span><span>${total} HTG</span></div>`;
         conteneur.innerHTML = html;
       }
-      const modal = new bootstrap.Modal(document.getElementById('modalPanier'));
-      modal.show();
+      new bootstrap.Modal(document.getElementById('modalPanier')).show();
     }
 
     function previsualiserImages(event) {
@@ -844,54 +680,33 @@
 
     function publierArticle(e) {
       e.preventDefault();
-
-      const vendeur = document.getElementById('vendeurNom').value;
-      const tel = document.getElementById('vendeurTel').value;
-      const titre = document.getElementById('articleTitre').value;
-      const prix = document.getElementById('articlePrix').value;
-      const categorie = document.getElementById('articleCategorie').value;
-      const zone = document.getElementById('articleZone').value;
-      let urlImg = document.getElementById('articleImg').value.trim();
-      const desc = document.getElementById('articleDesc').value;
-
-      let finalImg = imagesStockees.length > 0
-        ? imagesStockees[0]
-        : (urlImg || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80");
-
-      const nouvelArticle = {
+      const article = {
         id: Date.now(),
-        titre,
-        prix: Number(prix),
-        categorie,
-        zone,
-        vendeur,
-        tel,
-        img: finalImg,
-        desc
+        vendeur: document.getElementById('vendeurNom').value,
+        tel: document.getElementById('vendeurTel').value,
+        titre: document.getElementById('articleTitre').value,
+        prix: Number(document.getElementById('articlePrix').value),
+        categorie: document.getElementById('articleCategorie').value,
+        zone: document.getElementById('articleZone').value,
+        img: imagesStockees[0] || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
+        desc: document.getElementById('articleDesc').value
       };
 
-      articlesMarketplace.unshift(nouvelArticle);
+      articlesMarketplace.unshift(article);
       localStorage.setItem('articles_marketplace', JSON.stringify(articlesMarketplace));
-
-      afficherToast(`L'article "${titre}" est désormais publié sur l'accueil !`, "success");
-
+      afficherToast("Article mis en vente !");
       document.getElementById('formVendre').reset();
       document.getElementById('previewContainer').innerHTML = "";
-      imagesStockees = [];
-
       chargerMarketplace();
     }
 
     function chargerMarketplace(liste = articlesMarketplace) {
       const grid = document.getElementById('gridMarketplace');
-      const badge = document.getElementById('badgeTotalArticles');
-      if (!grid) return;
-
-      badge.textContent = `${liste.length} article(s)`;
+      document.getElementById('badgeTotalArticles').textContent = `${liste.length} article(s)`;
       grid.innerHTML = "";
 
       if (liste.length === 0) {
-        grid.innerHTML = `<p class="text-muted text-center py-4 col-12">Aucun article sur le marché. Soyez le premier à publier un produit !</p>`;
+        grid.innerHTML = `<p class="text-muted text-center py-4 col-12">Aucun article sur la vitrine.</p>`;
         return;
       }
 
@@ -899,23 +714,14 @@
         grid.innerHTML += `
           <div class="item-card d-flex flex-column">
             <img src="${art.img}" class="product-img mb-2" alt="${art.titre}">
-            <div class="d-flex justify-content-between align-items-start mb-1">
+            <div class="d-flex justify-content-between mb-1">
               <span class="badge bg-light text-dark border">${art.categorie}</span>
               <span class="badge bg-success">${art.prix} HTG</span>
             </div>
             <h5 class="fw-bold mb-1 fs-6">${art.titre}</h5>
-            <p class="small text-muted mb-2">${art.desc || 'Aucune description'}</p>
-            <div class="small mb-2">
-              <span class="text-secondary">📍 ${art.zone}</span><br>
-              <span class="text-secondary">👤 Vendeur: <strong>${art.vendeur}</strong></span>
-            </div>
+            <p class="small text-muted mb-2">${art.desc}</p>
             <div class="mt-auto pt-2 border-top d-flex flex-column gap-2">
-              <button onclick="ajouterAuPanier('${art.titre}', ${art.prix})" class="btn btn-sm btn-warning w-100 fw-bold">
-                🛒 Ajouter au panier
-              </button>
-              <button onclick="commanderArticleLivraison('${encodeURIComponent(art.titre)}', '${encodeURIComponent(art.zone)}', '${encodeURIComponent(art.vendeur)}')" class="btn btn-sm btn-outline-primary w-100">
-                🚚 Demander la livraison
-              </button>
+              <button onclick="ajouterAuPanier('${art.titre}', ${art.prix})" class="btn btn-sm btn-warning w-100 fw-bold">🛒 Ajouter au panier</button>
             </div>
           </div>
         `;
@@ -926,24 +732,44 @@
       const query = document.getElementById('searchMarket').value.toLowerCase();
       const cat = document.getElementById('catFilter').value;
 
-      const resultats = articlesMarketplace.filter(item => {
-        const matchQuery = item.titre.toLowerCase().includes(query) || (item.desc && item.desc.toLowerCase().includes(query));
-        const matchCat = cat === "" || item.categorie === cat;
-        return matchQuery && matchCat;
+      const res = articlesMarketplace.filter(i => {
+        return (i.titre.toLowerCase().includes(query) || i.desc.toLowerCase().includes(query)) && (cat === "" || i.categorie === cat);
       });
-
-      chargerMarketplace(resultats);
+      chargerMarketplace(res);
     }
 
-    function commanderArticleLivraison(titreEnc, zoneEnc, vendeurEnc) {
-      changerOnglet('client');
-      document.getElementById('typeColis').value = "Autre type de colis";
-      document.getElementById('zoneDepart').value = decodeURIComponent(zoneEnc);
-      document.getElementById('adresseDepart').value = `Achat chez : ${decodeURIComponent(vendeurEnc)} (Produit: ${decodeURIComponent(titreEnc)})`;
-      afficherToast(`Détails transférés vers le formulaire de livraison !`);
+    function toggleGpsTracking() {
+      gpsActif = !gpsActif;
+      const badge = document.getElementById('gpsBadge');
+      badge.className = gpsActif ? "badge bg-success ms-2" : "badge bg-secondary ms-2";
+      badge.textContent = gpsActif ? "GPS Actif" : "GPS Inactif";
+      afficherToast(gpsActif ? "Partage GPS activé" : "GPS désactivé", "info");
+    }
+
+    function passerCommande(e) {
+      e.preventDefault();
+      afficherToast("Commande transmise avec succès !");
+    }
+
+    function chercherSuivi() {
+      const num = document.getElementById('numSuivi').value;
+      document.getElementById('suiviResultat').innerHTML = num ? `<div class="alert alert-info">Statut pour ${num} : En cours de livraison 🛵</div>` : "";
+    }
+
+    function envoyerDemandeBusiness(e) {
+      e.preventDefault();
+      afficherToast("Demande Business envoyée !");
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      document.getElementById('userBar').classList.remove('d-none');
+      document.getElementById('userBar').classList.add('d-flex');
+      afficherToast("Connecté en tant que livreur !");
     }
 
     function deconnexion() {
+      document.getElementById('userBar').classList.add('d-none');
       afficherToast("Déconnexion réussie.", "info");
     }
   </script>
