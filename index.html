@@ -166,7 +166,7 @@
       </div>
       <div class="d-flex gap-2">
         <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm fw-bold">📍 Partage GPS Live</button>
-        <button onclick="deconnexion()" class="btn btn-danger btn-sm">Déconnexion</button>
+        <button onclick="deconnexionClientProfil()" class="btn btn-danger btn-sm">Déconnexion</button>
       </div>
     </div>
 
@@ -469,40 +469,12 @@
     <!-- 5. LIVREUR -->
     <div id="section-livreur" class="section-app d-none">
       <div class="card shadow-sm border-0 p-4 mb-4" id="espaceMonCompte" style="display:none;">
-        <h2>👤 Mon Espace Livreur</h2>
-        <p>Connecté sous : <strong id="profileNom"></strong></p>
-        <button onclick="deconnexion()" class="btn btn-danger">🔴 Se déconnecter</button>
-      </div>
-
-      <div class="card shadow-sm border-0 p-4 mb-4" id="authBox">
-        <div class="btn-group w-100 mb-3">
-          <button type="button" id="tabConnexion" class="btn btn-outline-primary active" onclick="switchAuthTab('login')">Se connecter</button>
-          <button type="button" id="tabInscription" class="btn btn-outline-primary" onclick="switchAuthTab('signup')">Créer un compte</button>
+        <h2>🛵 Mon Espace Livreur</h2>
+        <p class="mb-2">Connecté sous : <strong id="profileNom" class="text-primary"></strong></p>
+        <p class="small text-muted mb-3">Téléphone : <span id="profileTel"></span> | Email : <span id="profileEmail"></span></p>
+        <div>
+          <button onclick="deconnexionClientProfil()" class="btn btn-outline-danger btn-sm">🔴 Se déconnecter</button>
         </div>
-
-        <form id="formLogin" onsubmit="handleLoginSubmit(event)">
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-control" id="loginEmail" required placeholder="livreur@exemple.com">
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Se connecter</button>
-        </form>
-
-        <form id="formVerifyOtp" style="display: none;" class="mt-3" onsubmit="validerOtp(event)">
-          <div class="alert alert-info">Code envoyé à <strong id="emailSentTo"></strong></div>
-          <input type="text" class="form-control text-center fs-4 mb-3" id="otpCode" placeholder="123456" required>
-          <button type="submit" class="btn btn-success w-100">Valider</button>
-        </form>
-
-        <form id="formSignup" style="display: none;" onsubmit="handleSignupSubmit(event)">
-          <div class="row g-2 mb-3">
-            <div class="col-6"><input type="text" class="form-control" id="signupPrenom" placeholder="Prénom" required></div>
-            <div class="col-6"><input type="text" class="form-control" id="signupNomLivreur" placeholder="Nom" required></div>
-          </div>
-          <input type="email" class="form-control mb-3" id="signupEmailLivreur" placeholder="Email" required>
-          <input type="tel" class="form-control mb-3" id="signupTelLivreur" placeholder="Téléphone" required>
-          <button type="submit" class="btn btn-primary w-100">Créer mon compte livreur</button>
-        </form>
       </div>
 
       <div class="card shadow-sm border-0 p-4">
@@ -612,7 +584,6 @@
     let gpsWatchId = null;
     let imagesStockees = [];
 
-    let currentUser = JSON.parse(localStorage.getItem('user_livreur'));
     let currentClientUser = JSON.parse(localStorage.getItem('user_client'));
     let panier = JSON.parse(localStorage.getItem('panier_client')) || [];
 
@@ -646,7 +617,6 @@
     window.onload = function () {
       initMap();
       actualiserAffichagePrix();
-      verifierSession();
       verifierProfilClient();
       actualiserPanierUI();
       chargerLivreurs();
@@ -741,12 +711,35 @@
     /* PROFIL */
     function verifierProfilClient() {
       const btn = document.getElementById('btnProfilClient');
+      const userBar = document.getElementById('userBar');
+      const espaceMonCompte = document.getElementById('espaceMonCompte');
+
       if (currentClientUser) {
         btn.textContent = `👤 ${currentClientUser.nom}`;
         btn.className = "btn btn-success btn-sm ms-lg-1";
+
+        // Si le profil connecté est un Livreur
+        if (currentClientUser.role === 'Livreur') {
+          if (userBar) {
+            userBar.classList.remove('d-none');
+            userBar.classList.add('d-flex');
+            document.getElementById('userInfo').textContent = `Espace Livreur - ${currentClientUser.nom}`;
+          }
+          if (espaceMonCompte) {
+            espaceMonCompte.style.display = 'block';
+            document.getElementById('profileNom').textContent = currentClientUser.nom;
+            document.getElementById('profileTel').textContent = currentClientUser.tel;
+            document.getElementById('profileEmail').textContent = currentClientUser.email;
+          }
+        } else {
+          if (userBar) userBar.classList.add('d-none');
+          if (espaceMonCompte) espaceMonCompte.style.display = 'none';
+        }
       } else {
         btn.textContent = "👤 Mon Profil";
         btn.className = "btn btn-dark btn-sm ms-lg-1";
+        if (userBar) userBar.classList.add('d-none');
+        if (espaceMonCompte) espaceMonCompte.style.display = 'none';
       }
     }
 
@@ -769,23 +762,33 @@
 
     function inscriptionUtilisateur(e) {
       e.preventDefault();
+      const role = document.getElementById('signupRole').value;
       currentClientUser = {
-        role: document.getElementById('signupRole').value,
+        role: role,
         nom: document.getElementById('signupNom').value,
         tel: document.getElementById('signupTel').value,
         email: document.getElementById('signupEmail').value
       };
       localStorage.setItem('user_client', JSON.stringify(currentClientUser));
       verifierProfilClient();
-      ouvrirProfilClient();
+
+      const modalEl = bootstrap.Modal.getInstance(document.getElementById('modalProfilClient'));
+      if (modalEl) modalEl.hide();
+
       afficherToast("Profil configuré !");
+
+      // Redirection automatique vers l'espace livreur si le rôle sélectionné est Livreur
+      if (role === 'Livreur') {
+        changerOnglet('livreur');
+      }
     }
 
     function deconnexionClientProfil() {
       currentClientUser = null;
       localStorage.removeItem('user_client');
       verifierProfilClient();
-      bootstrap.Modal.getInstance(document.getElementById('modalProfilClient')).hide();
+      const modalEl = bootstrap.Modal.getInstance(document.getElementById('modalProfilClient'));
+      if (modalEl) modalEl.hide();
       afficherToast("Déconnecté.", "info");
     }
 
@@ -953,59 +956,6 @@
       const q = document.getElementById('searchMarket').value.toLowerCase();
       const cat = document.getElementById('catFilter').value;
       chargerMarketplace(articlesMarketplace.filter(a => a.titre.toLowerCase().includes(q) && (cat === "" || a.categorie === cat)));
-    }
-
-    /* AUTH LIVREUR & DASHBOARD */
-    function switchAuthTab(type) {
-      document.getElementById('formLogin').style.display = type === 'login' ? 'block' : 'none';
-      document.getElementById('formSignup').style.display = type === 'signup' ? 'block' : 'none';
-    }
-
-    function handleLoginSubmit(e) {
-      e.preventDefault();
-      document.getElementById('formLogin').style.display = 'none';
-      document.getElementById('formVerifyOtp').style.display = 'block';
-      document.getElementById('emailSentTo').textContent = document.getElementById('loginEmail').value;
-    }
-
-    function validerOtp(e) {
-      e.preventDefault();
-      currentUser = { prenom: "Livreur", nom: "Pro" };
-      localStorage.setItem('user_livreur', JSON.stringify(currentUser));
-      verifierSession();
-      afficherToast("Connecté !");
-    }
-
-    function handleSignupSubmit(e) {
-      e.preventDefault();
-      currentUser = {
-        prenom: document.getElementById('signupPrenom').value,
-        nom: document.getElementById('signupNomLivreur').value
-      };
-      localStorage.setItem('user_livreur', JSON.stringify(currentUser));
-      verifierSession();
-      afficherToast("Compte livreur créé !");
-    }
-
-    function verifierSession() {
-      const userBar = document.getElementById('userBar');
-      if (currentUser) {
-        userBar.classList.remove('d-none');
-        userBar.classList.add('d-flex');
-        document.getElementById('authBox').style.display = 'none';
-        document.getElementById('espaceMonCompte').style.display = 'block';
-        document.getElementById('profileNom').textContent = `${currentUser.prenom} ${currentUser.nom}`;
-      } else {
-        userBar.classList.add('d-none');
-        document.getElementById('authBox').style.display = 'block';
-        document.getElementById('espaceMonCompte').style.display = 'none';
-      }
-    }
-
-    function deconnexion() {
-      localStorage.removeItem('user_livreur');
-      currentUser = null;
-      verifierSession();
     }
 
     async function chargerLivreurs() {
