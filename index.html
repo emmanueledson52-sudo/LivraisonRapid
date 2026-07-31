@@ -168,7 +168,7 @@
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
     <div class="container">
-      <a class="navbar-brand fw-bold text-primary" href="#">🚚 LivraisonRapid</a>
+      <a class="navbar-brand fw-bold text-primary" href="#" onclick="changerOnglet('vendre', event)">🚚 LivraisonRapid</a>
 
       <!-- Bouton PWA d'installation de l'App -->
       <button id="btnPwaInstall" class="btn btn-warning btn-sm me-2 d-none fw-bold" onclick="installerPWA()">
@@ -181,20 +181,14 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <div class="navbar-nav ms-auto flex-row flex-wrap gap-2 mt-2 mt-lg-0">
-          <button class="btn btn-primary btn-sm" onclick="changerOnglet('client', event)">📦 Commander</button>
-          <!-- BOUTON VENDRE UN ARTICLE / MARKETPLACE -->
-          <button class="btn btn-warning btn-sm fw-bold text-dark" onclick="changerOnglet('vendre', event)">🛍️ Vendre /
-            Marketplace</button>
-          <button class="btn btn-outline-success btn-sm fw-bold" onclick="changerOnglet('business', event)">🏢 Espace
-            Business</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis /
-            GPS</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('livreur', event)">🛵 Espace
-            Livreur</button>
-          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('commandes', event)">📋 Courses en
-            cours</button>
-          <button class="btn btn-outline-info btn-sm" onclick="changerOnglet('support', event)">💬 Support &
-            FAQ</button>
+          <!-- BOUTON MARKETPLACE EN ACCUEIL -->
+          <button class="btn btn-warning btn-sm fw-bold text-dark" onclick="changerOnglet('vendre', event)">🛍️ Accueil Marketplace</button>
+          <button class="btn btn-primary btn-sm" onclick="changerOnglet('client', event)">📦 Commander Livraison</button>
+          <button class="btn btn-outline-success btn-sm fw-bold" onclick="changerOnglet('business', event)">🏢 Espace Business</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('suivi', event)">🔎 Suivi Colis / GPS</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('livreur', event)">🛵 Espace Livreur</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="changerOnglet('commandes', event)">📋 Courses en cours</button>
+          <button class="btn btn-outline-info btn-sm" onclick="changerOnglet('support', event)">💬 Support & FAQ</button>
           <button class="btn btn-outline-dark btn-sm" onclick="changerOnglet('admin', event)">📊 Admin</button>
         </div>
       </div>
@@ -211,14 +205,121 @@
         <span id="gpsBadge" class="badge bg-secondary ms-2">GPS Inactif</span>
       </div>
       <div class="d-flex gap-2">
-        <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm fw-bold">📍 Partage GPS
-          Live</button>
+        <button id="btnGpsToggle" onclick="toggleGpsTracking()" class="btn btn-warning btn-sm fw-bold">📍 Partage GPS Live</button>
         <button onclick="deconnexion()" class="btn btn-danger btn-sm">Déconnexion</button>
       </div>
     </div>
 
-    <!-- 1. SECTION COMMANDE CLIENT -->
-    <div id="section-client" class="section-app">
+    <!-- 1. ACCUEIL : SECTION MARKETPLACE / VENDRE (AFFICHEE PAR DEFAUT) -->
+    <div id="section-vendre" class="section-app">
+      <div class="row g-4">
+        <!-- Vitrine Marketplace (Placée à gauche et élargie pour la vue Accueil) -->
+        <div class="col-lg-7">
+          <div class="card shadow-sm border-0 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 class="card-title mb-0 fw-bold">🛒 Produits & Articles Disponibles</h3>
+              <span class="badge bg-secondary" id="badgeTotalArticles">0 article(s)</span>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-md-7">
+                <input type="text" id="searchMarket" class="form-control" placeholder="🔍 Rechercher un article..." oninput="filtrerMarketplace()">
+              </div>
+              <div class="col-md-5">
+                <select id="catFilter" class="form-select" onchange="filtrerMarketplace()">
+                  <option value="">Toutes les catégories</option>
+                  <option value="Électronique">Électronique</option>
+                  <option value="Mode & Vêtements">Mode & Vêtements</option>
+                  <option value="Nourriture / Repas">Nourriture / Repas</option>
+                  <option value="Maison & Déco">Maison & Déco</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="gridMarketplace" class="grid-layout mt-3"></div>
+          </div>
+        </div>
+
+        <!-- Formulaire de Publication d'Article -->
+        <div class="col-lg-5">
+          <div class="card shadow-sm border-0 p-4">
+            <h3 class="card-title text-warning text-dark fw-bold mb-3">🛍️ Exposer un produit à vendre</h3>
+            <p class="text-muted small mb-3">Vous avez un objet, un vêtement, de la nourriture ou un produit neuf/occasion à vendre ? Publiez-le gratuitement avec vos photos !</p>
+
+            <form id="formVendre" onsubmit="publierArticle(event)">
+              <div class="mb-3">
+                <label for="vendeurNom" class="form-label">Votre nom / Nom de boutique *</label>
+                <input type="text" class="form-control" id="vendeurNom" placeholder="Ex: Jean Boutique ou Sarah" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="vendeurTel" class="form-label">Téléphone / WhatsApp du vendeur *</label>
+                <input type="tel" class="form-control" id="vendeurTel" placeholder="Ex: +509 3821 0256" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="articleTitre" class="form-label">Titre de l'article *</label>
+                <input type="text" class="form-control" id="articleTitre" placeholder="Ex: iPhone 12 Pro Max / Baskets / Plat Griot" required>
+              </div>
+
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <label for="articlePrix" class="form-label">Prix (HTG / USD) *</label>
+                  <input type="number" class="form-control" id="articlePrix" placeholder="Ex: 2500" required>
+                </div>
+                <div class="col-6">
+                  <label for="articleCategorie" class="form-label">Catégorie *</label>
+                  <select class="form-select" id="articleCategorie" required>
+                    <option value="Électronique">Électronique</option>
+                    <option value="Mode & Vêtements">Mode & Vêtements</option>
+                    <option value="Nourriture / Repas">Nourriture / Repas</option>
+                    <option value="Maison & Déco">Maison & Déco</option>
+                    <option value="Autre">Autre</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="articleZone" class="form-label">Localisation de l'article *</label>
+                <select class="form-select" id="articleZone" required>
+                  <option value="Pétion-Ville">Pétion-Ville</option>
+                  <option value="Delmas">Delmas</option>
+                  <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
+                  <option value="Port-au-Prince - Turgeau">Port-au-Prince - Turgeau</option>
+                  <option value="Route de Frères">Route de Frères</option>
+                  <option value="Autre commune de l'Ouest">Autre commune de l'Ouest</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="articleImgs" class="form-label fw-bold">📷 Photos de l'article (Galerie/Photos - 3 max)</label>
+                <input type="file" class="form-control" id="articleImgs" accept="image/*" multiple onchange="previsualiserImages(event)">
+                <div class="form-text small">Sélectionnez jusqu'à 3 images de votre appareil.</div>
+                <div id="previewContainer" class="d-flex gap-2 mt-2 flex-wrap"></div>
+              </div>
+
+              <div class="mb-3">
+                <label for="articleImg" class="form-label">Ou URL d'image en ligne (Optionnel)</label>
+                <input type="url" class="form-control" id="articleImg" placeholder="https://images.unsplash.com/...">
+              </div>
+
+              <div class="mb-3">
+                <label for="articleDesc" class="form-label">Description de l'article *</label>
+                <textarea class="form-control" id="articleDesc" rows="3" placeholder="État du produit, garantie, détails..." required></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">
+                ✨ Mettre en vente maintenant
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. SECTION COMMANDE CLIENT (MASQUÉE PAR DÉFAUT EN PASSANT D-NONE) -->
+    <div id="section-client" class="section-app d-none">
       <div class="row g-4">
 
         <!-- Colonne Gauche : Formulaire de Commande -->
@@ -246,23 +347,19 @@
                 <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
                   <h5 class="text-secondary fs-6 mb-0">2. Information Destinataire</h5>
                   <div class="form-check form-switch mb-0">
-                    <input class="form-check-input" type="checkbox" id="memeDestinataire"
-                      onchange="copierInfoExpediteur()">
-                    <label class="form-check-label small text-muted" for="memeDestinataire">Je suis le
-                      destinataire</label>
+                    <input class="form-check-input" type="checkbox" id="memeDestinataire" onchange="copierInfoExpediteur()">
+                    <label class="form-check-label small text-muted" for="memeDestinataire">Je suis le destinataire</label>
                   </div>
                 </div>
 
                 <div class="row g-3 mb-3" id="blockDestinataire">
                   <div class="col-md-6">
                     <label for="destinataireNom" class="form-label">Nom du destinataire *</label>
-                    <input type="text" class="form-control" id="destinataireNom" placeholder="Ex: Jean Baptiste"
-                      required>
+                    <input type="text" class="form-control" id="destinataireNom" placeholder="Ex: Jean Baptiste" required>
                   </div>
                   <div class="col-md-6">
                     <label for="destinataireTel" class="form-label">WhatsApp Destinataire (Alerte Directe) *</label>
-                    <input type="tel" class="form-control" id="destinataireTel" placeholder="Ex: +509 3700 0000"
-                      required>
+                    <input type="tel" class="form-control" id="destinataireTel" placeholder="Ex: +509 3700 0000" required>
                   </div>
                 </div>
 
@@ -321,14 +418,12 @@
 
                 <div class="mb-3">
                   <label for="adresseDepart" class="form-label">Adresse exacte départ *</label>
-                  <input type="text" class="form-control" id="adresseDepart" placeholder="Ex: Rue Capois, près de..."
-                    required>
+                  <input type="text" class="form-control" id="adresseDepart" placeholder="Ex: Rue Capois, près de..." required>
                 </div>
 
                 <div class="mb-3">
                   <label for="adresseArrivee" class="form-label">Adresse exacte d'arrivée *</label>
-                  <input type="text" class="form-control" id="adresseArrivee" placeholder="Ex: Impasse Lavaud, ..."
-                    required>
+                  <input type="text" class="form-control" id="adresseArrivee" placeholder="Ex: Impasse Lavaud, ..." required>
                 </div>
 
                 <!-- 4. Planification & Colis -->
@@ -393,8 +488,7 @@
                   <div class="input-group input-group-sm">
                     <span class="input-group-text">+509</span>
                     <input type="tel" id="payPhone" class="form-control" placeholder="38XX XXXX">
-                    <button type="button" class="btn btn-success" onclick="simulerPaiementAPI()">Simuler le
-                      Paiement</button>
+                    <button type="button" class="btn btn-success" onclick="simulerPaiementAPI()">Simuler le Paiement</button>
                   </div>
                   <div id="payStatus" class="small mt-2"></div>
                 </div>
@@ -404,8 +498,7 @@
                   <label class="form-label fw-bold">Code Promo</label>
                   <div class="input-group">
                     <input type="text" id="codePromo" class="form-control" placeholder="Entrez RAPID10 ou LIVRAISON20">
-                    <button type="button" class="btn btn-outline-secondary"
-                      onclick="appliquerPromo()">Appliquer</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="appliquerPromo()">Appliquer</button>
                   </div>
                   <div id="promoStatus" class="small mt-1"></div>
                 </div>
@@ -414,13 +507,11 @@
                 <div class="mb-3">
                   <label class="form-label fw-bold">Moment de la livraison</label>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="deliveryTiming" id="asap" value="asap" checked
-                      onclick="toggleSchedule(false)">
+                    <input class="form-check-input" type="radio" name="deliveryTiming" id="asap" value="asap" checked onclick="toggleSchedule(false)">
                     <label class="form-check-label" for="asap">Livraison immédiate (Dès que possible)</label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="deliveryTiming" id="scheduled" value="scheduled"
-                      onclick="toggleSchedule(true)">
+                    <input class="form-check-input" type="radio" name="deliveryTiming" id="scheduled" value="scheduled" onclick="toggleSchedule(true)">
                     <label class="form-check-label" for="scheduled">Planifier pour plus tard</label>
                   </div>
                 </div>
@@ -470,8 +561,7 @@
                 <strong id="taxeVal">+34 HTG</strong>
               </div>
 
-              <div class="d-flex justify-content-between align-items-center mb-2 text-danger" id="boxReduction"
-                style="display: none;">
+              <div class="d-flex justify-content-between align-items-center mb-2 text-danger" id="boxReduction" style="display: none;">
                 <span>Réduction Promo :</span>
                 <strong id="reductionVal">-0 HTG</strong>
               </div>
@@ -484,8 +574,7 @@
               </div>
 
               <p class="small text-muted mt-3 mb-0">
-                ℹ️ Le tarif s'ajuste automatiquement selon la distance, la zone, le véhicule, le poids du colis et la
-                taxe de service (13,5%).
+                ℹ️ Le tarif s'ajuste automatiquement selon la distance, la zone, le véhicule, le poids du colis et la taxe de service (13,5%).
               </p>
             </div>
           </div>
@@ -494,132 +583,15 @@
       </div>
     </div>
 
-    <!-- 1.2. SECTION VENDRE UN ARTICLE / MARKETPLACE DES PARTICULIERS -->
-    <div id="section-vendre" class="section-app d-none">
-      <div class="row g-4">
-        <!-- Formulaire de Publication d'Article -->
-        <div class="col-lg-5">
-          <div class="card shadow-sm border-0 p-4">
-            <h3 class="card-title text-warning text-dark fw-bold mb-3">🛍️ Exposer un produit à vendre</h3>
-            <p class="text-muted small mb-3">Vous avez un objet, un vêtement, de la nourriture ou un produit
-              neuf/occasion à vendre ? Publiez-le gratuitement avec vos photos !</p>
-
-            <form id="formVendre" onsubmit="publierArticle(event)">
-              <div class="mb-3">
-                <label for="vendeurNom" class="form-label">Votre nom / Nom de boutique *</label>
-                <input type="text" class="form-control" id="vendeurNom" placeholder="Ex: Jean Boutique ou Sarah"
-                  required>
-              </div>
-
-              <div class="mb-3">
-                <label for="vendeurTel" class="form-label">Téléphone / WhatsApp du vendeur *</label>
-                <input type="tel" class="form-control" id="vendeurTel" placeholder="Ex: +509 3821 0256" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="articleTitre" class="form-label">Titre de l'article *</label>
-                <input type="text" class="form-control" id="articleTitre"
-                  placeholder="Ex: iPhone 12 Pro Max / Baskets / Plat Griot" required>
-              </div>
-
-              <div class="row g-2 mb-3">
-                <div class="col-6">
-                  <label for="articlePrix" class="form-label">Prix (HTG / USD) *</label>
-                  <input type="number" class="form-control" id="articlePrix" placeholder="Ex: 2500" required>
-                </div>
-                <div class="col-6">
-                  <label for="articleCategorie" class="form-label">Catégorie *</label>
-                  <select class="form-select" id="articleCategorie" required>
-                    <option value="Électronique">Électronique</option>
-                    <option value="Mode & Vêtements">Mode & Vêtements</option>
-                    <option value="Nourriture / Repas">Nourriture / Repas</option>
-                    <option value="Maison & Déco">Maison & Déco</option>
-                    <option value="Autre">Autre</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="mb-3">
-                <label for="articleZone" class="form-label">Localisation de l'article *</label>
-                <select class="form-select" id="articleZone" required>
-                  <option value="Pétion-Ville">Pétion-Ville</option>
-                  <option value="Delmas">Delmas</option>
-                  <option value="Port-au-Prince - Canapé-Vert">Port-au-Prince - Canapé-Vert</option>
-                  <option value="Port-au-Prince - Turgeau">Port-au-Prince - Turgeau</option>
-                  <option value="Route de Frères">Route de Frères</option>
-                  <option value="Autre commune de l'Ouest">Autre commune de l'Ouest</option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="articleImgs" class="form-label fw-bold">📷 Photos de l'article (Galerie/Photos - 3
-                  max)</label>
-                <input type="file" class="form-control" id="articleImgs" accept="image/*" multiple
-                  onchange="previsualiserImages(event)">
-                <div class="form-text small">Sélectionnez jusqu'à 3 images de votre appareil.</div>
-                <div id="previewContainer" class="d-flex gap-2 mt-2 flex-wrap"></div>
-              </div>
-
-              <div class="mb-3">
-                <label for="articleImg" class="form-label">Ou URL d'image en ligne (Optionnel)</label>
-                <input type="url" class="form-control" id="articleImg" placeholder="https://images.unsplash.com/...">
-              </div>
-
-              <div class="mb-3">
-                <label for="articleDesc" class="form-label">Description de l'article *</label>
-                <textarea class="form-control" id="articleDesc" rows="3"
-                  placeholder="État du produit, garantie, détails..." required></textarea>
-              </div>
-
-              <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">
-                ✨ Mettre en vente maintenant
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <!-- Vitrine Marketplace -->
-        <div class="col-lg-7">
-          <div class="card shadow-sm border-0 p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h3 class="card-title mb-0">🛒 Marketplace - Produits disponibles</h3>
-              <span class="badge bg-secondary" id="badgeTotalArticles">0 article(s)</span>
-            </div>
-
-            <div class="row g-2 mb-3">
-              <div class="col-md-7">
-                <input type="text" id="searchMarket" class="form-control" placeholder="🔍 Rechercher un article..."
-                  oninput="filtrerMarketplace()">
-              </div>
-              <div class="col-md-5">
-                <select id="catFilter" class="form-select" onchange="filtrerMarketplace()">
-                  <option value="">Toutes les catégories</option>
-                  <option value="Électronique">Électronique</option>
-                  <option value="Mode & Vêtements">Mode & Vêtements</option>
-                  <option value="Nourriture / Repas">Nourriture / Repas</option>
-                  <option value="Maison & Déco">Maison & Déco</option>
-                  <option value="Autre">Autre</option>
-                </select>
-              </div>
-            </div>
-
-            <div id="gridMarketplace" class="grid-layout mt-3"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 1.5. SECTION ESPACE BUSINESS / ENTREPRISES DE L'OUEST -->
+    <!-- 3. SECTION ESPACE BUSINESS / ENTREPRISES DE L'OUEST -->
     <div id="section-business" class="section-app d-none">
       <div class="row g-4">
         <!-- Présentation des Avantages Business -->
         <div class="col-lg-5">
           <div class="card shadow-sm border-0 p-4 h-100 bg-primary text-white">
             <h2 class="fw-bold mb-3">🏢 Externalisez vos livraisons</h2>
-            <p class="lead fs-6">Vous êtes un restaurant, un supermarché, une pharmacie ou une boutique en ligne à
-              Pétion-Ville, Delmas ou Port-au-Prince ?</p>
-            <p class="small opacity-75 mb-4">Gagnez du temps et réduisez vos coûts fixes en confiant vos livraisons à
-              notre réseau de chauffeurs professionnels géolocalisés.</p>
+            <p class="lead fs-6">Vous êtes un restaurant, un supermarché, une pharmacie ou une boutique en ligne à Pétion-Ville, Delmas ou Port-au-Prince ?</p>
+            <p class="small opacity-75 mb-4">Gagnez du temps et réduisez vos coûts fixes en confiant vos livraisons à notre réseau de chauffeurs professionnels géolocalisés.</p>
 
             <div class="mb-3">
               <h5>✨ Pourquoi devenir Partenaire Business ?</h5>
@@ -643,8 +615,7 @@
         <div class="col-lg-7">
           <div class="card shadow-sm border-0 p-4">
             <h3 class="card-title text-primary mb-3">💼 Demander un Compte Entreprise</h3>
-            <p class="text-muted small mb-4">Remplissez ce formulaire pour créer votre compte Partenaire ou être
-              recontacté sous 24h.</p>
+            <p class="text-muted small mb-4">Remplissez ce formulaire pour créer votre compte Partenaire ou être recontacté sous 24h.</p>
 
             <form id="formBusiness" onsubmit="envoyerDemandeBusiness(event)">
               <div class="row g-3 mb-3">
@@ -707,8 +678,7 @@
 
               <div class="mb-3">
                 <label for="bizNotes" class="form-label">Besoins spécifiques ou message</label>
-                <textarea class="form-control" id="bizNotes" rows="3"
-                  placeholder="Précisez vos horaires d'ouverture, les types de colis à transporter..."></textarea>
+                <textarea class="form-control" id="bizNotes" rows="3" placeholder="Précisez vos horaires d'ouverture, les types de colis à transporter..."></textarea>
               </div>
 
               <button type="submit" class="btn btn-primary btn-lg w-100">
@@ -720,7 +690,7 @@
       </div>
     </div>
 
-    <!-- 2. SECTION SUIVI DE COLIS -->
+    <!-- 4. SECTION SUIVI DE COLIS -->
     <div id="section-suivi" class="section-app d-none">
       <div class="row justify-content-center">
         <div class="col-md-8">
@@ -740,7 +710,7 @@
       </div>
     </div>
 
-    <!-- 3. SECTION LIVREUR / AUTHENTIFICATION -->
+    <!-- 5. SECTION LIVREUR / AUTHENTIFICATION -->
     <div id="section-livreur" class="section-app d-none">
       <div class="row justify-content-center">
         <div class="col-md-8">
@@ -757,10 +727,8 @@
 
           <div class="card shadow-sm border-0 p-4 mb-4" id="authBox">
             <div class="btn-group w-100 mb-3">
-              <button type="button" id="tabConnexion" class="btn btn-outline-primary active"
-                onclick="switchAuthTab('login')">Se connecter</button>
-              <button type="button" id="tabInscription" class="btn btn-outline-primary"
-                onclick="switchAuthTab('signup')">Créer un compte</button>
+              <button type="button" id="tabConnexion" class="btn btn-outline-primary active" onclick="switchAuthTab('login')">Se connecter</button>
+              <button type="button" id="tabInscription" class="btn btn-outline-primary" onclick="switchAuthTab('signup')">Créer un compte</button>
             </div>
 
             <!-- Form Connexion -->
@@ -780,8 +748,7 @@
                 <label class="form-label">Mot de passe</label>
                 <input type="password" class="form-control" id="loginPassword" placeholder="••••••••">
               </div>
-              <button type="submit" id="btnLoginSubmit" class="btn btn-primary w-100">Recevoir le code / lien
-                OTP</button>
+              <button type="submit" id="btnLoginSubmit" class="btn btn-primary w-100">Recevoir le code / lien OTP</button>
             </form>
 
             <!-- Verification OTP -->
@@ -791,31 +758,23 @@
               </div>
               <div class="mb-3">
                 <label class="form-label">Code de vérification</label>
-                <input type="text" class="form-control text-center fs-4" id="otpCode" placeholder="123456"
-                  maxlength="6">
+                <input type="text" class="form-control text-center fs-4" id="otpCode" placeholder="123456" maxlength="6">
               </div>
               <button type="submit" class="btn btn-success w-100">Vérifier et me connecter</button>
-              <button type="button" onclick="resetOtpForm()" class="btn btn-link w-100 text-secondary mt-2">Changer
-                d'email</button>
+              <button type="button" onclick="resetOtpForm()" class="btn btn-link w-100 text-secondary mt-2">Changer d'email</button>
             </form>
 
             <!-- Form Inscription -->
             <form id="formSignup" style="display: none;">
               <div class="row g-2 mb-3">
-                <div class="col-6"><label class="form-label">Prénom</label><input type="text" class="form-control"
-                    id="signupPrenom" required></div>
-                <div class="col-6"><label class="form-label">Nom</label><input type="text" class="form-control"
-                    id="signupNom" required></div>
+                <div class="col-6"><label class="form-label">Prénom</label><input type="text" class="form-control" id="signupPrenom" required></div>
+                <div class="col-6"><label class="form-label">Nom</label><input type="text" class="form-control" id="signupNom" required></div>
               </div>
-              <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control"
-                  id="signupEmail" required></div>
-              <div class="mb-3"><label class="form-label">Téléphone</label><input type="tel" class="form-control"
-                  id="signupTel" required></div>
+              <div class="mb-3"><label class="form-label">Email</label><input type="email" class="form-control" id="signupEmail" required></div>
+              <div class="mb-3"><label class="form-label">Téléphone</label><input type="tel" class="form-control" id="signupTel" required></div>
               <div class="row g-2 mb-3">
-                <div class="col-6"><label class="form-label">Mot de passe</label><input type="password"
-                    class="form-control" id="signupPassword" minlength="6" required></div>
-                <div class="col-6"><label class="form-label">Confirmation</label><input type="password"
-                    class="form-control" id="signupConfirmPassword" minlength="6" required></div>
+                <div class="col-6"><label class="form-label">Mot de passe</label><input type="password" class="form-control" id="signupPassword" minlength="6" required></div>
+                <div class="col-6"><label class="form-label">Confirmation</label><input type="password" class="form-control" id="signupConfirmPassword" minlength="6" required></div>
               </div>
               <div class="mb-3">
                 <label class="form-label">Zone d'intervention</label>
@@ -838,7 +797,7 @@
       </div>
     </div>
 
-    <!-- 4. SECTION COURSES EN COURS -->
+    <!-- 6. SECTION COURSES EN COURS -->
     <div id="section-commandes" class="section-app d-none">
       <div class="card shadow-sm border-0 p-4">
         <h2>📦 Commandes en cours & Marketplace</h2>
@@ -846,7 +805,7 @@
       </div>
     </div>
 
-    <!-- 5. SECTION SUPPORT & FAQ -->
+    <!-- 7. SECTION SUPPORT & FAQ -->
     <div id="section-support" class="section-app d-none">
       <div class="row g-4">
         <div class="col-md-6">
@@ -889,29 +848,25 @@
                 </h2>
                 <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
                   <div class="accordion-body">
-                    Les livraisons standard en zone urbaine (Pétion-Ville, Delmas, Canapé-Vert) prennent en moyenne de
-                    30 à 60 minutes selon la circulation et la sécurité.
+                    Les livraisons standard en zone urbaine (Pétion-Ville, Delmas, Canapé-Vert) prennent en moyenne de 30 à 60 minutes selon la circulation et la sécurité.
                   </div>
                 </div>
               </div>
               <div class="accordion-item">
                 <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#faq2">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
                     Comment se calcule le tarif d'une livraison ?
                   </button>
                 </h2>
                 <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                   <div class="accordion-body">
-                    Le tarif dépend de la zone de départ/arrivée, de la distance estimée, du type de véhicule (Moto,
-                    Tricycle, Voiture), du poids du colis et d'une taxe/frais de service de 13.5%.
+                    Le tarif dépend de la zone de départ/arrivée, de la distance estimée, du type de véhicule (Moto, Tricycle, Voiture), du poids du colis et d'une taxe/frais de service de 13.5%.
                   </div>
                 </div>
               </div>
               <div class="accordion-item">
                 <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#faq3">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
                     Quels moyens de paiement acceptez-vous ?
                   </button>
                 </h2>
@@ -927,7 +882,7 @@
       </div>
     </div>
 
-    <!-- 6. SECTION ADMIN -->
+    <!-- 8. SECTION ADMIN -->
     <div id="section-admin" class="section-app d-none">
       <div class="card shadow-sm border-0 p-4">
         <h2>📊 Tableau de bord Administrateur</h2>
@@ -980,15 +935,13 @@
       <div class="row g-4">
         <div class="col-md-4">
           <h5 class="text-white">🚚 LivraisonRapid</h5>
-          <p class="small text-muted">Service de livraison rapide, fiable et sécurisé adapté aux zones du département de
-            l'Ouest (Port-au-Prince, Pétion-Ville, Delmas...).</p>
+          <p class="small text-muted">Service de livraison rapide, fiable et sécurisé adapté aux zones du département de l'Ouest (Port-au-Prince, Pétion-Ville, Delmas...).</p>
         </div>
         <div class="col-md-4">
           <h5 class="text-white">Besoin d'aide ?</h5>
           <ul class="list-unstyled">
             <li class="mb-2">
-              <a href="https://wa.me/50938210256?text=Bonjour,%20je%20souhaite%20des%20informations%20sur%20vos%20services%20de%20livraison."
-                target="_blank" class="btn btn-outline-success btn-sm text-white">
+              <a href="https://wa.me/50938210256?text=Bonjour,%20je%20souhaite%20des%20informations%20sur%20vos%20services%20de%20livraison." target="_blank" class="btn btn-outline-success btn-sm text-white">
                 💬 Support WhatsApp direct
               </a>
             </li>
@@ -1206,7 +1159,6 @@
       }
     }
 
-    // Dynamic Recipient Information Handling
     function copierInfoExpediteur() {
       const isChecked = document.getElementById('memeDestinataire').checked;
       const blockDest = document.getElementById('blockDestinataire');
@@ -1234,7 +1186,6 @@
       scheduleInputs.classList.toggle('d-none', !show);
     }
 
-    // Unified Section Tab Switcher with Leaflet Map Invalidation
     function changerOnglet(nom, event) {
       document.querySelectorAll('.section-app').forEach(s => s.classList.add('d-none'));
       const targetSection = document.getElementById('section-' + nom);
@@ -1626,7 +1577,6 @@
       conteneur.style.display = 'none';
     }
 
-    // Direct Status Update Handler with Supabase Integration
     async function changerStatutCommande(id, nouveauStatut) {
       if (!supabaseClient) {
         afficherToast(`Changement de statut en simulation locale: ${nouveauStatut}`);
