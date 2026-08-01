@@ -614,6 +614,33 @@
       "Route de Frères": [18.5200, -72.2600]
     };
 
+    const zonesSensibles = ["Port-au-Prince - Turgeau"];
+
+    /* --- GESTION PWA --- */
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btnPwa = document.getElementById('btnPwaInstall');
+      if (btnPwa) btnPwa.classList.remove('d-none');
+    });
+
+    function installerPWA() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          const btnPwa = document.getElementById('btnPwaInstall');
+          if (btnPwa) btnPwa.classList.add('d-none');
+        }
+        deferredPrompt = null;
+      });
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
     window.onload = function () {
       initMap();
       actualiserAffichagePrix();
@@ -636,6 +663,51 @@
       document.getElementById('toastMessage').textContent = msg;
       toastEl.className = `toast align-items-center text-white border-0 bg-${type}`;
       new bootstrap.Toast(toastEl).show();
+    }
+
+    /* GPS LIVREUR */
+    function toggleGpsTracking() {
+      const badge = document.getElementById('gpsBadge');
+      const btn = document.getElementById('btnGpsToggle');
+
+      if (gpsWatchId) {
+        navigator.geolocation.clearWatch(gpsWatchId);
+        gpsWatchId = null;
+        badge.textContent = "GPS Inactif";
+        badge.className = "badge bg-secondary ms-2";
+        btn.textContent = "📍 Partage GPS Live";
+        btn.className = "btn btn-warning btn-sm fw-bold";
+        if (markerLivreurGps) map.removeLayer(markerLivreurGps);
+        afficherToast("Partage GPS désactivé", "info");
+      } else {
+        if ("geolocation" in navigator) {
+          gpsWatchId = navigator.geolocation.watchPosition((position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            badge.textContent = "GPS Actif (En direct)";
+            badge.className = "badge bg-success ms-2 gps-active";
+            btn.textContent = "🛑 Arrêter le GPS";
+            btn.className = "btn btn-danger btn-sm fw-bold";
+
+            if (!markerLivreurGps) {
+              markerLivreurGps = L.marker([lat, lng], {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png',
+                  iconSize: [35, 35]
+                })
+              }).addTo(map).bindPopup("<b>Votre position (Livreur)</b>");
+            } else {
+              markerLivreurGps.setLatLng([lat, lng]);
+            }
+            map.setView([lat, lng], 14);
+          }, (error) => {
+            afficherToast("Erreur d'accès GPS : " + error.message, "danger");
+          }, { enableHighAccuracy: true });
+        } else {
+          afficherToast("Géolocalisation non supportée sur cet appareil", "danger");
+        }
+      }
     }
 
     /* PANIER */
@@ -718,7 +790,6 @@
         btn.textContent = `👤 ${currentClientUser.nom}`;
         btn.className = "btn btn-success btn-sm ms-lg-1";
 
-        // Si le profil connecté est un Livreur
         if (currentClientUser.role === 'Livreur') {
           if (userBar) {
             userBar.classList.remove('d-none');
@@ -777,7 +848,6 @@
 
       afficherToast("Profil configuré !");
 
-      // Redirection automatique vers l'espace livreur si le rôle sélectionné est Livreur
       if (role === 'Livreur') {
         changerOnglet('livreur');
       }
@@ -803,6 +873,22 @@
       }
     }
 
+    function evaluerSecuriteZone(zDepart, zArrivee) {
+      const secBox = document.getElementById('securityAlert');
+      const secIcon = document.getElementById('secIcon');
+      const secText = document.getElementById('secText');
+
+      if (zonesSensibles.includes(zDepart) || zonesSensibles.includes(zArrivee)) {
+        secBox.className = "alert alert-warning d-flex align-items-center gap-2 mb-3";
+        secIcon.textContent = "⚠️";
+        secText.textContent = "Zone à vigilance modérée. Livraisons maintenues sous réserve de fluidité.";
+      } else {
+        secBox.className = "alert alert-success d-flex align-items-center gap-2 mb-3";
+        secIcon.textContent = "🛡️";
+        secText.textContent = "Trajet fluide et sécurisé. Livraison standard assurée.";
+      }
+    }
+
     function calculerPrixEtSecurite() {
       const zDepart = document.getElementById("zoneDepart").value;
       const zArrivee = document.getElementById("zoneArrivee").value;
@@ -810,6 +896,8 @@
       const transport = document.getElementById("moyenTransport").value;
 
       if (!zDepart || !zArrivee) return;
+
+      evaluerSecuriteZone(zDepart, zArrivee);
 
       let calculBase = zDepart === zArrivee ? 250 : 400;
       let distanceKm = 0;
@@ -855,6 +943,8 @@
 
     function toggleFormPaiement() {
       const mode = document.getElementById('methodePaiement').value;
+      const nomPasserelle = document.getElementById('nomPasserelle');
+      if (nomPasserelle) nomPasserelle.textContent = mode;
       document.getElementById('boxPaiementEnLigne').style.display = (mode === 'MonCash' || mode === 'NatCash') ? 'block' : 'none';
       paiementEstValide = (mode === 'Cash à la livraison');
     }
@@ -865,6 +955,20 @@
         paiementEstValide = true;
         document.getElementById('payStatus').innerHTML = `<span class="text-success fw-bold">✅ Paiement validé !</span>`;
       }, 1000);
+    }
+
+    function envoyerNotificationWhatsApp(commande) {
+      const message = encodeURIComponent(
+        `🚚 *NOUVELLE COMMANDE - LivraisonRapid*\n` +
+        `-----------------------------------\n` +
+        `📦 *Commande #:* ${commande.id}\n` +
+        `👤 *Client:* ${commande.client_nom} (${commande.client_tel})\n` +
+        `📍 *Trajet:* ${commande.zone_depart} ➡️ ${commande.zone_arrivee}\n` +
+        `💵 *Total:* ${commande.prix} HTG\n` +
+        `-----------------------------------\n` +
+        `Veuillez confirmer la prise en charge !`
+      );
+      window.open(`https://wa.me/50938210256?text=${message}`, '_blank');
     }
 
     document.getElementById("orderForm").addEventListener("submit", async function (e) {
@@ -889,6 +993,7 @@
         localStorage.setItem('local_commandes', JSON.stringify(commandLocalStore));
       }
 
+      envoyerNotificationWhatsApp(nouvelleCommande);
       afficherToast("Commande enregistrée !");
       chargerCommandes();
       this.reset();
