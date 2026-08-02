@@ -533,39 +533,92 @@
     </div>
   </div>
 
-  <!-- MODAL PROFIL -->
+  <!-- MODAL PROFIL / AUTHENTIFICATION -->
   <div class="modal fade" id="modalProfilClient" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content border-0">
         <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title fw-bold">👤 Mon Profil</h5>
+          <h5 class="modal-title fw-bold" id="titleModalAuth">👤 Mon Profil</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4">
+          
+          <!-- FORMULAIRES QUAND DÉCONNECTÉ -->
           <div id="profilClientNonConnecte">
-            <form id="formClientSignup" onsubmit="inscriptionUtilisateur(event)">
-              <div class="mb-3">
-                <label class="form-label">Rôle</label>
-                <select id="signupRole" class="form-select" required>
-                  <option value="Client">🛒 Client</option>
-                  <option value="Livreur">🛵 Livreur</option>
-                  <option value="Vendeur">🛍️ Vendeur</option>
-                </select>
+            
+            <!-- Onglets d'alternance Inscription / Connexion -->
+            <ul class="nav nav-pills nav-justified mb-3" id="pills-tab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold" id="pills-login-tab" data-bs-toggle="pill" data-bs-target="#pills-login" type="button" role="tab">Se connecter</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold" id="pills-signup-tab" data-bs-toggle="pill" data-bs-target="#pills-signup" type="button" role="tab">S'inscrire</button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="pills-tabContent">
+              
+              <!-- FORMULAIRE SE CONNECTER -->
+              <div class="tab-pane fade show active" id="pills-login" role="tabpanel">
+                <form id="formClientLogin" onsubmit="connexionUtilisateur(event)">
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">Adresse Email</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="exemple@mail.com" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">Mot de passe</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100 fw-bold">Se connecter</button>
+                </form>
               </div>
-              <input type="text" id="signupNom" class="form-control mb-2" placeholder="Nom complet" required>
-              <input type="tel" id="signupTel" class="form-control mb-2" placeholder="Téléphone WhatsApp" required>
-              <input type="email" id="signupEmail" class="form-control mb-3" placeholder="Email" required>
-              <button type="submit" class="btn btn-success w-100 fw-bold">S'inscrire / Se connecter</button>
-            </form>
+
+              <!-- FORMULAIRE S'INSCRIRE -->
+              <div class="tab-pane fade" id="pills-signup" role="tabpanel">
+                <form id="formClientSignup" onsubmit="inscriptionUtilisateur(event)">
+                  <div class="mb-2">
+                    <label class="form-label fw-bold small">Rôle</label>
+                    <select id="signupRole" class="form-select" required>
+                      <option value="Client">🛒 Client</option>
+                      <option value="Livreur">🛵 Livreur</option>
+                      <option value="Vendeur">🛍️ Vendeur</option>
+                    </select>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label fw-bold small">Nom complet</label>
+                    <input type="text" id="signupNom" class="form-control" placeholder="Ex: Jean Dupont" required>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label fw-bold small">Téléphone WhatsApp</label>
+                    <input type="tel" id="signupTel" class="form-control" placeholder="+509 3800 0000" required>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label fw-bold small">Adresse Email</label>
+                    <input type="email" id="signupEmail" class="form-control" placeholder="exemple@mail.com" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-bold small">Mot de passe</label>
+                    <input type="password" id="signupPassword" class="form-control" placeholder="Ex: P@ssword1" required>
+                    <div class="form-text text-muted small" style="font-size: 0.75rem;">
+                      Exigences : Au moins 8 caractères, débuter par une majuscule, contenir des minuscules, un chiffre et un caractère spécial.
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-success w-100 fw-bold">S'inscrire</button>
+                </form>
+              </div>
+
+            </div>
           </div>
 
+          <!-- AFFICHAGE QUAND CONNECTÉ -->
           <div id="profilClientConnecte" style="display: none;">
-            <h5 id="clientProfNomDisplay" class="fw-bold text-primary"></h5>
-            <p><strong>Tel:</strong> <span id="clientProfTelDisplay"></span></p>
-            <p><strong>Email:</strong> <span id="clientProfEmailDisplay"></span></p>
-            <p><strong>Rôle:</strong> <span id="clientProfRoleDisplay" class="badge bg-warning text-dark"></span></p>
-            <button onclick="deconnexionClientProfil()" class="btn btn-outline-danger w-100 mt-3">Se déconnecter</button>
+            <h5 id="clientProfNomDisplay" class="fw-bold text-primary mb-3"></h5>
+            <p class="mb-1"><strong>Tel :</strong> <span id="clientProfTelDisplay"></span></p>
+            <p class="mb-1"><strong>Email :</strong> <span id="clientProfEmailDisplay"></span></p>
+            <p class="mb-3"><strong>Rôle :</strong> <span id="clientProfRoleDisplay" class="badge bg-warning text-dark"></span></p>
+            <button onclick="deconnexionClientProfil()" class="btn btn-outline-danger w-100 mt-2">Se déconnecter</button>
           </div>
+
         </div>
       </div>
     </div>
@@ -780,7 +833,7 @@
       document.getElementById('adresseDepart').value = panier.map(i => `${i.quantite}x ${i.titre}`).join(', ');
     }
 
-    /* PROFIL */
+    /* PROFIL & AUTHENTIFICATION */
     function verifierProfilClient() {
       const btn = document.getElementById('btnProfilClient');
       const userBar = document.getElementById('userBar');
@@ -831,24 +884,80 @@
       new bootstrap.Modal(document.getElementById('modalProfilClient')).show();
     }
 
+    // Validation du mot de passe
+    function validerMotDePasse(password) {
+      const regex = /^[A-Z](?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{7,}$/;
+      return regex.test(password);
+    }
+
+    // Inscription d'un utilisateur
     function inscriptionUtilisateur(e) {
       e.preventDefault();
+      
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
       const role = document.getElementById('signupRole').value;
-      currentClientUser = {
-        role: role,
-        nom: document.getElementById('signupNom').value,
-        tel: document.getElementById('signupTel').value,
-        email: document.getElementById('signupEmail').value
-      };
-      localStorage.setItem('user_client', JSON.stringify(currentClientUser));
-      verifierProfilClient();
+      const nom = document.getElementById('signupNom').value;
+      const tel = document.getElementById('signupTel').value;
 
+      if (!validerMotDePasse(password)) {
+        return afficherToast(
+          "Le mot de passe doit commencer par une majuscule, faire au moins 8 caractères, inclure des minuscules, un chiffre et un caractère spécial.", 
+          "danger"
+        );
+      }
+
+      let comptes = JSON.parse(localStorage.getItem('comptes_utilisateurs')) || [];
+      if (comptes.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        return afficherToast("Cet email est déjà utilisé. Veuillez vous connecter.", "warning");
+      }
+
+      const nouveauCompte = { role, nom, tel, email, password };
+      comptes.push(nouveauCompte);
+      localStorage.setItem('comptes_utilisateurs', JSON.stringify(comptes));
+
+      currentClientUser = nouveauCompte;
+      localStorage.setItem('user_client', JSON.stringify(currentClientUser));
+
+      verifierProfilClient();
       const modalEl = bootstrap.Modal.getInstance(document.getElementById('modalProfilClient'));
       if (modalEl) modalEl.hide();
 
-      afficherToast("Profil configuré !");
+      afficherToast("Compte créé et connecté avec succès !");
+      document.getElementById('formClientSignup').reset();
 
       if (role === 'Livreur') {
+        changerOnglet('livreur');
+      }
+    }
+
+    // Connexion d'un utilisateur
+    function connexionUtilisateur(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      let comptes = JSON.parse(localStorage.getItem('comptes_utilisateurs')) || [];
+      const utilisateurTrouve = comptes.find(
+        u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+      );
+
+      if (!utilisateurTrouve) {
+        return afficherToast("Email ou mot de passe incorrect.", "danger");
+      }
+
+      currentClientUser = utilisateurTrouve;
+      localStorage.setItem('user_client', JSON.stringify(currentClientUser));
+
+      verifierProfilClient();
+      const modalEl = bootstrap.Modal.getInstance(document.getElementById('modalProfilClient'));
+      if (modalEl) modalEl.hide();
+
+      afficherToast(`Ravi de vous revoir, ${utilisateurTrouve.nom} !`);
+      document.getElementById('formClientLogin').reset();
+
+      if (utilisateurTrouve.role === 'Livreur') {
         changerOnglet('livreur');
       }
     }
