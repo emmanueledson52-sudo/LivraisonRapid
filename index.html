@@ -421,12 +421,13 @@
             <div id="map"></div>
             <hr class="my-4">
             <div class="d-flex justify-content-between mb-2"><span>Distance :</span><strong id="distVal">0.0 km</strong></div>
-            <div class="d-flex justify-content-between mb-2"><span>Sous-total :</span><strong id="subtotalVal">250 HTG</strong></div>
+            <div class="d-flex justify-content-between mb-2"><span>Articles panier :</span><strong id="cartSubtotalVal">0 HTG</strong></div>
+            <div class="d-flex justify-content-between mb-2"><span>Frais de livraison :</span><strong id="subtotalVal">250 HTG</strong></div>
             <div class="d-flex justify-content-between mb-2 text-primary"><span>Taxes (13.5%) :</span><strong id="taxeVal">+34 HTG</strong></div>
             <div class="d-flex justify-content-between mb-2 text-danger" id="boxReduction" style="display: none;"><span>Promo :</span><strong id="reductionVal">-0 HTG</strong></div>
             <hr>
             <div class="d-flex justify-content-between align-items-center">
-              <span class="fw-bold fs-5">Total :</span>
+              <span class="fw-bold fs-5">Total Général :</span>
               <strong id="priceVal" class="fs-3 text-success">284 HTG</strong>
             </div>
           </div>
@@ -523,7 +524,7 @@
         </div>
         <div class="modal-body p-4"><div id="contenuPanier"></div></div>
         <div class="modal-footer d-flex justify-content-between">
-          <div>Total : <strong id="totalPanier" class="fs-4 text-success">0 HTG</strong></div>
+          <div>Total des articles : <strong id="totalPanier" class="fs-4 text-success">0 HTG</strong></div>
           <div>
             <button type="button" class="btn btn-outline-danger me-2" onclick="viderPanier()">Vider</button>
             <button type="button" class="btn btn-success fw-bold" onclick="commanderPanierViaLivraison()">🚚 Commander le panier</button>
@@ -764,6 +765,10 @@
     }
 
     /* PANIER */
+    function obtenirTotalPanier() {
+      return panier.reduce((sum, item) => sum + (item.prix * item.quantite), 0);
+    }
+
     function ajouterAuPanier(idArticle) {
       const art = articlesMarketplace.find(a => a.id === idArticle);
       if (!art) return;
@@ -797,6 +802,9 @@
 
       const totalItems = panier.reduce((sum, item) => sum + item.quantite, 0);
       badge.textContent = totalItems;
+      
+      actualiserAffichagePrix();
+
       if (!conteneur) return;
 
       if (panier.length === 0) {
@@ -827,10 +835,14 @@
 
     function commanderPanierViaLivraison() {
       if (panier.length === 0) return afficherToast("Votre panier est vide !", "warning");
-      const modal = bootstrap.Modal.getInstance(document.getElementById('modalPanier'));
+      
+      const modalEl = document.getElementById('modalPanier');
+      const modal = bootstrap.Modal.getInstance(modalEl);
       if (modal) modal.hide();
+
       changerOnglet('client');
-      document.getElementById('adresseDepart').value = panier.map(i => `${i.quantite}x ${i.titre}`).join(', ');
+      actualiserAffichagePrix();
+      afficherToast("Panier synchronisé avec la commande. Choisissez vos zones de livraison !");
     }
 
     /* PROFIL & AUTHENTIFICATION */
@@ -884,13 +896,11 @@
       new bootstrap.Modal(document.getElementById('modalProfilClient')).show();
     }
 
-    // Validation du mot de passe
     function validerMotDePasse(password) {
       const regex = /^[A-Z](?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{7,}$/;
       return regex.test(password);
     }
 
-    // Inscription d'un utilisateur
     function inscriptionUtilisateur(e) {
       e.preventDefault();
       
@@ -931,7 +941,6 @@
       }
     }
 
-    // Connexion d'un utilisateur
     function connexionUtilisateur(e) {
       e.preventDefault();
 
@@ -1043,10 +1052,16 @@
     }
 
     function actualiserAffichagePrix() {
-      let taxe = Math.round(tarifBase * tauxTaxe);
-      tarifActuel = Math.max(100, (tarifBase + taxe) - reductionMontant);
+      const totalPanier = obtenirTotalPanier();
+      const taxeLivraison = Math.round(tarifBase * tauxTaxe);
+      
+      tarifActuel = Math.max(0, (totalPanier + tarifBase + taxeLivraison) - reductionMontant);
+
+      const cartSubtotalEl = document.getElementById("cartSubtotalVal");
+      if (cartSubtotalEl) cartSubtotalEl.textContent = totalPanier + " HTG";
+
       document.getElementById("subtotalVal").textContent = tarifBase + " HTG";
-      document.getElementById("taxeVal").textContent = "+" + taxe + " HTG";
+      document.getElementById("taxeVal").textContent = "+" + taxeLivraison + " HTG";
       document.getElementById("priceVal").textContent = tarifActuel + " HTG";
     }
 
@@ -1072,8 +1087,9 @@
         `-----------------------------------\n` +
         `📦 *Commande #:* ${commande.id}\n` +
         `👤 *Client:* ${commande.client_nom} (${commande.client_tel})\n` +
+        `📦 *Articles / Colis:* ${commande.type_colis}\n` +
         `📍 *Trajet:* ${commande.zone_depart} ➡️ ${commande.zone_arrivee}\n` +
-        `💵 *Total:* ${commande.prix} HTG\n` +
+        `💵 *Total Général:* ${commande.prix} HTG\n` +
         `-----------------------------------\n` +
         `Veuillez confirmer la prise en charge !`
       );
@@ -1084,11 +1100,15 @@
       e.preventDefault();
       if (!paiementEstValide) return afficherToast("Validez le paiement en ligne !", "warning");
 
+      const detailsArticles = panier.length > 0 
+        ? panier.map(i => `${i.quantite}x ${i.titre} (${i.prix * i.quantite} HTG)`).join(', ')
+        : document.getElementById('typeColis').value;
+
       const nouvelleCommande = {
         id: Date.now(),
         client_nom: document.getElementById('clientNom').value,
         client_tel: document.getElementById('clientTel').value,
-        type_colis: document.getElementById('typeColis').value,
+        type_colis: detailsArticles,
         zone_depart: document.getElementById('zoneDepart').value,
         zone_arrivee: document.getElementById('zoneArrivee').value,
         prix: tarifActuel,
