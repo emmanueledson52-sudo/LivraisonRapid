@@ -1258,9 +1258,15 @@
 
     function copierInfoExpediteur() {
       const chk = document.getElementById('memeDestinataire').checked;
+      const destNom = document.getElementById('destinataireNom');
+      const destTel = document.getElementById('destinataireTel');
+
       if (chk) {
-        document.getElementById('destinataireNom').value = document.getElementById('clientNom').value;
-        document.getElementById('destinataireTel').value = document.getElementById('clientTel').value;
+        destNom.value = document.getElementById('clientNom').value;
+        destTel.value = document.getElementById('clientTel').value;
+      } else {
+        destNom.value = "";
+        destTel.value = "";
       }
     }
 
